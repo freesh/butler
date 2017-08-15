@@ -1,0 +1,14 @@
+#!/usr/bin/env php
+<?php
+// File butler
+
+require __DIR__.'/vendor/autoload.php';
+
+use Symfony\Component\Console\Application;
+use Butler\Command\ButletCommand;
+
+$application = new Application('Butler', '1.0.0');
+
+$application->add(new ButletCommand());
+
+$application->run();
