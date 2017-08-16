@@ -29,13 +29,38 @@ class CreateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
 
-        $PATH_TEMP="./temp-install";
-        #$PATH_ROOT=$(pwd);
+        $PATH_ROOT = $this->task('pwd | tr -d \'\n\'');
+        $PATH_TEMP = $PATH_ROOT.'/temp-install';
+
+        $output->writeln([
+            'creating Project',
+            '#################',
+            'path: '.$PATH_ROOT,
+            'path temp: '.$PATH_TEMP,
+            'name: vendor/projectname'
+        ]);
 
 
+        # init composer project
         $this->task('composer create-project --no-dev neos/neos-base-distribution '.$PATH_TEMP);
+
+        # move all to root
+        $this->task('mv '.$PATH_TEMP.'/* '.$PATH_TEMP.'/.g* '.$PATH_ROOT.'/');
+
+
+
         $this->task('cd '.$PATH_TEMP);
+        # import docker config
         $this->task('cp -R ~/Tools/Docker/* ./');
+
+        # copy development Settings.yaml
+        $this->task('cp ~/Tools/Neos/Build/Templates/Configuration/Development/Settings.yaml ./Configuration/Development');
+        $this->task('mv ./Configuration/Settings.yaml.example ./Configuration/Settings.yaml');
+
+        $this->task('cp ~/Tools/Neos/Build/composer.php ./Build');
+
+
+
 
         #$output->writeln(sprintf('Created the file %s', $path));
         /*$output->writeln([
@@ -57,6 +82,6 @@ class CreateCommand extends Command
             throw new ProcessFailedException($process);
         }
 
-        echo $process->getOutput();
+        return $process->getOutput();
     }
 }
