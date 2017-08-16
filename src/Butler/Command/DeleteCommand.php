@@ -22,7 +22,8 @@ class DeleteCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->task('rm -Rf ./*');
+        $this->task('docker-compose down && docker-compose rm -f');
+        $this->task('sudo rm -Rf ./* ./.g*');
         $this->task('ls -la');
     }
 
