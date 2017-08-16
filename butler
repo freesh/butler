@@ -5,10 +5,12 @@
 require __DIR__.'/vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
-use Butler\Command\ButletCommand;
+use Butler\Command\CreateCommand;
+use Butler\Command\DeleteCommand;
 
-$application = new Application('Butler', '1.0.0');
+$application = new Application('Butler', '1.0.0 alpha');
 
-$application->add(new ButletCommand());
+$application->add(new CreateCommand());
+$application->add(new DeleteCommand());
 
 $application->run();
