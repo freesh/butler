@@ -3,8 +3,7 @@
 namespace Butler\Command;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Process\Process;
-use Symfony\Component\Process\Exception\ProcessFailedException;
+use Butler\Project;
 
 use Symfony\Component\Console\Input\InputArgument;
 #use Symfony\Component\Console\Input\InputOption;
@@ -13,6 +12,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CreateCommand extends Command
 {
+
+    protected $composerTask;
+    protected $neosTask;
+
     protected function configure()
     {
         $this->setName('project:create');
@@ -20,8 +23,9 @@ class CreateCommand extends Command
         $this->setDescription('Creates a Neos project.');
 
         #$this->addArgument('type', InputArgument::REQUIRED);
+        $this->addArgument('project type', InputArgument::REQUIRED);
         $this->addArgument('vendor', InputArgument::REQUIRED);
-        $this->addArgument('projectname', InputArgument::REQUIRED);
+        $this->addArgument('project name', InputArgument::REQUIRED);
 
         #$this->addOption('path', 'p', InputOption::VALUE_REQUIRED, '', getcwd());
     }
@@ -29,21 +33,47 @@ class CreateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
 
-        $PATH_ROOT = $this->task('pwd | tr -d \'\n\'');
-        $PATH_TEMP = $PATH_ROOT.'/temp-install';
+        #$PATH_ROOT = $this->task('pwd | tr -d \'\n\'');
+        #$PATH_TEMP = $PATH_ROOT.'/temp-install';
 
-        $output->writeln([
+        $project = new Project([
+            'type' => str_replace('-','', ucwords($input->getArgument('project type'),'-')),
+            'vendor' => $input->getArgument('vendor'),
+            'name' => $input->getArgument('project name')
+        ],
+            $input,
+            $output
+        );
+
+        $project->initProject();
+        $project->executeTasks();
+
+
+       /* $output->writeln([
             'creating Project',
             '#################',
-            'path: '.$PATH_ROOT,
-            'path temp: '.$PATH_TEMP,
+            #'path: '.$PATH_ROOT,
+            #'path temp: '.$PATH_TEMP,
             'name: '.$input->getArgument('vendor').'/'.$input->getArgument('projectname')
-        ]);
+        ]);*/
+
+        # init taskdispatcher
+
+
+        # create task
 
 
         # init composer project
-        $this->task('composer create-project --no-dev neos/neos-base-distribution '.$PATH_TEMP);
+        #$this->composerTask = new ComposerTask();
 
+
+
+        #$this->composerTask->create('neos/neos-base-distribution');
+        #$this->task('composer create-project --no-dev neos/neos-base-distribution '.$PATH_TEMP);
+
+
+
+/*
         # move all to root
         $this->task('mv '.$PATH_TEMP.'/* '.$PATH_TEMP.'/.g* '.$PATH_ROOT.'/');
 
@@ -168,19 +198,19 @@ class CreateCommand extends Command
 
         # start neos server
         #$this->task('export FLOW_CONTEXT=Development && ./flow server:run');
-
+*/
 
         #$output->writeln(sprintf('Created the file %s', $path));
-        $output->writeln([
+        /*$output->writeln([
             'Neos is configured:',
             '===================',
             'To start Server run: ',
             'docker-compose up -d',
             'export FLOW_CONTEXT=Development && ./flow server:run'
-        ]);
+        ]);*/
     }
 
-    protected function task($command) {
+    /*protected function task($command) {
         $process = new Process($command);
         $process->setTimeout(600);
         $process->run();
@@ -191,5 +221,5 @@ class CreateCommand extends Command
         }
 
         return $process->getOutput();
-    }
+    }*/
 }
