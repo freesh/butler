@@ -21,6 +21,10 @@ For example:
 
 ```git clone git@github.com:freesh/butler.git ~/Butler```
 
+**Composer install**
+
+```composer install```
+
 **Make butler file executable:**
 
 ```chmod +x ~/Butler/butler```
