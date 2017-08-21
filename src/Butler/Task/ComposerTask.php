@@ -3,23 +3,32 @@
 namespace Butler\Task;
 
 use Butler\Task\Task;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
-class ComposerTask extends Task
+class ComposerTask extends AbstractTask
 {
 
-
-    public function create(InputInterface $input, OutputInterface $output, $package) {
-        Task::executeTask('touch mofa.txt');
+    /**
+     * @param string $distribution
+     */
+    public function create($distribution) {
+        $this->output->writeln('Installing '.$distribution);
+        $this->execute('touch '.$distribution.'.txt');
     }
 
-    public function add() {
-        Task::executeTask('echo "Add vendor/package"');
+    /**
+     * @param string $package
+     */
+    public function add($package) {
+        $this->output->writeln('Add package :'.$package);
+        $this->execute('echo "Add vendor/package"');
     }
 
-    public function remove() {
-        Task::executeTask('echo "Remove vendor/package"');
+    /**
+     * @param string $package
+     */
+    public function remove($package) {
+        $this->output->writeln('Remove '.$package);
+        $this->execute('echo "Remove vendor/package"');
     }
 
 }

@@ -22,7 +22,6 @@ class CreateCommand extends Command
         $this->setAliases(['c']);
         $this->setDescription('Creates a Neos project.');
 
-        #$this->addArgument('type', InputArgument::REQUIRED);
         $this->addArgument('project type', InputArgument::REQUIRED);
         $this->addArgument('vendor', InputArgument::REQUIRED);
         $this->addArgument('project name', InputArgument::REQUIRED);

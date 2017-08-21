@@ -37,13 +37,17 @@ class Project
      */
     public function initProject() {
 
-        $this->output->writeln('Init Project:'.$this->projectConfig['type'] );
+        $this->output->writeln('Init Project: '.$this->projectConfig['type'] );
 
+        // load Project
         $namespace = '\\Butler\\Project\\'.$this->projectConfig['type'].'Project';
-
         $task = new $namespace();
 
-        $this->output->writeln($task->createTasks());
+        // get tasks
+        foreach ($task->getTasks() as $key => $config)
+        {
+            $this->output->writeln($key);
+        }
     }
 
     /**

@@ -8,7 +8,7 @@ interface ProjectInterface
     /**
      * init
      */
-    public function init();
+    #public function init();
 
     /**
      * create tasks
@@ -18,6 +18,6 @@ interface ProjectInterface
     /**
      * execute tasks
      */
-    public function executeTasks();
+    #public function executeTasks();
 
 }

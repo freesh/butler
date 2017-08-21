@@ -2,18 +2,8 @@
 
 namespace Butler\Project;
 
-use Butler\Project\ProjectInterface;
-
-class NeosBaseProject implements ProjectInterface
+class NeosBaseProject extends AbstractProject
 {
-
-
-    /**
-     * init
-     */
-    public function init() {
-        #Task::executeTask('touch mofa.txt');
-    }
 
     /**
      * create tasks
@@ -21,21 +11,22 @@ class NeosBaseProject implements ProjectInterface
     public function createTasks() {
         #Task::executeTask('echo "Add vendor/package"');
 
-        $task = new \Butler\Task();
-
-        $task->create([
+        $this->addTask([
             'key' => 'init',
             'class' => '\\Butler\\Task\\ComposerTask',
             'task' => 'create',
             'options' => [],
         ]);
 
+        $this->addTask([
+            'key' => 'init2',
+            'class' => '\\Butler\\Task\\ComposerTask',
+            'task' => 'create',
+            'options' => [],
+        ]);
+
+
         return 'tasks created :))';
     }
-
-    /**
-     *
-     */
-    public function executeTasks() {}
 
 }
