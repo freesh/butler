@@ -2,33 +2,36 @@
 // Command/InitGitCommand.php
 namespace Butler\Task;
 
-use Butler\Task\Task;
+#use Butler\Task\Task;
 
 class ComposerTask extends AbstractTask
 {
 
+
     /**
-     * @param string $distribution
+     * @param array $options
      */
-    public function create($options) {
+    public function create(array $options) {
         $this->output->writeln('Installing '.$options['distribution']);
-        $this->execute('touch '.$options['distribution'].'.txt');
+        $this->execute('composer create-project '. (!isset($options['params'])? '' : implode(' ', $options['params'])) .' '. $options['distribution'].' '.$options['path'] );
     }
 
-    /**
-     * @param string $package
-     */
-    public function add($options) {
-        $this->output->writeln('Add package :'.$options['distribution']);
-        $this->execute('echo "Add vendor/package"');
-    }
 
     /**
-     * @param string $package
+     * @param array $options
      */
-    public function remove($options) {
-        $this->output->writeln('Remove '.$options['distribution']);
-        $this->execute('echo "Remove vendor/package"');
+    public function add(array $options) {
+        $this->output->writeln('Add package :'.$options['package']);
+        $this->execute('composer require '. (!isset($options['params'])? '' : implode(' ', $options['params'])) .' '. $options['package'] );
+    }
+
+
+    /**
+     * @param array $options
+     */
+    public function remove(array $options) {
+        $this->output->writeln('Remove '.$options['package']);
+        $this->execute('composer remove '.$options['package']);
     }
 
 }

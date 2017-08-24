@@ -9,23 +9,38 @@ class NeosBaseProject extends AbstractProject
      * create tasks
      */
     public function createTasks() {
-        #Task::executeTask('echo "Add vendor/package"');
 
         $this->addTask([
-            'key' => 'init',
+            'key' => 'create',
             'class' => '\\Butler\\Task\\ComposerTask',
             'task' => 'create',
             'options' => [
-                'distribution' => 'neos-base'
+                'distribution' => 'neos/neos-base-distribution',
+                'path' => 'temp',
+                'params' => [
+                    '--no-dev'
+                ]
             ],
         ]);
 
         $this->addTask([
-            'key' => 'init2',
+            'key' => 'require',
             'class' => '\\Butler\\Task\\ComposerTask',
-            'task' => 'create',
+            'task' => 'add',
             'options' => [
-                'distribution' => 'neos-base'
+                'package' => 'packagefactory/atomicfusion packagefactory/atomicfusion-afx:~3.0.0 sitegeist/monocle'
+            ],
+        ]);
+
+        $this->addTask([
+            'key' => 'require-dev',
+            'class' => '\\Butler\\Task\\ComposerTask',
+            'task' => 'add',
+            'options' => [
+                'package' => 'sitegeist/magicwand:dev-master sitegeist/neosguidelines',
+                'params' => [
+                    '--dev'
+                ]
             ],
         ]);
 
