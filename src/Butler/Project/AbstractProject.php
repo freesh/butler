@@ -12,9 +12,22 @@ abstract class AbstractProject implements ProjectInterface
      */
     protected $tasks = [];
 
+    /**
+     * @var array
+     */
+    protected $config = [];
 
-    function __construct()
+    protected $input;
+    protected $output;
+
+
+    /**
+     * AbstractProject constructor.
+     * @param array $config
+     */
+    function __construct(array $config)
     {
+        $this->config = $config;
         $this->createTasks();
     }
 
@@ -28,11 +41,9 @@ abstract class AbstractProject implements ProjectInterface
         if(isset($config['key']))
         {
             $this->tasks[$config['key']] = $config;
-        } else
-        {
-            // exeption: missing task key
-            // ToDo: Exeption handling
+            return true;
         }
+        return false;
     }
 
     /**
@@ -56,6 +67,11 @@ abstract class AbstractProject implements ProjectInterface
             return $this->tasks[$key];
         }
         return false;
+    }
+
+    protected function executeTasks()
+    {
+
     }
 
 }

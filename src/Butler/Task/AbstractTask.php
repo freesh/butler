@@ -20,9 +20,14 @@ abstract class AbstractTask
      */
     protected $output;
 
+    /**
+     * @var array
+     */
+    protected $config = [];
+
 
     /**
-     * AbstractTask constructor.
+     * AbstractTask constructor
      * @param InputInterface $input
      * @param OutputInterface $output
      */

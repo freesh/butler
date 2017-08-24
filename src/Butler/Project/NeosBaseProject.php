@@ -15,14 +15,18 @@ class NeosBaseProject extends AbstractProject
             'key' => 'init',
             'class' => '\\Butler\\Task\\ComposerTask',
             'task' => 'create',
-            'options' => [],
+            'options' => [
+                'distribution' => 'neos-base'
+            ],
         ]);
 
         $this->addTask([
             'key' => 'init2',
             'class' => '\\Butler\\Task\\ComposerTask',
             'task' => 'create',
-            'options' => [],
+            'options' => [
+                'distribution' => 'neos-base'
+            ],
         ]);
 
 

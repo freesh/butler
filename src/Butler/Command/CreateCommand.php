@@ -3,7 +3,7 @@
 namespace Butler\Command;
 
 use Symfony\Component\Console\Command\Command;
-use Butler\Project;
+#use Butler\Project;
 
 use Symfony\Component\Console\Input\InputArgument;
 #use Symfony\Component\Console\Input\InputOption;
@@ -15,6 +15,8 @@ class CreateCommand extends Command
 
     protected $composerTask;
     protected $neosTask;
+
+    protected $taskObjects;
 
     protected function configure()
     {
@@ -29,26 +31,60 @@ class CreateCommand extends Command
         #$this->addOption('path', 'p', InputOption::VALUE_REQUIRED, '', getcwd());
     }
 
+    /**
+     * @param array $config
+     * @return mixed
+     */
+    protected  function dispatchProject(array $config)
+    {
+        // load Project
+        $namespace = '\\Butler\\Project\\'.$config['type'].'Project';
+        $project = new $namespace($config);
+
+        return $project;
+    }
+
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
 
         #$PATH_ROOT = $this->task('pwd | tr -d \'\n\'');
         #$PATH_TEMP = $PATH_ROOT.'/temp-install';
 
-        $project = new Project([
+        $output->writeln('Init Project: '.$input->getArgument('project type') );
+
+        $project = $this->dispatchProject([
             'type' => str_replace('-','', ucwords($input->getArgument('project type'),'-')),
             'vendor' => $input->getArgument('vendor'),
             'name' => $input->getArgument('project name')
-        ],
-            $input,
-            $output
-        );
-
-        $project->initProject();
-        $project->executeTasks();
+        ]);
 
 
-       /* $output->writeln([
+
+        // get tasks
+        foreach ( $project->getTasks() as $key => $config ) {
+            $task = (string) $config['task'];
+            $class = (string) $config['class'];
+
+            $output->writeln( 'Execute Task: ' . $key . '(' .$class. ' -> ' .$task. ')' );
+
+            # create task object
+            if ( ! $this->taskObjects[$class] instanceof $class ) {
+                $this->taskObjects[$class] = new $class( $input, $output );
+            }
+
+            // execute task
+            $this->taskObjects[$class]->$task( $config['options'] );
+
+        }
+
+
+
+
+        /* $output->writeln([
             'creating Project',
             '#################',
             #'path: '.$PATH_ROOT,
