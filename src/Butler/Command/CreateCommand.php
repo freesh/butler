@@ -3,7 +3,6 @@
 namespace Butler\Command;
 
 use Symfony\Component\Console\Command\Command;
-#use Butler\Project;
 
 use Symfony\Component\Console\Input\InputArgument;
 #use Symfony\Component\Console\Input\InputOption;
@@ -63,7 +62,6 @@ class CreateCommand extends Command
             'name' => $input->getArgument('project name')
         ]);
 
-
         // execute tasks
         foreach ($project->getTasks() as $key => $config) {
             $task = (string)$config['task'];
@@ -72,8 +70,8 @@ class CreateCommand extends Command
             $output->writeln('Execute Task: ' . $key . '(' . $class . ' -> ' . $task . ')');
 
             # create task object
-            if (!$this->taskObjects[$class] instanceof $class) {
-                $this->taskObjects[$class] = new $class($input, $output);
+            if (!isset($this->taskObjects[$class]) || !$this->taskObjects[$class] instanceof $class) {
+                $this->taskObjects[$class] = new $class($input, $output, $this->getHelperSet());
             }
 
             // execute task
