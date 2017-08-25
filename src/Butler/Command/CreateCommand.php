@@ -13,10 +13,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 class CreateCommand extends Command
 {
 
-    protected $composerTask;
-    protected $neosTask;
+    #protected $composerTask;
+    #protected $neosTask;
 
     protected $taskObjects;
+    private $projectConfig = [];
 
     protected function configure()
     {
@@ -54,34 +55,44 @@ class CreateCommand extends Command
         #$PATH_ROOT = $this->task('pwd | tr -d \'\n\'');
         #$PATH_TEMP = $PATH_ROOT.'/temp-install';
 
-        $output->writeln('Init Project: '.$input->getArgument('project type') );
+        $output->writeln('Init Project: ' . $input->getArgument('project type'));
 
         $project = $this->dispatchProject([
-            'type' => str_replace('-','', ucwords($input->getArgument('project type'),'-')),
+            'type' => str_replace('-', '', ucwords($input->getArgument('project type'), '-')),
             'vendor' => $input->getArgument('vendor'),
             'name' => $input->getArgument('project name')
         ]);
 
 
+        // execute tasks
+        foreach ($project->getTasks() as $key => $config) {
+            $task = (string)$config['task'];
+            $class = (string)$config['class'];
 
-        // get tasks
-        foreach ( $project->getTasks() as $key => $config ) {
-            $task = (string) $config['task'];
-            $class = (string) $config['class'];
-
-            $output->writeln( 'Execute Task: ' . $key . '(' .$class. ' -> ' .$task. ')' );
+            $output->writeln('Execute Task: ' . $key . '(' . $class . ' -> ' . $task . ')');
 
             # create task object
-            if ( ! $this->taskObjects[$class] instanceof $class ) {
-                $this->taskObjects[$class] = new $class( $input, $output );
+            if (!$this->taskObjects[$class] instanceof $class) {
+                $this->taskObjects[$class] = new $class($input, $output);
             }
 
             // execute task
-            $this->taskObjects[$class]->$task( $config['options'] );
+            $projectConf = $this->taskObjects[$class]->$task(['project' => $this->projectConfig, 'options' => $config['options']]);
 
+            // merge project if task returns array with options
+            if(is_array($projectConf)) {
+                $this->updateProjectConfiguration($projectConf);
+            }
         }
+    }
 
 
+    /**
+     * @param array $projectConfiguration
+     */
+    private function updateProjectConfiguration(array $projectConfiguration = []) {
+        $this->projectConfig = array_merge( $this->projectConfig, $projectConfiguration);
+    }
 
 
         /* $output->writeln([
@@ -243,7 +254,7 @@ class CreateCommand extends Command
             'docker-compose up -d',
             'export FLOW_CONTEXT=Development && ./flow server:run'
         ]);*/
-    }
+    #}
 
     /*protected function task($command) {
         $process = new Process($command);

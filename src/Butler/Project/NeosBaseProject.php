@@ -12,7 +12,7 @@ class NeosBaseProject extends AbstractProject
 
         // ToDo: ask projectname and vendor
 
-        $this->addTask([
+        /*$this->addTask([
             'key' => 'create',
             'class' => '\\Butler\\Task\\ComposerTask',
             'task' => 'create',
@@ -23,7 +23,7 @@ class NeosBaseProject extends AbstractProject
                     '--no-dev'
                 ]
             ],
-        ]);
+        ]);*/
 
         # ToDo: Copy files up
 

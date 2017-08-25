@@ -18,11 +18,13 @@ class ComposerTask extends AbstractTask
 
 
     /**
-     * @param array $options
+     * @param array $config
+     * @return array
      */
-    public function add(array $options) {
-        $this->output->writeln('Add package :'.$options['package']);
-        $this->execute('composer require '. (!isset($options['params'])? '' : implode(' ', $options['params'])) .' '. $options['package'] );
+    public function add(array $config) {
+        $this->output->writeln('Add package :'.$config['options']['package']);
+        $this->execute('composer require '. (!isset($config['options']['params'])? '' : implode(' ', $config['options']['params'])) .' '. $config['options']['package'] );
+        return ['test' => $config['options']['package']];
     }
 
 
