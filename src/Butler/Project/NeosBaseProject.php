@@ -10,6 +10,8 @@ class NeosBaseProject extends AbstractProject
      */
     public function createTasks() {
 
+        // ToDo: ask projectname and vendor
+
         $this->addTask([
             'key' => 'create',
             'class' => '\\Butler\\Task\\ComposerTask',
@@ -22,6 +24,8 @@ class NeosBaseProject extends AbstractProject
                 ]
             ],
         ]);
+
+        # ToDo: Copy files up
 
         $this->addTask([
             'key' => 'require',
@@ -44,6 +48,8 @@ class NeosBaseProject extends AbstractProject
             ],
         ]);
 
+
+        # ToDo: init docker
 
         return 'tasks created :))';
     }
