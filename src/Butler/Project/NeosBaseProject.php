@@ -20,22 +20,20 @@ class NeosBaseProject extends AbstractProject
             ],
         ]);
 
-        /*$this->addTask([
+        $this->addTask([
             'key' => 'create',
             'class' => '\\Butler\\Task\\ComposerTask',
             'task' => 'create',
             'options' => [
                 'distribution' => 'neos/neos-base-distribution',
-                'path' => 'temp',
+                'tempPath' => 'temp',
                 'params' => [
                     '--no-dev'
                 ]
             ],
-        ]);*/
+        ]);
 
-        # ToDo: Copy files up
-
-        /*$this->addTask([
+        $this->addTask([
             'key' => 'require',
             'class' => '\\Butler\\Task\\ComposerTask',
             'task' => 'add',
@@ -55,7 +53,7 @@ class NeosBaseProject extends AbstractProject
                 ]
             ],
         ]);
-*/
+
 
         # ToDo: init docker
 

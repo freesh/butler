@@ -11,9 +11,11 @@ class ComposerTask extends AbstractTask
     /**
      * @param array $options
      */
-    public function create(array $options) {
-        $this->output->writeln('Installing '.$options['distribution']);
-        $this->execute('composer create-project '. (!isset($options['params'])? '' : implode(' ', $options['params'])) .' '. $options['distribution'].' '.$options['path'] );
+    public function create(array $config) {
+        $this->output->writeln('Installing '.$config['options']['distribution']);
+        $this->execute('composer create-project '. (!isset($config['options']['params'])? '' : implode(' ', $config['options']['params'])) .' '. $config['options']['distribution'].' '.$config['options']['tempPath'] );
+        $this->execute('shopt -s dotglob && mv '. $config['options']['tempPath'] .'/* ./');
+        $this->execute('rm -Rf '. $config['options']['tempPath']);
     }
 
 
@@ -22,7 +24,7 @@ class ComposerTask extends AbstractTask
      * @return array
      */
     public function add(array $config) {
-        $this->output->writeln('Add package :'.$config['options']['package']);
+        $this->output->writeln('Add package(s) :'.$config['options']['package']);
         $this->execute('composer require '. (!isset($config['options']['params'])? '' : implode(' ', $config['options']['params'])) .' '. $config['options']['package'] );
         return ['test' => $config['options']['package']];
     }
