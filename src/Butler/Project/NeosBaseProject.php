@@ -10,7 +10,15 @@ class NeosBaseProject extends AbstractProject
      */
     public function createTasks() {
 
-        // ToDo: ask projectname and vendor
+        $this->addTask([
+            'key' => 'set project data',
+            'class' => '\\Butler\\Task\\InputTask',
+            'task' => 'question',
+            'options' => [
+                'projectname' => 'What is the name of your Project?',
+                'projectvendor' => 'What is the vendor name of your Project?'
+            ],
+        ]);
 
         $this->addTask([
             'key' => 'create',
@@ -18,14 +26,12 @@ class NeosBaseProject extends AbstractProject
             'task' => 'create',
             'options' => [
                 'distribution' => 'neos/neos-base-distribution',
-                'path' => 'temp',
+                'tempPath' => 'temp',
                 'params' => [
                     '--no-dev'
                 ]
             ],
         ]);
-
-        # ToDo: Copy files up
 
         $this->addTask([
             'key' => 'require',
