@@ -13,7 +13,7 @@ class InputTask extends AbstractTask
 
         $answers = [];
         foreach ($config['options'] as $key => $question) {
-            $response = $this->setQuestion($question, 'AcmeDemo');
+            $response = $this->setQuestion('<options=bold;bg=cyan>  ASK </> <fg=cyan>'.$question.' :</> ', 'AcmeDemo');
             $answers[$key] = $response;
         }
 

@@ -54,6 +54,10 @@ class NeosBaseProject extends AbstractProject
             ],
         ]);
 
+        # ToDO: create neos settings
+
+        # ToDO: create neos dev settings
+
 
         # ToDo: init docker
 

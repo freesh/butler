@@ -9,6 +9,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use Symfony\Component\Process\ProcessBuilder;
+
 class CreateCommand extends Command
 {
 
@@ -54,8 +56,7 @@ class CreateCommand extends Command
         #$PATH_ROOT = $this->task('pwd | tr -d \'\n\'');
         #$PATH_TEMP = $PATH_ROOT.'/temp-install';
 
-        $output->writeln('Init Project: ' . $input->getArgument('project type'));
-
+        #$output->writeln('Init Project: ' . $input->getArgument('project type'));
         $project = $this->dispatchProject([
             'type' => str_replace('-', '', ucwords($input->getArgument('project type'), '-')),
             'vendor' => $input->getArgument('vendor'),
@@ -67,7 +68,7 @@ class CreateCommand extends Command
             $task = (string)$config['task'];
             $class = (string)$config['class'];
 
-            $output->writeln('Execute Task: ' . $key . '(' . $class . ' -> ' . $task . ')');
+            $output->writeln('<fg=green;options=bold>Execute Task:</> <fg=blue>' . $key . '</>'. ($output->isVerbose() ? ' <comment>(' . $class . ' -> ' . $task . ')</comment>':''));
 
             # create task object
             if (!isset($this->taskObjects[$class]) || !$this->taskObjects[$class] instanceof $class) {
