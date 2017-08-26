@@ -12,6 +12,8 @@ use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 
+use Symfony\Component\Process\ProcessBuilder;
+
 
 
 abstract class AbstractTask
@@ -68,16 +70,28 @@ abstract class AbstractTask
      * @return string
      */
     protected function execute($command) {
+
+        $processHelper = $this->getHelper('process');
+
         $process = new Process($command);
         $process->setTimeout(600);
-        $process->run();
+
+        $processHelper->run($this->output, $process);
+
 
         // executes after the command finishes
         if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
+
+            $this->output->writeln('<error><options=bold;bg=red>  ERR </></error> <fg=red>"' . $command . '" is too drunk to work. Please run butler command with -v for more information.</>');
+            if($this->output->isVerbose()) $this->output->writeln('<fg=black;bg=white>'.$process->getErrorOutput().'</>');
+
+            #throw new ProcessFailedException($process);
+        } else {
+
+            if($this->output->isVerbose()) $this->output->writeln('<options=bold;bg=green>  OK  </> <comment>"' . $command . '</comment>');
         }
 
-        return $process->getOutput();
+        #return $process->getOutput();
     }
 
     /**
