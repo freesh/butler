@@ -7,7 +7,7 @@ class ComposerTask extends AbstractTask
 
 
     /**
-     * @param array $options
+     * @param array $config
      */
     public function create(array $config) {
         $this->execute('composer create-project '. (!isset($config['options']['params'])? '' : implode(' ', $config['options']['params'])) .' '. $config['options']['distribution'].' '.$config['options']['tempPath'] );
@@ -25,10 +25,10 @@ class ComposerTask extends AbstractTask
 
 
     /**
-     * @param array $options
+     * @param array $config
      */
-    public function remove(array $options) {
-        $this->execute('composer remove '.$options['package']);
+    public function remove(array $config) {
+        $this->execute('composer remove '.$config['package']);
     }
 
 }
