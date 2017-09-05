@@ -2,6 +2,7 @@
 // Command/CreateCommand.php
 namespace Butler\Command;
 
+use Butler\Helper\FileSystemHelper;
 use Symfony\Component\Console\Command\Command;
 
 use Symfony\Component\Console\Input\InputArgument;
@@ -62,6 +63,8 @@ class CreateCommand extends Command
             'vendor' => $input->getArgument('vendor'),
             'name' => $input->getArgument('project name')
         ]);
+
+        $this->getHelperSet()->set(new FileSystemHelper());
 
         // execute tasks
         foreach ($project->getTasks() as $key => $config) {
