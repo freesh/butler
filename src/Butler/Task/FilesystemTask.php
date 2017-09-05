@@ -1,7 +1,7 @@
 <?php
 namespace Butler\Task;
 
-use Butler\Helper\FilesystemHelper;
+use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 
 class FilesystemTask extends AbstractTask
 {
@@ -12,10 +12,9 @@ class FilesystemTask extends AbstractTask
     /**
      * @param array $config
      */
-    public function create(array $config) {
+    public function touch(array $config) {
         $this->fs = $this->helperSet->get('filesystem');
-        $this->fs->createFile('test.txt');
-
+        $this->fs->touch('test.txt');
     }
 
 }

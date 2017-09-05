@@ -14,7 +14,7 @@ class NeosBaseProject extends AbstractProject
         $this->addTask([
             'key' => 'test filesystem',
             'class' => '\\Butler\\Task\\FilesystemTask',
-            'task' => 'create-file',
+            'task' => 'touch',
             'options' => [
                 'name' => 'test.txt',
             ],

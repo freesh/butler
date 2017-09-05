@@ -1,24 +1,33 @@
 <?php
 namespace Butler\Helper;
 
-use Symfony\Component\Console\Helper\Helper;
+use Symfony\Component\Console\Helper\HelperSet;
+use Symfony\Component\Console\Helper\HelperInterface;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 
-class FilesystemHelper extends Helper
+class FilesystemHelper extends Filesystem implements HelperInterface
 {
+
+    protected $helperSet = null;
+
     /**
-     * @param $filename
-     * @return bool|\Exception|IOExceptionInterface
+     * Sets the helper set associated with this helper.
+     *
+     * @param HelperSet $helperSet A HelperSet instance
      */
-    public function createFile($filename) {
-        $fs = new Filesystem();
-        try {
-            $fs->mkdir('./symfonyTest/'.mt_rand());
-        } catch (IOExceptionInterface $e) {
-            return $e;
-        }
-        return true;
+    public function setHelperSet(HelperSet $helperSet = null)
+    {
+        $this->helperSet = $helperSet;
+    }
+
+    /**
+     * Gets the helper set associated with this helper.
+     *
+     * @return HelperSet|null
+     */
+    public function getHelperSet()
+    {
+        return $this->helperSet;
     }
 
     /**
