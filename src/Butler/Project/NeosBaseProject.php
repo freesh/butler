@@ -19,6 +19,15 @@ class NeosBaseProject extends AbstractProject
                 'name' => 'test.txt',
             ],
         ]);
+        $this->addTask([
+            'key' => 'test filesystem',
+            'class' => '\\Butler\\Task\\FilesystemTask',
+            'task' => 'copy',
+            'options' => [
+                'originFile' => 'test.txt',
+                'targetFile' => 'copy.txt'
+            ],
+        ]);
 
         $this->addTask([
             'key' => 'set project data',
