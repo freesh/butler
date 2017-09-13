@@ -2,6 +2,7 @@
 // Command/CreateCommand.php
 namespace Butler\Command;
 
+use Butler\Helper\FileSystemHelper;
 use Symfony\Component\Console\Command\Command;
 
 use Symfony\Component\Console\Input\InputArgument;
@@ -53,15 +54,16 @@ class CreateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
 
-        #$PATH_ROOT = $this->task('pwd | tr -d \'\n\'');
-        #$PATH_TEMP = $PATH_ROOT.'/temp-install';
-
         #$output->writeln('Init Project: ' . $input->getArgument('project type'));
+        // create project object
         $project = $this->dispatchProject([
             'type' => str_replace('-', '', ucwords($input->getArgument('project type'), '-')),
             'vendor' => $input->getArgument('vendor'),
             'name' => $input->getArgument('project name')
         ]);
+
+        // set additional helpers
+        $this->getHelperSet()->set(new FileSystemHelper());
 
         // execute tasks
         foreach ($project->getTasks() as $key => $config) {
