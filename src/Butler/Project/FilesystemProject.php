@@ -10,9 +10,8 @@ class FilesystemProject extends AbstractProject
      */
     public function createTasks() {
 
-        // init docker
         $this->addTask([
-            'key' => 'touch file',
+            'key' => 'touch',
             'class' => '\\Butler\\Task\\FilesystemTask',
             'task' => 'touch',
             'options' => [
@@ -23,7 +22,7 @@ class FilesystemProject extends AbstractProject
         ]);
 
         $this->addTask([
-            'key' => 'copy file',
+            'key' => 'copy',
             'class' => '\\Butler\\Task\\FilesystemTask',
             'task' => 'copy',
             'options' => [

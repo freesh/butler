@@ -10,25 +10,6 @@ class NeosBaseProject extends AbstractProject
      */
     public function createTasks() {
 
-        // init docker
-        $this->addTask([
-            'key' => 'test filesystem',
-            'class' => '\\Butler\\Task\\FilesystemTask',
-            'task' => 'touch',
-            'options' => [
-                'name' => 'test.txt',
-            ],
-        ]);
-        $this->addTask([
-            'key' => 'test filesystem',
-            'class' => '\\Butler\\Task\\FilesystemTask',
-            'task' => 'copy',
-            'options' => [
-                'originFile' => 'test.txt',
-                'targetFile' => 'copy.txt'
-            ],
-        ]);
-
         $this->addTask([
             'key' => 'set project data',
             'class' => '\\Butler\\Task\\InputTask',
