@@ -1,18 +1,23 @@
 # Butler
-Butler is a small taskmanager for creating and initialising web projects.
+Butler is a small taskrunner for creating and initialising web projects.
 You can define tasks for composer, git, docker and and and...
 
 The future goal of this project is to create tasks for initializing the complete project stack.
 For example:
-- [x] clone project distribution with composer
-- [ ] init and start docker
-- [ ] init configuration
-- [ ] migrate databases
-- [ ] create sitepackage and site
-- [ ] init a new project on github or gitlab
-- [ ] setup remote server on digitalocean or another hoster with an api or just ssh
-- [ ] setup deployment with deployer
-...
+- Ask project name and vendor
+- Init project on github/gitlab
+- Init project on your projectmanagement tool
+- Init dev, stage, and live server (ssh on your hoster, or with api on aws, digitalocean and other services)
+- Init CI tool (gitlabci, usw...)
+- Init project distribution
+- Init and start docker (or vagrant)
+- Init configuration
+- Call setup routines for project distribution
+- Setup deployment with deployer
+- Push Project to git
+- Deploy Project to dev server
+- Create your awesome project. =)
+
 
 
 ## Installation:
@@ -117,7 +122,37 @@ class MyNewSiteProject extends AbstractProject
 }
 ```
 
-## Create Tasks
+### Modify and use project config
+
+Ask the user some interesting questions with the question task of the inputTask Driver:
+```
+        $this->addTask([
+            'key' => 'project-data',
+            'class' => '\\Butler\\Task\\InputTask',
+            'task' => 'question',
+            'options' => [
+                'projectname' => 'What is the name of your project?',
+                'projectvendor' => 'What is the vendor of your project?'
+            ],
+        ]);
+ ```
+
+The option keys "projectname" and "projectvendor" will be stored in a project configuration.
+This config variables can be used in task configuration like this:
+```
+        $this->addTask([
+            'key' => 'touch file',
+            'class' => '\\Butler\\Task\\FilesystemTask',
+            'task' => 'touch',
+            'options' => [
+                'files' => '{projectvendor}-{projectname}.txt'
+            ]
+        ]);
+```
+The first task will ask the user for vendor and name and the second task creates a file named by the answers.
+
+
+## Create new Task Driver
 
 1. Create a new task class in ```src/Butler/Task/``` extending ```AbstractTask```.
 2. Now you can create public functions with a $config param which is an array. (function name = task name)
