@@ -21,6 +21,17 @@ class NeosBaseProject extends AbstractProject
         ]);
 
         $this->addTask([
+            'key' => 'touch projectvendor',
+            'class' => '\\Butler\\Task\\FilesystemTask',
+            'task' => 'touch',
+            'options' => [
+                'files' => '{projectvendor}-{projectname}.txt', // string|array|\Traversable A filename, an array of files, or a \Traversable instance to create
+                'time' => null, // (optional) int The touch time as a Unix timestamp
+                'atime' => null // (optional) int The access time as a Unix timestamp
+            ]
+        ]);
+
+        $this->addTask([
             'key' => 'create',
             'class' => '\\Butler\\Task\\ComposerTask',
             'task' => 'create',

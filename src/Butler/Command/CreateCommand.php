@@ -78,7 +78,7 @@ class CreateCommand extends Command
             }
 
             // execute task
-            $projectConf = $this->taskObjects[$class]->$task(['project' => $this->projectConfig, 'options' => $config['options']]);
+            $projectConf = $this->taskObjects[$class]->$task(['project' => $this->projectConfig, 'options' => $this->parseTaskConfig($config['options'])]);
 
             // merge project if task returns array with options
             if(is_array($projectConf)) {
@@ -95,6 +95,34 @@ class CreateCommand extends Command
         $this->projectConfig = array_merge( $this->projectConfig, $projectConfiguration);
     }
 
+
+    /**
+     * @param array $taskConfig
+     */
+    private function parseTaskConfig(array $taskConfig = []) {
+
+        array_walk_recursive(
+            $taskConfig,
+            function (&$val) {
+                $matches = null;
+                // get variablenames from taskConfig string ( declaration: {var1} varname: var1 )
+                preg_match_all('/{(.*?)}/', $val, $matches, PREG_SET_ORDER, 0);
+
+                if ($matches) {
+                    // iterate over multible matches and replace them if they exists in projectConfig
+                    foreach ($matches as $match) {
+                        if ($param = isset($match[1]) ? $match[1] : false) {
+                            if (isset($this->projectConfig[$param])) {
+                                $val = str_replace('{'.$param.'}', $this->projectConfig[$param], $val);
+                            }
+                        }
+                    }
+                }
+            }
+        );
+
+        return $taskConfig;
+    }
 
         /* $output->writeln([
             'creating Project',
