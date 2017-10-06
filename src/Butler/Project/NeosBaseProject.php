@@ -10,7 +10,7 @@ class NeosBaseProject extends AbstractProject
      */
     public function createTasks() {
 
-        $this->addTask([
+        /*$this->addTask([
             'key' => 'set project data',
             'class' => '\\Butler\\Task\\InputTask',
             'task' => 'question',
@@ -18,9 +18,9 @@ class NeosBaseProject extends AbstractProject
                 'projectname' => 'What is the name of your Project?',
                 'projectvendor' => 'What is the vendor name of your Project?'
             ],
-        ]);
+        ]);*/
 
-        $this->addTask([
+        /*$this->addTask([
             'key' => 'touch projectvendor',
             'class' => '\\Butler\\Task\\FilesystemTask',
             'task' => 'touch',
@@ -30,7 +30,7 @@ class NeosBaseProject extends AbstractProject
                 'atime' => null // (optional) int The access time as a Unix timestamp
             ],
             'condition' => 'projectname != projectvendor'
-        ]);
+        ]);*/
 
         $this->addTask([
             'key' => 'create',
@@ -44,6 +44,7 @@ class NeosBaseProject extends AbstractProject
                 ]
             ],
         ]);
+
 
         $this->addTask([
             'key' => 'require',
@@ -66,9 +67,34 @@ class NeosBaseProject extends AbstractProject
             ],
         ]);
 
-        # ToDO: create neos settings
-
         # ToDO: create neos dev settings
+        $this->addTask([
+            'key' => 'Neos dev settings',
+            'class' => '\\Butler\\Task\\NeosTask',
+            'task' => 'settings',
+            'options' => [
+                'filename' => 'Configuration/Development/Settings.yaml', // string path to Settings.yaml; Existing file will be merged.
+                'settings' => [ // array with setting structure
+                    'Neos' => [
+                        'Flow' => [
+                            'persistence' => [
+                                'backendOptions' => [
+                                    'dbname' => 'application',
+                                    'user' => 'toor',
+                                    'password' => 'toor',
+                                    'host' => '0.0.0.1'
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]);
+
+
+
+/*
+        # ToDO: create neos settings
 
         // init docker
         $this->addTask([
