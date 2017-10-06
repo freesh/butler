@@ -93,7 +93,7 @@ class FilesystemProject extends AbstractProject
             'task' => 'chown',
             'options' => [
                 'files' => 'lala', // string|array|\Traversable A filename, an array of files, or a \Traversable instance to change owner
-                'user' => 'freesh', // string The new owner user name
+                'user' => 'leanferret', // string The new owner user name
                 'recursive' => true // (optional) bool Whether change the owner recursively or not (default: false)
             ],
         ]);
@@ -113,7 +113,7 @@ class FilesystemProject extends AbstractProject
             'task' => 'chgrp',
             'options' => [
                 'files' => 'lala', // string|array|\Traversable A filename, an array of files, or a \Traversable instance to change group
-                'group' => 'staff', // string The group name
+                'group' => 'leanferret', // string The group name
                 'recursive' => true // (optional) bool Whether change the group recursively or not (default: false)
             ],
         ]);

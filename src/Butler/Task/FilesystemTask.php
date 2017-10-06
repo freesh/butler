@@ -9,6 +9,9 @@ use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 class FilesystemTask extends AbstractTask
 {
 
+    /**
+     * @var \Butler\Helper\FilesystemHelper
+     */
     protected $fs;
 
     /**
