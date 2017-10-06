@@ -3,6 +3,7 @@
 namespace Butler\Command;
 
 use Butler\Helper\FilesystemHelper;
+use Butler\Helper\YamlHelper;
 use Symfony\Component\Console\Command\Command;
 
 use Symfony\Component\Console\Input\InputArgument;
@@ -13,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 
-use Symfony\Component\Process\ProcessBuilder;
+#use Symfony\Component\Process\ProcessBuilder;
 
 class CreateCommand extends Command
 {
@@ -36,8 +37,8 @@ class CreateCommand extends Command
         $this->setDescription('Creates a Neos project.');
 
         $this->addArgument('project type', InputArgument::REQUIRED);
-        $this->addArgument('vendor', InputArgument::REQUIRED);
-        $this->addArgument('project name', InputArgument::REQUIRED);
+        #$this->addArgument('vendor', InputArgument::REQUIRED);
+        #$this->addArgument('project name', InputArgument::REQUIRED);
 
         #$this->addOption('path', 'p', InputOption::VALUE_REQUIRED, '', getcwd());
     }
@@ -62,17 +63,17 @@ class CreateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
 
+        // set additional helpers
+        $this->getHelperSet()->set(new FilesystemHelper());
+        $this->getHelperSet()->set(new YamlHelper());
+
         #$output->writeln('Init Project: ' . $input->getArgument('project type'));
         // create project object
         $project = $this->dispatchProject([
             'type' => str_replace('-', '', ucwords($input->getArgument('project type'), '-')),
-            'vendor' => $input->getArgument('vendor'),
-            'name' => $input->getArgument('project name')
+            #'vendor' => $input->getArgument('vendor'),
+            #'name' => $input->getArgument('project name')
         ]);
-
-        // set additional helpers
-        $this->getHelperSet()->set(new FilesystemHelper());
-
 
         // execute tasks
         foreach ($project->getTasks() as $key => $config) {
