@@ -10,16 +10,24 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+
+
 use Symfony\Component\Process\ProcessBuilder;
 
 class CreateCommand extends Command
 {
 
-    #protected $composerTask;
-    #protected $neosTask;
+    protected $taskObjects; // Array with task objects
+    protected $expLang; // ExpressionLanguage
+    private $projectConfig = []; // Runtime project config array
 
-    protected $taskObjects;
-    private $projectConfig = [];
+    public function __construct($name = null)
+    {
+        parent::__construct($name);
+
+        $this->expLang = new ExpressionLanguage();
+    }
 
     protected function configure()
     {
@@ -65,23 +73,36 @@ class CreateCommand extends Command
         // set additional helpers
         $this->getHelperSet()->set(new FileSystemHelper());
 
+
         // execute tasks
         foreach ($project->getTasks() as $key => $config) {
             $task = (string)$config['task'];
             $class = (string)$config['class'];
+            $projectConf = null;
 
-            $output->writeln('<fg=green;options=bold>Execute Task:</> <fg=blue>' . $key . '</>'. ($output->isVerbose() ? ' <comment>(' . $class . ' -> ' . $task . ')</comment>':''));
+            // execute if no condition is configured or condition is true
+            if ( !isset($config['condition']) || $this->parseTaskCondition($config['condition']) ) {
 
-            # create task object
-            if (!isset($this->taskObjects[$class]) || !$this->taskObjects[$class] instanceof $class) {
-                $this->taskObjects[$class] = new $class($input, $output, $this->getHelperSet());
+                $output->writeln('<fg=green;options=bold>Execute Task:</> <fg=blue>' . $key . '</>' . ($output->isVerbose() ? ' <comment>(' . $class . ' -> ' . $task . ')</comment>' : ''));
+
+                # create task object
+                if (!isset($this->taskObjects[$class]) || !$this->taskObjects[$class] instanceof $class) {
+                    $this->taskObjects[$class] = new $class($input, $output, $this->getHelperSet());
+                }
+
+                // execute task
+                $projectConf = $this->taskObjects[$class]->$task(
+                    [
+                        'project' => $this->projectConfig,
+                        'options' => $this->parseTaskConfig($config['options'])
+                    ]
+                );
+            } else {
+                $output->writeln('<fg=green;options=bold>Execute Task:</> <fg=blue>' . $key . '</> <fg=red>Skipped by condition.</> ' . ($output->isVerbose() ? ' <comment>(' . $class . ' -> ' . $task . ')</comment>' : ''));
             }
 
-            // execute task
-            $projectConf = $this->taskObjects[$class]->$task(['project' => $this->projectConfig, 'options' => $this->parseTaskConfig($config['options'])]);
-
             // merge project if task returns array with options
-            if(is_array($projectConf)) {
+            if (is_array($projectConf)) {
                 $this->updateProjectConfiguration($projectConf);
             }
         }
@@ -91,16 +112,31 @@ class CreateCommand extends Command
     /**
      * @param array $projectConfiguration
      */
-    private function updateProjectConfiguration(array $projectConfiguration = []) {
+    private function updateProjectConfiguration(array $projectConfiguration = [])
+    {
         $this->projectConfig = array_merge( $this->projectConfig, $projectConfiguration);
+    }
+
+
+    /**
+     * @param array $condition
+     */
+    private function parseTaskCondition($condition = '')
+    {
+        $res = $this->expLang->evaluate(
+                $condition,
+                $this->projectConfig
+            );
+
+        return $res;
     }
 
 
     /**
      * @param array $taskConfig
      */
-    private function parseTaskConfig(array $taskConfig = []) {
-
+    private function parseTaskConfig(array $taskConfig = [])
+    {
         array_walk_recursive(
             $taskConfig,
             function (&$val) {

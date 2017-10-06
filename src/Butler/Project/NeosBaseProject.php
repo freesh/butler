@@ -28,7 +28,8 @@ class NeosBaseProject extends AbstractProject
                 'files' => '{projectvendor}-{projectname}.txt', // string|array|\Traversable A filename, an array of files, or a \Traversable instance to create
                 'time' => null, // (optional) int The touch time as a Unix timestamp
                 'atime' => null // (optional) int The access time as a Unix timestamp
-            ]
+            ],
+            'condition' => 'projectname != projectvendor'
         ]);
 
         $this->addTask([
