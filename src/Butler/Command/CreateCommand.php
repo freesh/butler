@@ -2,7 +2,7 @@
 // Command/CreateCommand.php
 namespace Butler\Command;
 
-use Butler\Helper\FileSystemHelper;
+use Butler\Helper\FilesystemHelper;
 use Symfony\Component\Console\Command\Command;
 
 use Symfony\Component\Console\Input\InputArgument;
@@ -71,7 +71,7 @@ class CreateCommand extends Command
         ]);
 
         // set additional helpers
-        $this->getHelperSet()->set(new FileSystemHelper());
+        $this->getHelperSet()->set(new FilesystemHelper());
 
 
         // execute tasks
