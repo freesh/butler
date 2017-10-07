@@ -67,7 +67,7 @@ class NeosBaseProject extends AbstractProject
             ],
         ]);
 
-        # ToDO: create neos dev settings
+
         $this->addTask([
             'key' => 'Neos dev settings',
             'class' => '\\Butler\\Task\\NeosTask',
@@ -92,10 +92,17 @@ class NeosBaseProject extends AbstractProject
         ]);
 
 
+        $this->addTask([
+            'key' => 'Neos global settings',
+            'class' => '\\Butler\\Task\\FilesystemTask',
+            'task' => 'copy',
+            'options' => [
+                'originFile' => 'Configuration/Settings.yaml.example',
+                'targetFile' => 'Configuration/Settings.yaml'
+            ]
+        ]);
 
 /*
-        # ToDO: create neos settings
-
         // init docker
         $this->addTask([
             'key' => 'init docker configuration',
