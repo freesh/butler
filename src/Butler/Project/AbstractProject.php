@@ -17,9 +17,6 @@ abstract class AbstractProject implements ProjectInterface
      */
     protected $config = [];
 
-    protected $input;
-    protected $output;
-
 
     /**
      * AbstractProject constructor.
@@ -52,6 +49,13 @@ abstract class AbstractProject implements ProjectInterface
      */
     public function getTasks()
     {
+        // return just tasks are configured to execute by --task="... 1" --task="... 2"
+        if (!empty($this->config['tasks']))
+        {
+            return array_intersect_key($this->tasks, array_flip($this->config['tasks']));
+        }
+
+        // return all configured project tasks
         return $this->tasks;
     }
 
@@ -73,5 +77,4 @@ abstract class AbstractProject implements ProjectInterface
     {
 
     }
-
 }

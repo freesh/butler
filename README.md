@@ -47,7 +47,13 @@ For example:
 - Go to your empty Projectfolder
 - Execute butler command
 
-```butler project:create neos-base Vendor ProjectName```
+Parameter "neos-base" stands for NeosBase project and is configures in NeosBaseProject.php/yaml
+
+```butler project:create neos-base```
+
+Execute just some specific tasks: --task or -t
+
+```butler project:create neos-base --task="my task1 key" --task="my task4 key"```
 
 
 **Help:**

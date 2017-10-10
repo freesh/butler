@@ -7,7 +7,7 @@ use Butler\Helper\YamlHelper;
 use Symfony\Component\Console\Command\Command;
 
 use Symfony\Component\Console\Input\InputArgument;
-#use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -37,10 +37,7 @@ class CreateCommand extends Command
         $this->setDescription('Creates a Neos project.');
 
         $this->addArgument('project type', InputArgument::REQUIRED);
-        #$this->addArgument('vendor', InputArgument::REQUIRED);
-        #$this->addArgument('project name', InputArgument::REQUIRED);
-
-        #$this->addOption('path', 'p', InputOption::VALUE_REQUIRED, '', getcwd());
+        $this->addOption('task', 't', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Execute only this task(s)', []);
     }
 
     /**
@@ -71,8 +68,7 @@ class CreateCommand extends Command
         // create project object
         $project = $this->dispatchProject([
             'type' => str_replace('-', '', ucwords($input->getArgument('project type'), '-')),
-            #'vendor' => $input->getArgument('vendor'),
-            #'name' => $input->getArgument('project name')
+            'tasks' => $input->getOption('task')
         ]);
 
         // execute tasks
