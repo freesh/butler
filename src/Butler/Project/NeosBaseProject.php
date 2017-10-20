@@ -82,7 +82,8 @@ class NeosBaseProject extends AbstractProject
                                     'dbname' => 'application',
                                     'user' => 'toor',
                                     'password' => 'toor',
-                                    'host' => '0.0.0.1'
+                                    'host' => '0.0.0.0',
+                                    'port' => 8086
                                 ]
                             ]
                         ]
@@ -171,7 +172,7 @@ class NeosBaseProject extends AbstractProject
                     #    'echo "extension=imagick.so" > /usr/local/etc/php/conf.d/ext-imagick.ini',
                     #    'apk del libtool autoconf gcc g++ make'
                     #],
-                    ['RUN' => 'docker-php-ext-install pdo pdo_mysql gd'],
+                    #['RUN' => 'docker-php-ext-install pdo pdo_mysql gd'],
                     [
                         'RUN' => [
                             'apk add --no-cache bash imagemagick-dev ssmtp libtool autoconf gcc g++ make',
@@ -184,44 +185,23 @@ class NeosBaseProject extends AbstractProject
             ],
         ]);
 
-/*
-        // init docker
-        $this->addTask([
-            'key' => 'init docker configuration',
-            'class' => '\\Butler\\Task\\CommandTask',
-            'task' => 'command',
-            'options' => [
-                'command' => 'cp -R ~/Tools/Docker/* ./',
-            ],
-        ]);
 
-        # copy development Settings.yaml
-        $this->addTask([
-            'key' => 'set neos configurations',
-            'class' => '\\Butler\\Task\\CommandTask',
-            'task' => 'commands',
+        # update composer.json
+        /*$this->addTask([
+            'key' => 'update composer.json',
+            'class' => '\\Butler\\Task\\JsonTask',
+            'task' => 'add',
             'options' => [
-                'commands' => [
-                    'cp ~/Tools/Neos/Build/Templates/Configuration/Development/Settings.yaml ./Configuration/Development',
-                    'mv ./Configuration/Settings.yaml.example ./Configuration/Settings.yaml',
-                    'cp ~/Tools/Neos/Build/composer.php ./Build'
+                'file' => 'composer.json',
+                'data' => [
+                    'scripts' => ''
                 ]
             ],
-        ]);
-/*
-        # update composer.json
-        $this->addTask([
-            'key' => 'set neos configurations',
-            'class' => '\\Butler\\Task\\CommandTask',
-            'task' => 'command',
-            'options' => [
-                'command' => 'php ./Build/composer.php'
-            ],
-        ]);
+        ]);*/
 
         # Init Docker ...
         $this->addTask([
-            'key' => 'init docker',
+            'key' => 'docker-compose up',
             'class' => '\\Butler\\Task\\CommandTask',
             'task' => 'command',
             'options' => [
@@ -242,35 +222,45 @@ class NeosBaseProject extends AbstractProject
         # migrate database
         $this->addTask([
             'key' => 'migrate neos database',
-            'class' => '\\Butler\\Task\\CommandTask',
-            'task' => 'command',
+            'class' => '\\Butler\\Task\\NeosTask',
+            'task' => 'doctrineMigrate',
             'options' => [
-                'command' => 'export FLOW_CONTEXT=Development && ./flow doctrine:migrate'
+                'context' => 'Development', // optional | String
             ],
         ]);
 
-        # Create Admin [admin:admin]'
+        # Stop Docker ...
         $this->addTask([
-            'key' => 'create neos admin',
+            'key' => 'docker-compose down',
             'class' => '\\Butler\\Task\\CommandTask',
             'task' => 'command',
             'options' => [
-                'command' => '\'export FLOW_CONTEXT=Development && ./flow user:create admin admin King Loui --roles Neos.Neos:Administrator\''
+                'command' => 'docker-compose down'
             ],
         ]);
+/*
+                # Create Admin [admin:admin]'
+                $this->addTask([
+                    'key' => 'create neos admin',
+                    'class' => '\\Butler\\Task\\CommandTask',
+                    'task' => 'command',
+                    'options' => [
+                        'command' => '\'export FLOW_CONTEXT=Development && ./flow user:create admin admin King Loui --roles Neos.Neos:Administrator\''
+                    ],
+                ]);
 
-        # import site package
-        ##export FLOW_CONTEXT=Development && ./flow site:import --package-key Neos.Demo
+                # import site package
+                ##export FLOW_CONTEXT=Development && ./flow site:import --package-key Neos.Demo
 
 
-        # create site package
-        #echo "Create Sitepackage $VENDOR_NAME.Site"
-        #$this->task('export FLOW_CONTEXT=Development && ./flow kickstart:site --package-key '.$input->getArgument('vendor').'.Site --site-name '.$input->getArgument('projectname'));
+                # create site package
+                #echo "Create Sitepackage $VENDOR_NAME.Site"
+                #$this->task('export FLOW_CONTEXT=Development && ./flow kickstart:site --package-key '.$input->getArgument('vendor').'.Site --site-name '.$input->getArgument('projectname'));
 
-        # create page
-        #echo "Create Page $PAGE_NAME"
-        #$this->task('export FLOW_CONTEXT=Development && ./flow site:create '.$input->getArgument('projectname').' '.$input->getArgument('vendor').'.Site');
-*/
+                # create page
+                #echo "Create Page $PAGE_NAME"
+                #$this->task('export FLOW_CONTEXT=Development && ./flow site:create '.$input->getArgument('projectname').' '.$input->getArgument('vendor').'.Site');
+        */
 
         return 'tasks created :))';
     }

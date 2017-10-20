@@ -92,6 +92,28 @@ class DockerProject extends AbstractProject
             ],
         ]);
 
+        // run docker compose
+        $this->addTask([
+            'key' => 'docker-compose up',
+            'class' => '\\Butler\\Task\\CommandTask',
+            'task' => 'command',
+            'options' => [
+                'command' => 'docker-compose up -d'
+            ],
+        ]);
+
+
+        // run docker compose
+        $this->addTask([
+            'key' => 'docker-compose down',
+            'class' => '\\Butler\\Task\\CommandTask',
+            'task' => 'command',
+            'options' => [
+                'command' => 'docker-compose down'
+            ],
+        ]);
+
+
         return 'tasks created :))';
     }
 }
