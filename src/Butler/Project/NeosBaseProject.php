@@ -229,6 +229,22 @@ class NeosBaseProject extends AbstractProject
             ],
         ]);
 
+        # Create Admin [admin:admin]'
+        $this->addTask([
+            'key' => 'create neos admin',
+            'class' => '\\Butler\\Task\\NeosTask',
+            'task' => 'createUser',
+            'options' => [
+                'context' => 'Development', // optional | String default: Development
+                'user' => 'admin',
+                'password' => 'admin',
+                'username' => 'King Loui',
+                'roles' => [
+                    'Neos.Neos:Administrator'
+                ]
+            ],
+        ]);
+
         # Stop Docker ...
         $this->addTask([
             'key' => 'docker-compose down',
@@ -239,15 +255,7 @@ class NeosBaseProject extends AbstractProject
             ],
         ]);
 /*
-                # Create Admin [admin:admin]'
-                $this->addTask([
-                    'key' => 'create neos admin',
-                    'class' => '\\Butler\\Task\\CommandTask',
-                    'task' => 'command',
-                    'options' => [
-                        'command' => '\'export FLOW_CONTEXT=Development && ./flow user:create admin admin King Loui --roles Neos.Neos:Administrator\''
-                    ],
-                ]);
+
 
                 # import site package
                 ##export FLOW_CONTEXT=Development && ./flow site:import --package-key Neos.Demo
