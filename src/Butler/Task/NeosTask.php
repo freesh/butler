@@ -60,4 +60,21 @@ class NeosTask extends AbstractTask
         );
     }
 
+
+    /**
+     * @param array $config
+     */
+    public function doctrineMigrate(array $config) {
+
+        $context = 'Development';
+
+        // set context to Production
+        if ( isset($config['options']['context'])) {
+            $context = $config['options']['context'];
+        }
+
+        // execute command
+        $this->execute('export FLOW_CONTEXT='. $context .' && ./flow doctrine:migrate');
+
+    }
 }
