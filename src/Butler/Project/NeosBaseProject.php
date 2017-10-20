@@ -271,6 +271,19 @@ class NeosBaseProject extends AbstractProject
             ],
         ]);
 
+
+        # Stop Docker ...
+        $this->addTask([
+            'key' => 'The End :)',
+            'class' => '\\Butler\\Task\\InputTask',
+            'task' => 'writelines',
+            'options' => [
+                'command' => 'Finished',
+                '....'
+            ],
+        ]);
+
+
         return 'tasks created :))';
     }
 
