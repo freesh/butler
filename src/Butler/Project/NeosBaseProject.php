@@ -103,6 +103,7 @@ class NeosBaseProject extends AbstractProject
         ]);
 
 
+        // ToDo: create a special yaml task and remove neos/settings task?
         $this->addTask([
             'key' => 'Create docker-compose.yml',
             'class' => '\\Butler\\Task\\NeosTask',
@@ -153,6 +154,35 @@ class NeosBaseProject extends AbstractProject
             ]
         ]);
 
+        // create dockerfile
+        $this->addTask([
+            'key' => 'init dockerfile',
+            'class' => '\\Butler\\Task\\DockerTask',
+            'task' => 'dockerfile',
+            'options' => [
+                'path' => 'Build/Docker/',
+                'cmd' => [
+                    'FROM' => 'php:7-fpm-alpine',
+                    'ENV' => 'IMAGICK_VERSION 3.4.1',
+                    'RUN' => 'docker-php-ext-install pdo pdo_mysql gd',
+                    #'RUN' => [
+                    #    'apk add --no-cache bash imagemagick-dev ssmtp libtool autoconf gcc g++ make',
+                    #    'pecl install imagick-$IMAGICK_VERSION',
+                    #    'echo "extension=imagick.so" > /usr/local/etc/php/conf.d/ext-imagick.ini',
+                    #    'apk del libtool autoconf gcc g++ make'
+                    #],
+                    ['RUN' => 'docker-php-ext-install pdo pdo_mysql gd'],
+                    [
+                        'RUN' => [
+                            'apk add --no-cache bash imagemagick-dev ssmtp libtool autoconf gcc g++ make',
+                            'pecl install imagick-$IMAGICK_VERSION',
+                            'echo "extension=imagick.so" > /usr/local/etc/php/conf.d/ext-imagick.ini',
+                            'apk del libtool autoconf gcc g++ make'
+                        ]
+                    ]
+                ]
+            ],
+        ]);
 
 /*
         // init docker
