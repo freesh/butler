@@ -176,19 +176,6 @@ class NeosBaseProject extends AbstractProject
         ]);
 
 
-        # update composer.json
-        /*$this->addTask([
-            'key' => 'update composer.json',
-            'class' => '\\Butler\\Task\\JsonTask',
-            'task' => 'add',
-            'options' => [
-                'file' => 'composer.json',
-                'data' => [
-                    'scripts' => ''
-                ]
-            ],
-        ]);*/
-
         # Init Docker ...
         $this->addTask([
             'key' => 'docker-compose up',
@@ -255,7 +242,20 @@ class NeosBaseProject extends AbstractProject
             'task' => 'kickstartSite',
             'options' => [
                 'context' => 'Development', // optional | String default: Development
-                'package-key' => '{projectvendor}.{projectname}',
+                'package-key' => '{projectvendor}.Site',
+                'site-name' => '{projectname}'
+            ],
+        ]);
+
+
+        # create a new site
+        $this->addTask([
+            'key' => 'create site',
+            'class' => '\\Butler\\Task\\NeosTask',
+            'task' => 'siteCreate',
+            'options' => [
+                'context' => 'Development', // optional | String default: Development
+                'package-key' => '{projectvendor}.Site',
                 'site-name' => '{projectname}'
             ],
         ]);
@@ -270,11 +270,6 @@ class NeosBaseProject extends AbstractProject
                 'command' => 'docker-compose down'
             ],
         ]);
-/*
-                # create page
-                #echo "Create Page $PAGE_NAME"
-                #$this->task('export FLOW_CONTEXT=Development && ./flow site:create '.$input->getArgument('projectname').' '.$input->getArgument('vendor').'.Site');
-        */
 
         return 'tasks created :))';
     }
@@ -292,94 +287,7 @@ class NeosBaseProject extends AbstractProject
 
 
 /*
-        # move all to root
-        $this->task('mv '.$PATH_TEMP.'/* '.$PATH_TEMP.'/.g* '.$PATH_ROOT.'/');
 
-
-
-        $this->task('cd '.$PATH_TEMP);
-        # import docker config
-        $this->task('cp -R ~/Tools/Docker/* ./');
-
-        # copy development Settings.yaml
-        $this->task('cp ~/Tools/Neos/Build/Templates/Configuration/Development/Settings.yaml ./Configuration/Development');
-        $this->task('mv ./Configuration/Settings.yaml.example ./Configuration/Settings.yaml');
-
-        $this->task('cp ~/Tools/Neos/Build/composer.php ./Build');
-
-        # update composer.json
-        $this->task('php ./Build/composer.php');
-
-        # Init Docker ...
-        $this->task('docker-compose up -d');
-
-        # Init mySQL
-        $this->task('while ! mysqladmin ping -h0.0.0.0 --port=8086 --silent; do sleep 1 ;done');
-
-        # migrate database
-        $this->task('export FLOW_CONTEXT=Development && ./flow doctrine:migrate');
-
-        # Create Admin [admin:admin]'
-        $this->task('export FLOW_CONTEXT=Development && ./flow user:create admin admin King Loui --roles Neos.Neos:Administrator');
-
-        # import site package
-        #export FLOW_CONTEXT=Development && ./flow site:import --package-key Neos.Demo
-
-        # create site package
-        #echo "Create Sitepackage $VENDOR_NAME.Site"
-        $this->task('export FLOW_CONTEXT=Development && ./flow kickstart:site --package-key '.$input->getArgument('vendor').'.Site --site-name '.$input->getArgument('projectname'));
-
-        # create page
-        #echo "Create Page $PAGE_NAME"
-        $this->task('export FLOW_CONTEXT=Development && ./flow site:create '.$input->getArgument('projectname').' '.$input->getArgument('vendor').'.Site');
-
-        #####################
-        # init atomic fusion
-        #####################
-        #start_spinner "Add packagefactory/atomicfusion"
-        $this->task('composer require packagefactory/atomicfusion');
-
-        # TODO: configure
-
-        ########################
-        # init atomic fusion-afx
-        ########################
-        #start_spinner "Add packagefactory/atomicfusion-afx"
-        $this->task('composer require packagefactory/atomicfusion-afx:~3.0.0');
-
-        #TODO: Configure
-
-        #####################
-        # init monocle
-        #####################
-        #start_spinner "Add sitegeist/monocle"
-        $this->task('composer require sitegeist/monocle');
-
-        # ToDo: configure
-
-        #####################
-        # init magickwand
-        #####################
-        #start_spinner "Add sitegeist/magicwand"
-        $this->task('composer require --dev sitegeist/magicwand:dev-master');
-
-        # ToDo: configure
-
-
-        ########################
-        # init tests and linting
-        ########################
-        #start_spinner "Add sitegeist/neosguidelines"
-        $this->task('composer require --dev sitegeist/neosguidelines');
-
-        # ToDo: configure
-
-
-        ########################
-        # remove unused packages
-        ########################
-        #start_spinner "Remove neos/demo"
-        $this->task('composer remove neos/demo');
 
 
         #####################
