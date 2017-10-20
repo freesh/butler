@@ -95,4 +95,22 @@ class NeosTask extends AbstractTask
         $this->execute('export FLOW_CONTEXT='. $context .' && ./flow user:create '. $config['options']['user'] .' '. $config['options']['password'] .' '. $config['options']['username'] . (!isset($config['options']['roles']) ? '' : ' --roles ' . implode(' ', $config['options']['roles'])) );
 
     }
+
+
+    /**
+     * @param array $config
+     */
+    public function siteImport(array $config) {
+
+        $context = 'Development';
+
+        // set context to Production
+        if ( isset($config['options']['context'])) {
+            $context = $config['options']['context'];
+        }
+
+        // execute command
+        $this->execute('export FLOW_CONTEXT='. $context .' && ./flow site:import --package-key '. $config['options']['package'] );
+
+    }
 }

@@ -245,6 +245,19 @@ class NeosBaseProject extends AbstractProject
             ],
         ]);
 
+
+        # Create Admin [admin:admin]'
+        $this->addTask([
+            'key' => 'import neos demo',
+            'class' => '\\Butler\\Task\\NeosTask',
+            'task' => 'siteImport',
+            'options' => [
+                'context' => 'Development', // optional | String default: Development
+                'package' => 'Neos.Demo'
+            ],
+        ]);
+
+
         # Stop Docker ...
         $this->addTask([
             'key' => 'docker-compose down',
