@@ -10,7 +10,8 @@ class NeosBaseProject extends AbstractProject
      */
     public function createTasks() {
 
-        /*$this->addTask([
+        # get vendor and project name
+        $this->addTask([
             'key' => 'set project data',
             'class' => '\\Butler\\Task\\InputTask',
             'task' => 'question',
@@ -18,19 +19,8 @@ class NeosBaseProject extends AbstractProject
                 'projectname' => 'What is the name of your Project?',
                 'projectvendor' => 'What is the vendor name of your Project?'
             ],
-        ]);*/
+        ]);
 
-        /*$this->addTask([
-            'key' => 'touch projectvendor',
-            'class' => '\\Butler\\Task\\FilesystemTask',
-            'task' => 'touch',
-            'options' => [
-                'files' => '{projectvendor}-{projectname}.txt', // string|array|\Traversable A filename, an array of files, or a \Traversable instance to create
-                'time' => null, // (optional) int The touch time as a Unix timestamp
-                'atime' => null // (optional) int The access time as a Unix timestamp
-            ],
-            'condition' => 'projectname != projectvendor'
-        ]);*/
 
         $this->addTask([
             'key' => 'create',
@@ -246,7 +236,7 @@ class NeosBaseProject extends AbstractProject
         ]);
 
 
-        # Create Admin [admin:admin]'
+        # import neos demo site
         $this->addTask([
             'key' => 'import neos demo',
             'class' => '\\Butler\\Task\\NeosTask',
@@ -254,6 +244,19 @@ class NeosBaseProject extends AbstractProject
             'options' => [
                 'context' => 'Development', // optional | String default: Development
                 'package' => 'Neos.Demo'
+            ],
+        ]);
+
+
+        # kickstart a new site package
+        $this->addTask([
+            'key' => 'kickstart site',
+            'class' => '\\Butler\\Task\\NeosTask',
+            'task' => 'kickstartSite',
+            'options' => [
+                'context' => 'Development', // optional | String default: Development
+                'package-key' => '{projectvendor}.{projectname}',
+                'site-name' => '{projectname}'
             ],
         ]);
 
@@ -268,16 +271,6 @@ class NeosBaseProject extends AbstractProject
             ],
         ]);
 /*
-
-
-                # import site package
-                ##export FLOW_CONTEXT=Development && ./flow site:import --package-key Neos.Demo
-
-
-                # create site package
-                #echo "Create Sitepackage $VENDOR_NAME.Site"
-                #$this->task('export FLOW_CONTEXT=Development && ./flow kickstart:site --package-key '.$input->getArgument('vendor').'.Site --site-name '.$input->getArgument('projectname'));
-
                 # create page
                 #echo "Create Page $PAGE_NAME"
                 #$this->task('export FLOW_CONTEXT=Development && ./flow site:create '.$input->getArgument('projectname').' '.$input->getArgument('vendor').'.Site');
