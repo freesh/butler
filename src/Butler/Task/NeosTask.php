@@ -113,4 +113,40 @@ class NeosTask extends AbstractTask
         $this->execute('export FLOW_CONTEXT='. $context .' && ./flow site:import --package-key '. $config['options']['package'] );
 
     }
+
+
+    /**
+     * @param array $config
+     */
+    public function siteCreate(array $config) {
+
+        $context = 'Development';
+
+        // set context to Production
+        if ( isset($config['options']['context'])) {
+            $context = $config['options']['context'];
+        }
+
+        // execute command
+        $this->execute('export FLOW_CONTEXT='. $context .' && ./flow site:create ' . ucfirst($config['options']['site-name']) .' '. ucwords($config['options']['package-key'],'.') );
+
+    }
+
+
+    /**
+     * @param array $config
+     */
+    public function kickstartSite(array $config) {
+
+        $context = 'Development';
+
+        // set context to Production
+        if ( isset($config['options']['context'])) {
+            $context = $config['options']['context'];
+        }
+
+        // execute command
+        $this->execute('export FLOW_CONTEXT='. $context .' && ./flow kickstart:site --package-key '. ucwords($config['options']['package-key'],'.') .' --site-name ' . ucfirst($config['options']['site-name']) );
+
+    }
 }
