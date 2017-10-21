@@ -26,7 +26,6 @@ class GitTask extends AbstractTask
     }
 
 
-
     /**
      * @param array $config
      * @return void
@@ -35,6 +34,7 @@ class GitTask extends AbstractTask
         $this->execute( 'git init' );
     }
 
+
     /**
      * @param array $config
      * @return void
@@ -42,6 +42,7 @@ class GitTask extends AbstractTask
     public function add(array $config) {
         $this->execute( 'git add ' . (!isset($config['options']['files'])? '*' : implode(' ', $config['options']['files'])) );
     }
+
 
     /**
      * @param array $config
@@ -80,6 +81,7 @@ class GitTask extends AbstractTask
 
     }
 
+
     /**
      * @param array $config
      * @return void
@@ -105,7 +107,6 @@ class GitTask extends AbstractTask
 
         }
     }
-
 
 
     /**
@@ -141,21 +142,6 @@ class GitTask extends AbstractTask
         }
     }
 
-    /**
-     * @param array $config
-     * @return void
-     */
-    public function pull(array $config) {
-        $this->execute( 'git pull origin ' . $config['options']['branch'] );
-    }
-
-    /**
-     * @param array $config
-     * @return void
-     */
-    public function push(array $config) {
-        $this->execute( 'git push origin ' . $config['options']['branch'] );
-    }
 
     /**
      * @param array $config
@@ -163,6 +149,44 @@ class GitTask extends AbstractTask
      */
     public function commit(array $config) {
         $this->execute( 'git commit -m "' . $config['options']['message'] .'"' );
+    }
+
+
+    /**
+     * @param array $config
+     * @return void
+     */
+    public function remoteAdd(array $config) {
+        $this->execute( 'git remote add '
+            . (!isset($config['options']['origin'])? 'origin' : $config['options']['origin'])
+            .' '
+            . $config['options']['url']
+        );
+    }
+
+
+    /**
+     * @param array $config
+     * @return void
+     */
+    public function push(array $config) {
+        $this->execute( 'git push '
+            . (!isset($config['options']['params'])? '' : implode(' ', $config['options']['params']))
+            .' ' . (!isset($config['options']['origin'])? 'origin' : $config['options']['origin'])
+            .' ' . $config['options']['branch']
+        );
+    }
+
+
+    /**
+     * @param array $config
+     * @return void
+     */
+    public function pull(array $config) {
+        $this->execute( 'git pull '
+            . (!isset($config['options']['origin'])? 'origin' : $config['options']['origin'])
+            .' ' . $config['options']['branch']
+        );
     }
 
 

@@ -57,8 +57,6 @@ class GitProject extends AbstractProject
             ],
         ]);
 
-
-
         $this->addTask([
             'key' => 'add',
             'class' => '\\Butler\\Task\\GitTask',
@@ -68,6 +66,48 @@ class GitProject extends AbstractProject
                     '*',
                     '.gitignore'
                 ]
+            ],
+        ]);
+
+        $this->addTask([
+            'key' => 'commit',
+            'class' => '\\Butler\\Task\\GitTask',
+            'task' => 'commit',
+            'options' => [
+                'message' => 'initial commit'
+            ],
+        ]);
+
+        $this->addTask([
+            'key' => 'add remote',
+            'class' => '\\Butler\\Task\\GitTask',
+            'task' => 'remoteAdd',
+            'options' => [
+                'origin' => 'origin', // optional | string default: origin
+                'url' => 'git@github.com:freesh/butlertest.git'
+            ],
+        ]);
+
+        $this->addTask([
+            'key' => 'push',
+            'class' => '\\Butler\\Task\\GitTask',
+            'task' => 'push',
+            'options' => [
+                'params' => [ // optional | string
+                    '-u'
+                ],
+                'origin' => 'origin', // optional | string default: origin
+                'branch' => 'master'
+            ],
+        ]);
+
+        $this->addTask([
+            'key' => 'pull',
+            'class' => '\\Butler\\Task\\GitTask',
+            'task' => 'pull',
+            'options' => [
+                'origin' => 'origin', // optional | string default: origin
+                'branch' => 'master'
             ],
         ]);
 
