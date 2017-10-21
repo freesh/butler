@@ -82,7 +82,7 @@ abstract class AbstractTask
         // executes after the command finishes
         if (!$process->isSuccessful()) {
 
-            $this->output->writeln('<error><options=bold;bg=red>  ERR </></error> <fg=red>"' . $command . '" is too drunk to work. Please run butler command with -v for more information.</>');
+            $this->output->writeln('<error><options=bold;bg=red>  ERR </></error> <fg=red>"' . $command . '" is too drunk to work. Please run butler command with -v, -vv, or -vvv for more information.</>');
             if($this->output->isVerbose()) $this->output->writeln('<fg=black;bg=white>'.$process->getErrorOutput().'</>');
 
             #throw new ProcessFailedException($process);
