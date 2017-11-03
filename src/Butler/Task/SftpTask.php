@@ -104,33 +104,24 @@ class SftpTask extends AbstractTask
 
         try {
             $list = $this->client->nlist((isset($config['options']['path']) ? $config['options']['path'] : '.'));
+            #$list = $this->client->rawlist((isset($config['options']['path']) ? $config['options']['path'] : '.'));
             asort($list);
-            var_dump($list);
+            foreach ($list as $id => $item) {
+                if (!is_array($item)) {
+                    $this->output->writeln($item);
+                } else {
+                    $this->output->writeln($id);
+                    foreach ($item as $key => $value) {
+                        $this->output->write(''.$key.':'.$value);
+                    }
+                    $this->output->writeln('');
+                }
+            }
         } catch (Exception $e) {
             #$this->output->writeln('<error><options=bold;bg=red>  ERR </></error> <fg=red>"github:repositoryCreate" is too drunk to work. Please run butler command with -v, -vv, or -vvv for more information.</>');
             #if($this->output->isVerbose()) $this->output->writeln('<fg=black;bg=white>'.$e->getMessage().'</>');
 
             echo 'SFTP Exception: ',  $e->getMessage(), "\n";
-        }
-
-    }
-
-
-    /**
-     * @param array $config
-     * task config:
-     *
-     */
-    public function repositoryRemove(array $config) {
-
-        try {
-            // Remove repo
-            $this->client->api('repo')->remove($config['options']['user'], $config['options']['name']); // Get the deletion token
-        } catch (Exception $e) {
-            #$this->output->writeln('<error><options=bold;bg=red>  ERR </></error> <fg=red>"github:repositoryRemove" is too drunk to work. Please run butler command with -v, -vv, or -vvv for more information.</>');
-            #if($this->output->isVerbose()) $this->output->writeln('<fg=black;bg=white>'.$e->getMessage().'</>');
-
-            echo 'Github Exception: ',  $e->getMessage(), "\n";
         }
 
     }
