@@ -54,11 +54,27 @@ abstract class AbstractTask
     /**
      * @param string $question
      * @param string $default
+     * @param string $type question | confirmation | choice
+     * @param array $choices array with choices if $type == choice
+     * @return mixed
      */
-    protected function setQuestion($question = '', $default = '') {
+    protected function setQuestion($question = '', $default = '', $type = 'question', $choices = array()) {
 
         $helper = $this->getHelper('question');
-        $question = new Question($question, $default);
+
+        switch($type) {
+            case 'confirmation':
+                if ($default == '') $default = false;
+                $question = new ConfirmationQuestion($question, $default);
+                break;
+            case 'choice':
+                if (!$default) $default = null;
+                $question = new ChoiceQuestion($question, $choices, $default);
+                break;
+            case 'question':
+            default:
+                $question = new Question($question, $default);
+        }
 
         $bundle = $helper->ask($this->input, $this->output, $question);
 
