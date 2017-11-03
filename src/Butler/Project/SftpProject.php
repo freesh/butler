@@ -23,7 +23,7 @@ class SftpProject extends AbstractProject
         ]);*/
 
 
-        # get vendor and project name
+        # connect to sftp server
         $this->addTask([
             'key' => 'Auth',
             'class' => '\\Butler\\Task\\SftpTask',
@@ -40,13 +40,29 @@ class SftpProject extends AbstractProject
             ],
         ]);
 
-        # get vendor and project name
+        # create folders
         $this->addTask([
             'key' => 'Create folders',
             'class' => '\\Butler\\Task\\SftpTask',
             'task' => 'mkdir',
             'options' => [
-                'dir' => 'dirname', // string or array | required relative or absolute path
+                'dir' => 'dirname/s1', // string or array | required relative or absolute path
+            ],
+        ]);
+
+        # delete files and folders
+        $this->addTask([
+            'key' => 'Delete folders',
+            'class' => '\\Butler\\Task\\SftpTask',
+            'task' => 'delete',
+            'options' => [
+                'target' => [
+                    'thisIsATest',
+                    'dirname',
+                    'thisIsATesta',
+                    'thisIsATests',
+                    'thisIsATestss'
+                ], // string or array | required relative or absolute path
             ],
         ]);
 

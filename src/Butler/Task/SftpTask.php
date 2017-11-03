@@ -172,6 +172,84 @@ class SftpTask extends AbstractTask
 
 
     /**
+     * @param array $config
+     * task options:
+     * 'target' => 'filename' // string or array | required relative or absolute path
+     * or
+     * 'target' => [
+     *      'dir1',
+     *      'file1',
+     *      'dir2'
+     * ]
+     */
+    public function delete($config) {
+
+        try {
+            $path = $config['options']['target'];
+
+            // if target is string put it in an array
+            if (!is_array($path)) {
+                $path = array($path);
+            }
+
+            // iterate over multible targets
+            foreach ($path as $target) {
+                if ($this->client->file_exists($target)) {
+
+                    // check if is dir or file
+                    if (!$this->isEmptyDir($target)) {
+
+                        // get confirmation to delete not empty folder
+                        if ($this->setQuestion(
+                            '<options=bold;bg=cyan>  ASK </> <fg=cyan>"'.$target .'" is a dir and not empty. Delete recursively? (y/n): </> ',
+                            true,
+                            'confirmation'
+                        )) {
+                            // delete recursive
+                            if (!$this->client->delete($target, true)) {
+                                throw new \Exception('Cannot delete '.$target.'! Please check file permissions');
+                            }
+                        }
+                    } else {
+                        // delete file or dir with just . and .. in it.
+                        if (!$this->client->delete($target, true)) {
+                            throw new \Exception('Cannot delete '.$target.'! Please check file permissions');
+                        }
+                    }
+
+                } else {
+                    //echo 'File "'.$delpath.'" does not exist!';
+                }
+            }
+
+        } catch (Exception $e) {
+
+            echo 'SFTP Exception: ',  $e->getMessage(), "\n";
+        }
+    }
+
+    /**
+     * returns true if $dir ist an empty dir or a file
+     * @param $path
+     * @return bool
+     */
+    private function isEmptyDir($dir) {
+
+        // if result is an array (dir) or false (file)
+        if ($result = $this->client->nlist($dir)) {
+            return empty(
+            array_diff(
+                $result,
+                ['.','..']
+            )
+            );
+        }
+
+        // $path looks like a file
+        return true;
+    }
+
+    /**
      * replace ~ with absolute user path
      * @param $path
      * @return mixed
