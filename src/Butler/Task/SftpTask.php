@@ -25,8 +25,19 @@ class SftpTask extends AbstractTask
 
     /**
      * @param array $config
-     * task config:
+     * task options:
+     *  'host' => '{ssh-host}', // string
+     *  'port' => '22', // int | optional default: 22
+     *  'timeout' => '10', // int | optional default: 10
+     *  'username' => '{ssh-user}', // string | optional default: input on runtime
+     *  'auth_method' => 'rsa', // string | optional ('rsa', 'userpw') default: userpw
      *
+     * # if auth_method == userpw
+     *  'password' => '{ssh-pwd}', //'' // string | optional default: input on runtime
+     *
+     * # if auth_method == rsa
+     *  'rsa_private_file' => '~/.ssh/id_rsa', // string | optional default: ~/.ssh/id_rsa
+     *  'rsa_private_password' => '{rsa_password}', // string | optional default: ~/.ssh/id_rsa
      */
     public function auth(array $config) {
 
@@ -69,7 +80,7 @@ class SftpTask extends AbstractTask
 
                         break;
 
-                    case 'userauth':
+                    case 'userpw':
                     default:
 
                         // if password is empty
@@ -87,8 +98,6 @@ class SftpTask extends AbstractTask
             }
 
         } catch (Exception $e) {
-            #$this->output->writeln('<error><options=bold;bg=red>  ERR </></error> <fg=red>"github:auth" is too drunk to work. Please run butler command with -v, -vv, or -vvv for more information.</>');
-            #if($this->output->isVerbose()) $this->output->writeln('<fg=black;bg=white>'.$e->getMessage().'</>');
 
             echo 'Sftp Exception: ',  $e->getMessage(), "\n";
         }
@@ -97,8 +106,8 @@ class SftpTask extends AbstractTask
 
     /**
      * @param array $config
-     * task config:
-     *
+     * task options:
+     * 'path' => '.' // string | optional default: ./
      */
     public function list(array $config) {
 
@@ -118,12 +127,47 @@ class SftpTask extends AbstractTask
                 }
             }
         } catch (Exception $e) {
-            #$this->output->writeln('<error><options=bold;bg=red>  ERR </></error> <fg=red>"github:repositoryCreate" is too drunk to work. Please run butler command with -v, -vv, or -vvv for more information.</>');
-            #if($this->output->isVerbose()) $this->output->writeln('<fg=black;bg=white>'.$e->getMessage().'</>');
 
             echo 'SFTP Exception: ',  $e->getMessage(), "\n";
         }
 
+    }
+
+    /**
+     * @param array $config
+     * task options:
+     * 'dir' => 'dirname' // string or array | required relative or absolute path
+     * or
+     * 'dir' => [
+     *      'dir1',
+     *      'dir2',
+     *      'dir3'
+     * ]
+     */
+    public function mkdir(array $config) {
+
+        try {
+            $path = $config['options']['dir'];
+
+            // if dir is string put it in an array
+            if (!is_array($path)) {
+                $path = array($path);
+            }
+
+            // iterate over multible dirs
+            foreach ($path as $dir) {
+                if (!$this->client->file_exists($dir)) {
+                    if (!$this->client->mkdir($dir, -1, true)) {
+                        throw new \Exception('Cannot create directory! Please check file permissions');
+                    }
+                } else {
+                    echo 'Directory "'.$dir.'" already exist!';
+                }
+            }
+        } catch (Exception $e) {
+
+            echo 'SFTP Exception: ',  $e->getMessage(), "\n";
+        }
     }
 
 

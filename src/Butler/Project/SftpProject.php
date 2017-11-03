@@ -40,6 +40,15 @@ class SftpProject extends AbstractProject
             ],
         ]);
 
+        # get vendor and project name
+        $this->addTask([
+            'key' => 'Create folders',
+            'class' => '\\Butler\\Task\\SftpTask',
+            'task' => 'mkdir',
+            'options' => [
+                'dir' => 'dirname', // string or array | required relative or absolute path
+            ],
+        ]);
 
         # get vendor and project name
         $this->addTask([
