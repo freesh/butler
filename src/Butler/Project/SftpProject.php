@@ -46,7 +46,13 @@ class SftpProject extends AbstractProject
             'class' => '\\Butler\\Task\\SftpTask',
             'task' => 'mkdir',
             'options' => [
-                'dir' => 'dirname/s1', // string or array | required relative or absolute path
+                'dir' => [
+                    'dirname/s1', // string or array | required relative or absolute path
+                    'thisIsATest',
+                    'thisIsATesta/mimimi',
+                    'thisIsATests',
+                    'thisIsATestss'
+                ]
             ],
         ]);
 
@@ -58,11 +64,21 @@ class SftpProject extends AbstractProject
             'options' => [
                 'target' => [
                     'thisIsATest',
-                    'dirname',
-                    'thisIsATesta',
-                    'thisIsATests',
-                    'thisIsATestss'
+                    'thisIsATesta'
                 ], // string or array | required relative or absolute path
+            ],
+        ]);
+
+        # delete files and folders
+        $this->addTask([
+            'key' => 'Create Symlinks',
+            'class' => '\\Butler\\Task\\SftpTask',
+            'task' => 'symlink',
+            'options' => [
+                'links' => [ // array | required array with links $key = link $value = target
+                    's1' => 'dirname/s1',
+                    's2' => 'dirname/s2'
+                ],
             ],
         ]);
 

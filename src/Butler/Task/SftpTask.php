@@ -158,10 +158,10 @@ class SftpTask extends AbstractTask
             foreach ($path as $dir) {
                 if (!$this->client->file_exists($dir)) {
                     if (!$this->client->mkdir($dir, -1, true)) {
-                        throw new \Exception('Cannot create directory! Please check file permissions');
+                        throw new \Exception('Cannot create directory "'.$dir.'"! Please check file permissions');
                     }
                 } else {
-                    echo 'Directory "'.$dir.'" already exist!';
+                    $this->output->writeln('Directory "'.$dir.'" already exist!');
                 }
             }
         } catch (Exception $e) {
@@ -194,37 +194,95 @@ class SftpTask extends AbstractTask
 
             // iterate over multible targets
             foreach ($path as $target) {
-                if ($this->client->file_exists($target)) {
+                $this->deleteTarget($target);
+            }
 
-                    // check if is dir or file
-                    if (!$this->isEmptyDir($target)) {
+        } catch (Exception $e) {
 
-                        // get confirmation to delete not empty folder
-                        if ($this->setQuestion(
-                            '<options=bold;bg=cyan>  ASK </> <fg=cyan>"'.$target .'" is a dir and not empty. Delete recursively? (y/n): </> ',
-                            true,
-                            'confirmation'
-                        )) {
-                            // delete recursive
-                            if (!$this->client->delete($target, true)) {
-                                throw new \Exception('Cannot delete '.$target.'! Please check file permissions');
-                            }
-                        }
-                    } else {
-                        // delete file or dir with just . and .. in it.
-                        if (!$this->client->delete($target, true)) {
-                            throw new \Exception('Cannot delete '.$target.'! Please check file permissions');
+            echo 'SFTP Exception: ',  $e->getMessage(), "\n";
+        }
+    }
+
+
+    /**
+     * @param array $config
+     * task options:
+     * 'links' => [ // array | required array with links $key = source $value = target
+     *      'link1' => 'target/target1',
+     *      'file1' => 'target/file1'
+     * ]
+     */
+    public function symlink($config) {
+
+        try {
+            // iterate over multible links
+            foreach ($config['options']['links'] as $link => $target) {
+
+                // check if file or link does not exist
+                if (!$this->client->file_exists($link) && !$this->client->is_link($link)) {
+                    // create symlink
+                    if (!$this->client->symlink($target, $link)) {
+                        throw new \Exception('Cannot create symlink "'.$link.'"! Please check file permissions');
+                    }
+                } else {
+                    // get confirmation to delete existing link, file or folder
+                    if ($this->setQuestion(
+                        '<options=bold;bg=cyan>  ASK </> <fg=cyan>"'.$link .'" already exist. Will you delete it and create symlink? (y/n): </> ',
+                        true,
+                        'confirmation'
+                    )) {
+
+                        // delete existing link
+                        $this->deleteTarget($link);
+                        // create symlink
+                        if (!$this->client->symlink($target, $link)) {
+                            throw new \Exception('Cannot create symlink "'.$link.'"! Please check file permissions');
                         }
                     }
-
-                } else {
-                    //echo 'File "'.$delpath.'" does not exist!';
                 }
             }
 
         } catch (Exception $e) {
 
             echo 'SFTP Exception: ',  $e->getMessage(), "\n";
+        }
+    }
+
+
+
+
+
+    /**
+     * @param $target
+     * @throws \Exception
+     */
+    private function deleteTarget($target) {
+        if ($this->client->file_exists($target)) {
+
+            // check if is dir or file
+            if (!$this->client->is_link($target) && !$this->isEmptyDir($target)) {
+
+                // get confirmation to delete not empty folder
+                if ($this->setQuestion(
+                    '<options=bold;bg=cyan>  ASK </> <fg=cyan>"'.$target .'" is a dir and not empty. Delete recursively? (y/n): </> ',
+                    true,
+                    'confirmation'
+                )) {
+                    // delete recursive
+                    if (!$this->client->delete($target, true)) {
+                        throw new \Exception('Cannot delete '.$target.'! Please check file permissions');
+                    }
+                }
+            } else {
+
+                // delete file or dir with just . and .. in it.
+                if (!$this->client->delete($target, true)) {
+                    throw new \Exception('Cannot delete '.$target.'! Please check file permissions');
+                }
+            }
+
+        } else {
+            //echo 'File "'.$delpath.'" does not exist!';
         }
     }
 
