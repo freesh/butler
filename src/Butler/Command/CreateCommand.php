@@ -23,6 +23,18 @@ class CreateCommand extends Command
     protected $expLang; // ExpressionLanguage
     private $projectConfig = []; // Runtime project config array
 
+    /**
+     * @var OutputInterface
+     */
+    protected $output;
+
+    /**
+     * @var InputInterface
+     */
+    protected $input;
+
+
+
     public function __construct($name = null)
     {
         parent::__construct($name);
@@ -60,6 +72,9 @@ class CreateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
 
+        $this->output = $output;
+        $this->input = $input;
+
         // set additional helpers
         $this->getHelperSet()->set(new FilesystemHelper());
         $this->getHelperSet()->set(new YamlHelper());
@@ -80,27 +95,44 @@ class CreateCommand extends Command
             // execute if no condition is configured or condition is true
             if ( !isset($config['condition']) || $this->parseTaskCondition($config['condition']) ) {
 
-                $output->writeln('<fg=green;options=bold>Execute Task:</> <fg=blue>' . $key . '</>' . ($output->isVerbose() ? ' <comment>(' . $class . ' -> ' . $task . ')</comment>' : ''));
+                $this->output->writeln('<fg=green;options=bold>Execute Task:</> <fg=blue>' . $key . '</>' . ($output->isVerbose() ? ' <comment>(' . $class . ' -> ' . $task . ')</comment>' : ''));
 
                 # create task object
                 if (!isset($this->taskObjects[$class]) || !$this->taskObjects[$class] instanceof $class) {
                     $this->taskObjects[$class] = new $class($input, $output, $this->getHelperSet());
                 }
 
+                // Parse variables in task option array
+                $taskOptions = $this->parseTaskConfig($config['options']);
+
                 // execute task
                 $projectConf = $this->taskObjects[$class]->$task(
                     [
                         'project' => $this->projectConfig,
-                        'options' => $this->parseTaskConfig($config['options'])
+                        'options' => $taskOptions
                     ]
                 );
-            } else {
-                $output->writeln('<fg=green;options=bold>Execute Task:</> <fg=blue>' . $key . '</> <fg=red>Skipped by condition.</> ' . ($output->isVerbose() ? ' <comment>(' . $class . ' -> ' . $task . ')</comment>' : ''));
-            }
 
-            // merge project if task returns array with options
-            if (is_array($projectConf)) {
-                $this->updateProjectConfiguration($projectConf);
+                // merge project if task returns array with options
+                if (is_array($projectConf)) {
+                    $this->updateProjectConfiguration($projectConf);
+                }
+
+                // debug task options or/and runtime config
+                if (isset($taskOptions['debug'])) {
+                    $this->debug(
+                        [
+                            'project' => $this->projectConfig,
+                            'options' => $taskOptions
+                        ],
+                        (isset($taskOptions['debug-path']) ? $taskOptions['debug-path'] : ''),
+                        (isset($taskOptions['debug-depth']) ? $taskOptions['debug-depth'] : -1),
+                        (isset($taskOptions['debug-type']) ? $taskOptions['debug-type'] : null)
+                    );
+                }
+
+            } else {
+                $this->output->writeln('<fg=green;options=bold>Execute Task:</> <fg=blue>' . $key . '</> <fg=red>Skipped by condition.</> ' . ($output->isVerbose() ? ' <comment>(' . $class . ' -> ' . $task . ')</comment>' : ''));
             }
         }
     }
@@ -155,6 +187,94 @@ class CreateCommand extends Command
         );
 
         return $taskConfig;
+    }
+
+    /**
+     * debug output for task options, project runtime config or both
+     * @param array $array
+     * @param string $path
+     * @param int $depth
+     * @param string $type
+     */
+    private function debug($array=[], $path='', $depth=-1, $type='print') {
+
+        // get ary value by path
+        if (isset($path)) {
+            $array = $this->arrayPath(
+                $path,
+                $array
+            );
+        }
+
+        // to max depth level
+        $array = $this->arrayReduce(
+            $array,
+            $depth
+        );
+
+        if ($type == 'export') {
+            var_export($array);
+        } else {
+            $this->recursive_print('debug', $array);
+        }
+
+    }
+
+    function recursive_print ($varname, $varval) {
+        if (! is_array($varval)):
+            $this->output->writeln( "<fg=red>".$varname . ": </> = " . $varval );
+        else:
+            foreach ($varval as $key => $val):
+                $this->recursive_print ($varname . "." . $key, $val);
+            endforeach;
+        endif;
+    }
+
+    /**
+     * returns the $path value of $array
+     * @param $path string (example: this.is.my.path)
+     * @param array $array
+     * @return array|mixed
+     */
+    private function arrayPath($path=null, array $array) {
+
+        $paths = explode(".", $path);
+        $value = $array;
+        foreach($paths as $path){
+            isset($value[$path]) ? $value = $value[$path] : null;
+        }
+
+        return $value;
+    }
+
+    /**
+     * returns an array with given max level
+     * @param $array
+     * @param int $maxLevel
+     * @return array
+     */
+    private function arrayReduce($array, $maxLevel = -1) {
+
+        // if no max level is set return whole array
+        if ($maxLevel == -1)
+            return $array;
+
+        // reduce if max level is set // ToDO: refactor! this shit works verry poor
+        $arrayReduced = [];
+        if ($maxLevel > 0 ) {
+
+            foreach ($array as $key => $value) {
+
+                if(is_array($value)) {
+                    $arrayReduced[$key] = $this->arrayReduce($value, --$maxLevel);
+                } else {
+                    $arrayReduced[$key] = $value;
+                }
+
+            }
+        }
+
+        return $arrayReduced;
     }
 
         /* $output->writeln([
