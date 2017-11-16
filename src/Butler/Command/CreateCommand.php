@@ -119,15 +119,15 @@ class CreateCommand extends Command
                 }
 
                 // debug task options or/and runtime config
-                if (isset($taskOptions['debug'])) {
+                if (isset($config['debug']) && $config['debug'] == true) {
                     $this->debug(
                         [
                             'project' => $this->projectConfig,
                             'options' => $taskOptions
                         ],
-                        (isset($taskOptions['debug-path']) ? $taskOptions['debug-path'] : ''),
-                        (isset($taskOptions['debug-depth']) ? $taskOptions['debug-depth'] : -1),
-                        (isset($taskOptions['debug-type']) ? $taskOptions['debug-type'] : null)
+                        (isset($config['debug-path']) ? $config['debug-path'] : ''),
+                        (isset($config['debug-depth']) ? $config['debug-depth'] : -1),
+                        (isset($config['debug-type']) ? $config['debug-type'] : null)
                     );
                 }
 
@@ -176,10 +176,12 @@ class CreateCommand extends Command
                 if ($matches) {
                     // iterate over multible matches and replace them if they exists in projectConfig
                     foreach ($matches as $match) {
-                        if ($param = isset($match[1]) ? $match[1] : false) {
-                            if (isset($this->projectConfig[$param])) {
-                                $val = str_replace('{'.$param.'}', $this->projectConfig[$param], $val);
-                            }
+
+                        // if path is found and a value is returned
+                        if ( is_string( $param = $this->arrayPathValue( $match[1], $this->projectConfig ) ) ) {
+
+                            // replace variable string with value
+                            $val = str_replace( $match[0], $param, $val );
                         }
                     }
                 }
@@ -200,7 +202,7 @@ class CreateCommand extends Command
 
         // get ary value by path
         if (isset($path)) {
-            $array = $this->arrayPath(
+            $array = $this->arrayPathValue(
                 $path,
                 $array
             );
@@ -231,20 +233,20 @@ class CreateCommand extends Command
     }
 
     /**
-     * returns the $path value of $array
-     * @param $path string (example: this.is.my.path)
+     * get the value of a array by key path example: this.is.my.path
+     * @param $path
      * @param array $array
      * @return array|mixed
      */
-    private function arrayPath($path=null, array $array) {
-
+    private function arrayPathValue( $path, array $data ) {
         $paths = explode(".", $path);
-        $value = $array;
-        foreach($paths as $path){
-            isset($value[$path]) ? $value = $value[$path] : null;
+
+        // iterate over path and data array
+        foreach($paths as $seg){
+            isset($data[$seg]) ? $data = $data[$seg] : null;
         }
 
-        return $value;
+        return $data;
     }
 
     /**
@@ -259,7 +261,7 @@ class CreateCommand extends Command
         if ($maxLevel == -1)
             return $array;
 
-        // reduce if max level is set // ToDO: refactor! this shit works verry poor
+        // reduce if max level is set // ToDO: refactor! this shit works very poor
         $arrayReduced = [];
         if ($maxLevel > 0 ) {
 
@@ -270,184 +272,9 @@ class CreateCommand extends Command
                 } else {
                     $arrayReduced[$key] = $value;
                 }
-
             }
         }
 
         return $arrayReduced;
     }
-
-        /* $output->writeln([
-            'creating Project',
-            '#################',
-            #'path: '.$PATH_ROOT,
-            #'path temp: '.$PATH_TEMP,
-            'name: '.$input->getArgument('vendor').'/'.$input->getArgument('projectname')
-        ]);*/
-
-        # init taskdispatcher
-
-
-        # create task
-
-
-        # init composer project
-        #$this->composerTask = new ComposerTask();
-
-
-
-        #$this->composerTask->create('neos/neos-base-distribution');
-        #$this->task('composer create-project --no-dev neos/neos-base-distribution '.$PATH_TEMP);
-
-
-
-/*
-        # move all to root
-        $this->task('mv '.$PATH_TEMP.'/* '.$PATH_TEMP.'/.g* '.$PATH_ROOT.'/');
-
-
-
-        $this->task('cd '.$PATH_TEMP);
-        # import docker config
-        $this->task('cp -R ~/Tools/Docker/* ./');
-
-        # copy development Settings.yaml
-        $this->task('cp ~/Tools/Neos/Build/Templates/Configuration/Development/Settings.yaml ./Configuration/Development');
-        $this->task('mv ./Configuration/Settings.yaml.example ./Configuration/Settings.yaml');
-
-        $this->task('cp ~/Tools/Neos/Build/composer.php ./Build');
-
-        # update composer.json
-        $this->task('php ./Build/composer.php');
-
-        # Init Docker ...
-        $this->task('docker-compose up -d');
-
-        # Init mySQL
-        $this->task('while ! mysqladmin ping -h0.0.0.0 --port=8086 --silent; do sleep 1 ;done');
-
-        # migrate database
-        $this->task('export FLOW_CONTEXT=Development && ./flow doctrine:migrate');
-
-        # Create Admin [admin:admin]'
-        $this->task('export FLOW_CONTEXT=Development && ./flow user:create admin admin King Loui --roles Neos.Neos:Administrator');
-
-        # import site package
-        #export FLOW_CONTEXT=Development && ./flow site:import --package-key Neos.Demo
-
-        # create site package
-        #echo "Create Sitepackage $VENDOR_NAME.Site"
-        $this->task('export FLOW_CONTEXT=Development && ./flow kickstart:site --package-key '.$input->getArgument('vendor').'.Site --site-name '.$input->getArgument('projectname'));
-
-        # create page
-        #echo "Create Page $PAGE_NAME"
-        $this->task('export FLOW_CONTEXT=Development && ./flow site:create '.$input->getArgument('projectname').' '.$input->getArgument('vendor').'.Site');
-
-        #####################
-        # init atomic fusion
-        #####################
-        #start_spinner "Add packagefactory/atomicfusion"
-        $this->task('composer require packagefactory/atomicfusion');
-
-        # TODO: configure
-
-        ########################
-        # init atomic fusion-afx
-        ########################
-        #start_spinner "Add packagefactory/atomicfusion-afx"
-        $this->task('composer require packagefactory/atomicfusion-afx:~3.0.0');
-
-        #TODO: Configure
-
-        #####################
-        # init monocle
-        #####################
-        #start_spinner "Add sitegeist/monocle"
-        $this->task('composer require sitegeist/monocle');
-
-        # ToDo: configure
-
-        #####################
-        # init magickwand
-        #####################
-        #start_spinner "Add sitegeist/magicwand"
-        $this->task('composer require --dev sitegeist/magicwand:dev-master');
-
-        # ToDo: configure
-
-
-        ########################
-        # init tests and linting
-        ########################
-        #start_spinner "Add sitegeist/neosguidelines"
-        $this->task('composer require --dev sitegeist/neosguidelines');
-
-        # ToDo: configure
-
-
-        ########################
-        # remove unused packages
-        ########################
-        #start_spinner "Remove neos/demo"
-        $this->task('composer remove neos/demo');
-
-
-        #####################
-        # init git repository
-        #####################
-        #echo "Init git"
-        #start_spinner 'Init git'
-        $this->task('git init');
-
-        #####################
-        # init deployment
-        #####################
-        # tbd: call deployment.sh
-
-        #####################
-        # init README.md
-        #####################
-        # tbd: call readme.sh
-        #start_spinner 'Create README.md'
-        $this->task('touch README.md');
-
-
-        #####################
-        # tidy up
-        #####################
-        # remove initial temp folder
-        $this->task('rm -Rf $PATH_TEMP');
-        $this->task('docker-compose down');
-
-        # remove unused composer packages
-
-        # flush cache (because of deleted neos packages)
-        $this->task('export FLOW_CONTEXT=Development && ./flow flow:cache:flush');
-
-        # start neos server
-        #$this->task('export FLOW_CONTEXT=Development && ./flow server:run');
-*/
-
-        #$output->writeln(sprintf('Created the file %s', $path));
-        /*$output->writeln([
-            'Neos is configured:',
-            '===================',
-            'To start Server run: ',
-            'docker-compose up -d',
-            'export FLOW_CONTEXT=Development && ./flow server:run'
-        ]);*/
-    #}
-
-    /*protected function task($command) {
-        $process = new Process($command);
-        $process->setTimeout(600);
-        $process->run();
-
-        // executes after the command finishes
-        if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
-
-        return $process->getOutput();
-    }*/
 }

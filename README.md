@@ -139,7 +139,9 @@ Ask the user some interesting questions with the question task of the inputTask 
             'task' => 'question',
             'options' => [
                 'projectname' => 'What is the name of your project?',
-                'projectvendor' => 'What is the vendor of your project?'
+                'projectvendor' => 'What is the vendor of your project?',
+                'level1.sub1.myvar' => 'first tree in level1',
+                'level1.sub2.myvar' => 'different tree in level1'
             ],
         ]);
  ```
@@ -152,7 +154,11 @@ This config variables can be used in task configuration like this:
             'class' => '\\Butler\\Task\\FilesystemTask',
             'task' => 'touch',
             'options' => [
-                'files' => '{projectvendor}-{projectname}.txt'
+                'files' => [
+                    '{projectvendor}-{projectname}.txt',
+                    '{level1.sub1.myvar}.txt',
+                    '{level1.sub2.myvar}.txt'
+                ]
             ]
         ]);
 ```
@@ -247,12 +253,11 @@ Ternary Operators: (see: https://symfony.com/doc/current/components/expression_l
             'task' => 'repositoryCreate',
             'options' => [
                 ...
-
-                'debug' => true, // bool | optional default: false
-                'debug-depth' => '3', // int | optional (default: -1)
-                'debug-path' => 'project.github', // string | optional (project.my.option)
-                'debug-type' => 'export' // string | optional [export|print] (default: print)
-            ]
+            ],
+            'debug' => true, // bool | optional default: false
+            'debug-depth' => '3', // int | optional (default: -1)
+            'debug-path' => 'project.github', // string | optional (project.my.option)
+            'debug-type' => 'export' // string | optional [export|print] (default: print) 
         ]);
 ```
 
@@ -276,7 +281,6 @@ debug.options.name:  = {projectname}
 debug.options.description:  =  Test project for {projectname}
 debug.options.homepage:  = www.{projectname}
 debug.options.public:  = false
-debug.options.debug:  = 1
 
 ```
 
@@ -334,13 +338,11 @@ array (
     'description' => ' Test project for {projectname}',
     'homepage' => 'www.{projectname}',
     'public' => false,
-    'debug' => true,
-    'debug-type' => 'export',
   ),
 )%
 ```
 
-**debug-depth: 2**
+**debug-depth: 1**
 
 output export:
 ```
@@ -356,8 +358,6 @@ array (
     'homepage' => 'www.{projectname}',
     'public' => false,
     'debug' => true,
-    'debug-depth' => '1',
-    'debug-type' => 'export',
   ),
 )%
 ```
@@ -368,10 +368,7 @@ Execute Task: github create repository
 debug.options.name:  = {projectname}
 debug.options.description:  =  Test project for {projectname}
 debug.options.homepage:  = www.{projectname}
-debug.options.public:  = 
-debug.options.debug:  = 1
-debug.options.debug-depth:  = 1
-debug.options.debug-type:  = print
+debug.options.public:  = false
 
 ```
 
@@ -380,7 +377,7 @@ debug.options.debug-type:  = print
 
 1. Create a new task class in ```src/Butler/Task/``` extending ```AbstractTask```.
 2. Now you can create public functions with a $config param which is an array. (function name = task name)
-3. If a task function return an array, the values are merged in to the project config.
+3. If a task function return an array, the values are merged in to the project config. Multidimensional Arrays are supported and can be used in following task configs like this: {level1.sub2.myvar}
 4. Use $this->execute(); to execute a cli command; Example: ```$this->execute('composer-install');```
 5. (tbd) Use $this->writeln(); to write some text on the commandline. Example ```$this->writeln('project installed');```
 6. (tbd) Use $this->question(); to send a question input. Example: ```$answer = $this->question('Description for Github project', 'This is a default description');```
