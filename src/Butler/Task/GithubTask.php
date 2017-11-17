@@ -29,16 +29,11 @@ class GithubTask extends AbstractTask
         try {
             if ($this->client === null) {
                 $this->client = new \Github\Client();
-                var_dump($this->client->authenticate($config['options']['token'], null, \Github\Client::AUTH_HTTP_TOKEN));
+                $this->client->authenticate($config['options']['token'], null, \Github\Client::AUTH_HTTP_TOKEN);
             }
-
-        } catch (Exception $e) {
-            #$this->output->writeln('<error><options=bold;bg=red>  ERR </></error> <fg=red>"github:auth" is too drunk to work. Please run butler command with -v, -vv, or -vvv for more information.</>');
-            #if($this->output->isVerbose()) $this->output->writeln('<fg=black;bg=white>'.$e->getMessage().'</>');
-
-            echo 'Github Exception: ',  $e->getMessage(), "\n";
+        } catch ( Exception $e) {
+            $this->output->writeln('<error><options=bold;bg=red>  ERR </></error> <fg=red>"github:auth" ' . $e->getMessage() .'</>');
         }
-
     }
 
     /**
@@ -57,13 +52,13 @@ class GithubTask extends AbstractTask
                 (isset($config['options']['public']) ? $config['options']['public'] : true)
             );
 
-        } catch (Exception $e) {
-            #$this->output->writeln('<error><options=bold;bg=red>  ERR </></error> <fg=red>"github:repositoryCreate" is too drunk to work. Please run butler command with -v, -vv, or -vvv for more information.</>');
-            #if($this->output->isVerbose()) $this->output->writeln('<fg=black;bg=white>'.$e->getMessage().'</>');
+            return ['github' => $repo];
 
-            echo 'Github Exception: ',  $e->getMessage(), "\n";
+        } catch ( \Github\Exception\ValidationFailedException $e ) {
+                $this->output->writeln('<error><options=bold;bg=red>  ERR </></error> <fg=red>"github:repositoryCreate" The Repository "' . $config['options']['name'] . '" already exist.</>');
+        } catch ( \Github\Exception\RuntimeException $e ) {
+                $this->output->writeln('<error><options=bold;bg=red>  ERR </></error> <fg=red>"github:repositoryCreate" ' . $e->getMessage() .'</>');
         }
-
     }
 
 
@@ -78,10 +73,7 @@ class GithubTask extends AbstractTask
             // Remove repo
             $this->client->api('repo')->remove($config['options']['user'], $config['options']['name']); // Get the deletion token
         } catch (Exception $e) {
-            #$this->output->writeln('<error><options=bold;bg=red>  ERR </></error> <fg=red>"github:repositoryRemove" is too drunk to work. Please run butler command with -v, -vv, or -vvv for more information.</>');
-            #if($this->output->isVerbose()) $this->output->writeln('<fg=black;bg=white>'.$e->getMessage().'</>');
-
-            echo 'Github Exception: ',  $e->getMessage(), "\n";
+            $this->output->writeln('<error><options=bold;bg=red>  ERR </></error> <fg=red>"github:repositoryDelete" ' . $e->getMessage() .'</>');
         }
 
     }
