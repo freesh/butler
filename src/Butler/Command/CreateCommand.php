@@ -42,7 +42,7 @@ class CreateCommand extends Command
         $this->expLang = new ExpressionLanguage();
     }
 
-    protected function configure()
+    protected function configure ()
     {
         $this->setName('project:create');
         $this->setAliases(['c']);
@@ -56,7 +56,7 @@ class CreateCommand extends Command
      * @param array $config
      * @return mixed
      */
-    protected  function dispatchProject(array $config)
+    protected  function dispatchProject (array $config)
     {
         // load Project
         $namespace = '\\Butler\\Project\\'.$config['type'].'Project';
@@ -69,7 +69,7 @@ class CreateCommand extends Command
      * @param InputInterface $input
      * @param OutputInterface $output
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute (InputInterface $input, OutputInterface $output)
     {
 
         $this->output = $output;
@@ -139,18 +139,23 @@ class CreateCommand extends Command
 
 
     /**
+     * Merge new data to existing global project configuration
+     *
      * @param array $projectConfiguration
      */
-    private function updateProjectConfiguration(array $projectConfiguration = [])
+    private function updateProjectConfiguration (array $projectConfiguration = [])
     {
         $this->projectConfig = array_merge( $this->projectConfig, $projectConfiguration);
     }
 
 
     /**
-     * @param array $condition
+     * Parse and evaluate the condition string from config
+     *
+     * @param string $condition
+     * @return string
      */
-    private function parseTaskCondition($condition = '')
+    private function parseTaskCondition ($condition = '')
     {
         $res = $this->expLang->evaluate(
                 $condition,
@@ -164,7 +169,7 @@ class CreateCommand extends Command
     /**
      * @param array $taskConfig
      */
-    private function parseTaskConfig(array $taskConfig = [])
+    private function parseTaskConfig (array $taskConfig = [])
     {
         array_walk_recursive(
             $taskConfig,
@@ -193,12 +198,13 @@ class CreateCommand extends Command
 
     /**
      * debug output for task options, project runtime config or both
+     *
      * @param array $array
      * @param string $path
      * @param int $depth
      * @param string $type
      */
-    private function debug($array=[], $path='', $depth=-1, $type='print') {
+    private function debug ($array=[], $path='', $depth=-1, $type='print') {
 
         // get ary value by path
         if (isset($path)) {
@@ -238,7 +244,7 @@ class CreateCommand extends Command
      * @param array $array
      * @return array|mixed
      */
-    private function arrayPathValue( $path, array $data ) {
+    private function arrayPathValue ( $path, array $data ) {
         $paths = explode(".", $path);
 
         // iterate over path and data array
@@ -255,7 +261,7 @@ class CreateCommand extends Command
      * @param int $maxLevel
      * @return array
      */
-    private function arrayReduce($array, $maxLevel = -1) {
+    private function arrayReduce ($array, $maxLevel = -1) {
 
         // if no max level is set return whole array
         if ($maxLevel == -1)
