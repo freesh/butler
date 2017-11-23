@@ -49,12 +49,15 @@ For example:
 
 Parameter "neos-base" stands for NeosBase project and is configures in NeosBaseProject.php/yaml
 
-```butler project:create neos-base```
+```butler project:run neos-base```
 
 Execute just some specific tasks: --task or -t
 
-```butler project:create neos-base --task="my task1 key" --task="my task4 key"```
+```butler project:run neos-base --task="my task1 key" --task="my task4 key"```
 
+Execute with special path for butler files (default: ~/Butler)
+
+```butler project:run neos-base --task="./Build/Butler"```
 
 **Help:**
 

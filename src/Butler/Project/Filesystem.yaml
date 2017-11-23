@@ -1,0 +1,147 @@
+touch:
+  class: \Butler\Task\FilesystemTask
+  task: touch
+  options:
+    files: test.txt
+    time: null
+    atime: null
+
+copy:
+  class: \Butler\Task\FilesystemTask
+  task: copy
+  options:
+    originFile: test.txt
+    targetFile: copy.txt
+    overwriteNewerFiles: false
+
+exists:
+  class: \Butler\Task\FilesystemTask
+  task: exists
+  options:
+    files: test.txt
+    condition: ''
+    action: ''
+
+mkdir:
+  class: \Butler\Task\FilesystemTask
+  task: mkdir
+  options:
+    dirs: testDir
+    mode: 493
+
+remove:
+  class: \Butler\Task\FilesystemTask
+  task: remove
+  options:
+    files: testDir
+
+'mkdir lala':
+  class: \Butler\Task\FilesystemTask
+  task: mkdir
+  options:
+    dirs: lala/ohohoh/huhuhu
+    mode: 493
+
+chmod:
+  class: \Butler\Task\FilesystemTask
+  task: chmod
+  options:
+    files: lala
+    mode: 511
+    umask: 0
+    recursive: true
+
+chown:
+  class: \Butler\Task\FilesystemTask
+  task: chown
+  options:
+    files: lala
+    user: leanferret
+    recursive: true
+
+chgrp:
+  class: \Butler\Task\FilesystemTask
+  task: chgrp
+  options:
+    files: lala
+    group: leanferret
+    recursive: true
+
+rename:
+  class: \Butler\Task\FilesystemTask
+  task: rename
+  options:
+    origin: lala
+    target: staff
+    overwrite: true
+
+symlink:
+  class: \Butler\Task\FilesystemTask
+  task: symlink
+  options:
+    originDir: staff
+    targetDir: symlink
+    copyOnWindows: true
+
+hardlink:
+  class: \Butler\Task\FilesystemTask
+  task: hardlink
+  options:
+    originFile: test.txt
+    targetFiles:
+      - hardlink
+      - hardlink2
+      - hardlink3
+
+readlink:
+  class: \Butler\Task\FilesystemTask
+  task: readlink
+  options:
+    path: symlink
+    canonicalize: true
+
+makePathRelative:
+  class: \Butler\Task\FilesystemTask
+  task: makePathRelative
+  options:
+    endPath: /Users/freesh/PhpstormProjects/butler/
+    startPath: /Users/freesh/PhpstormProjects/butler/testfolder
+
+mirror:
+  class: \Butler\Task\FilesystemTask
+  task: mirror
+  options:
+    originDir: staff
+    targetDir: lulu
+    iterator: null
+    options:
+      override: false
+      copy_on_windows: true
+      delete: true
+
+isAbsolutePath:
+  class: \Butler\Task\FilesystemTask
+  task: isAbsolutePath
+  options:
+    file: copy.txt
+
+tempnam:
+  class: \Butler\Task\FilesystemTask
+  task: tempnam
+  options:
+    dir: temp
+    prefix: tmp_
+
+dumpFile:
+  class: \Butler\Task\FilesystemTask
+  task: dumpFile
+  options:
+    filename: test.txt
+    content: 'dumped content... :)'
+
+appendToFile:
+  class: \Butler\Task\FilesystemTask
+  task: appendToFile
+  options:
+    filename: test.txt
+    content: 'appended content... :-)'

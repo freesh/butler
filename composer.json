@@ -1,6 +1,6 @@
 {
     "name": "leanferret/butler",
-    "description": "Taskmana",
+    "description": "A experimental task runner written in php and configurable over .yaml files.",
     "type": "project",
     "license": "MIT",
     "authors": [

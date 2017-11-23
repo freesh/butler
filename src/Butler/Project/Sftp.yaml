@@ -1,0 +1,43 @@
+Auth:
+  class: \Butler\Task\SftpTask
+  task: auth
+  options:
+    auth_method: rsa
+    rsa_private_file: ~/.ssh/id_rsa
+    rsa_private_password: '123456'
+    host: 00.000.000.000
+    port: '22'
+    timeout: '10'
+
+'Create folders':
+  class: \Butler\Task\SftpTask
+  task: mkdir
+  options:
+    dir:
+      - dirname/s1
+      - thisIsATest
+      - thisIsATesta/mimimi
+      - thisIsATests
+      - thisIsATestss
+
+'Delete folders':
+  class: \Butler\Task\SftpTask
+  task: delete
+  options:
+    target:
+      - thisIsATest
+      - thisIsATesta
+
+'Create Symlinks':
+  class: \Butler\Task\SftpTask
+  task: symlink
+  options:
+    links:
+      s1: dirname/s1
+      s2: dirname/s2
+
+List:
+  class: \Butler\Task\SftpTask
+  task: list
+  options:
+    path: .

@@ -91,6 +91,14 @@ class NeosTask extends AbstractTask
             $context = $config['options']['context'];
         }
 
+        if(!isset($config['options']['user'])) {
+            $config['options']['user'] = $this->setQuestion('<options=bold;bg=cyan>  ASK </> <fg=cyan>Username: </> ', null);
+        }
+
+        if (!isset($config['options']['password'])) {
+            $config['options']['password'] = $this->setQuestion('<options=bold;bg=cyan>  ASK </> <fg=cyan>Password: </> ', null);
+        }
+
         // execute command
         $this->execute('export FLOW_CONTEXT='. $context .' && ./flow user:create '. $config['options']['user'] .' '. $config['options']['password'] .' '. $config['options']['username'] . (!isset($config['options']['roles']) ? '' : ' --roles ' . implode(' ', $config['options']['roles'])) );
 
@@ -98,55 +106,62 @@ class NeosTask extends AbstractTask
 
 
     /**
+     * Import a site from a package
+     *
      * @param array $config
      */
     public function siteImport(array $config) {
-
         $context = 'Development';
-
-        // set context to Production
         if ( isset($config['options']['context'])) {
             $context = $config['options']['context'];
         }
-
-        // execute command
         $this->execute('export FLOW_CONTEXT='. $context .' && ./flow site:import --package-key '. $config['options']['package'] );
-
     }
 
 
     /**
+     * Create a site
+     *
      * @param array $config
      */
     public function siteCreate(array $config) {
-
         $context = 'Development';
-
-        // set context to Production
         if ( isset($config['options']['context'])) {
             $context = $config['options']['context'];
         }
-
-        // execute command
-        $this->execute('export FLOW_CONTEXT='. $context .' && ./flow site:create ' . ucfirst($config['options']['site-name']) .' '. ucwords($config['options']['package-key'],'.') );
-
+        $this->execute(
+            'export FLOW_CONTEXT='. $context .' && '
+            .'./flow site:create "' . ucfirst(
+                (isset($config['options']['site-name'])? $config['options']['site-name'] : $this->setQuestion('<options=bold;bg=cyan>  ASK </> <fg=cyan>Please add the site name: </> ', null))
+            ) .'" '
+            . ucwords(
+                (isset($config['options']['package-key'])? $config['options']['package-key'] : $this->setQuestion('<options=bold;bg=cyan>  ASK </> <fg=cyan>Please add the package key: </> ', null)),
+                '.'
+            )
+        );
     }
 
 
     /**
+     * kickstart a site package
+     *
      * @param array $config
      */
     public function kickstartSite(array $config) {
-
         $context = 'Development';
-
-        // set context to Production
         if ( isset($config['options']['context'])) {
             $context = $config['options']['context'];
         }
-
-        // execute command
-        $this->execute('export FLOW_CONTEXT='. $context .' && ./flow kickstart:site --package-key '. ucwords($config['options']['package-key'],'.') .' --site-name ' . ucfirst($config['options']['site-name']) );
-
+        $this->execute(
+            'export FLOW_CONTEXT='. $context .' && '
+            .'./flow kickstart:site '
+            .'--package-key ' . ucwords(
+                (isset($config['options']['package-key'])? $config['options']['package-key'] : $this->setQuestion('<options=bold;bg=cyan>  ASK </> <fg=cyan>Please add the package key: </> ', null)),
+                '.'
+            )
+            .' --site-name "' . ucfirst(
+                (isset($config['options']['site-name'])? $config['options']['site-name'] : $this->setQuestion('<options=bold;bg=cyan>  ASK </> <fg=cyan>Please add the site name: </> ', null))
+            ) .'"'
+        );
     }
 }
