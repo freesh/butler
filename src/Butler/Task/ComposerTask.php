@@ -48,7 +48,6 @@ class ComposerTask extends AbstractTask
      * @param array $config
      */
     public function remove(array $config) {
-        $this->execute('composer remove '.$config['package']);
+        $this->execute('composer remove '.$config['options']['package']);
     }
-
 }
