@@ -29,8 +29,9 @@ class ComposerTask extends AbstractTask
     /**
      * @param array $config
      */
-    public function create(array $config) {
-        $this->execute('composer create-project '. (!isset($config['options']['params'])? '' : implode(' ', $config['options']['params'])) .' '. $config['options']['distribution'].' '.$config['options']['tempPath'] );
+    public function create(array $config)
+    {
+        $this->execute('composer create-project '. (!isset($config['options']['params'])? '' : implode(' ', $config['options']['params'])) .' '. $config['options']['distribution'].' '.$config['options']['tempPath']);
         $this->fs->mirror($config['options']['tempPath'], './');
         $this->fs->remove($config['options']['tempPath']);
     }
@@ -39,15 +40,17 @@ class ComposerTask extends AbstractTask
     /**
      * @param array $config
      */
-    public function add(array $config) {
-        $this->execute('composer require '. (!isset($config['options']['params'])? '' : implode(' ', $config['options']['params'])) .' '. $config['options']['package'] );
+    public function add(array $config)
+    {
+        $this->execute('composer require '. (!isset($config['options']['params'])? '' : implode(' ', $config['options']['params'])) .' '. $config['options']['package']);
     }
 
 
     /**
      * @param array $config
      */
-    public function remove(array $config) {
+    public function remove(array $config)
+    {
         $this->execute('composer remove '.$config['options']['package']);
     }
 }

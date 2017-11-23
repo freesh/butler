@@ -27,7 +27,8 @@ class DeleteCommand extends Command
         $this->task('ls -la');
     }
 
-    protected function task($command) {
+    protected function task($command)
+    {
         $process = new Process($command);
         $process->setTimeout(600);
         $process->run();

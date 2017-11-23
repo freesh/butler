@@ -30,8 +30,9 @@ class GitTask extends AbstractTask
      * @param array $config
      * @return void
      */
-    public function init(array $config) {
-        $this->execute( 'git init' );
+    public function init(array $config)
+    {
+        $this->execute('git init');
     }
 
 
@@ -39,8 +40,9 @@ class GitTask extends AbstractTask
      * @param array $config
      * @return void
      */
-    public function add(array $config) {
-        $this->execute( 'git add ' . (!isset($config['options']['files'])? '*' : implode(' ', $config['options']['files'])) );
+    public function add(array $config)
+    {
+        $this->execute('git add ' . (!isset($config['options']['files'])? '*' : implode(' ', $config['options']['files'])));
     }
 
 
@@ -48,7 +50,8 @@ class GitTask extends AbstractTask
      * @param array $config
      * @return void
      */
-    public function ignore(array $config) {
+    public function ignore(array $config)
+    {
         $cmds = "";
 
         if (!$this->fs->exists('.gitignore')) {
@@ -58,10 +61,8 @@ class GitTask extends AbstractTask
                 $cmds .= $cmd . " \n";
             }
             // dump to file
-            $this->fs->dumpFile( '.gitignore', $cmds );
-
+            $this->fs->dumpFile('.gitignore', $cmds);
         } else {
-
             $cmds .= "\n";
 
             // load file
@@ -76,9 +77,8 @@ class GitTask extends AbstractTask
             }
 
             // append to file
-            $this->fs->appendToFile('.gitignore', $cmds );
+            $this->fs->appendToFile('.gitignore', $cmds);
         }
-
     }
 
 
@@ -86,7 +86,8 @@ class GitTask extends AbstractTask
      * @param array $config
      * @return void
      */
-    public function unignore(array $config) {
+    public function unignore(array $config)
+    {
         $cmds = "";
 
         if ($this->fs->exists('.gitignore')) {
@@ -103,8 +104,7 @@ class GitTask extends AbstractTask
             }
 
             // dump to file
-            $this->fs->dumpFile( '.gitignore', $cmds );
-
+            $this->fs->dumpFile('.gitignore', $cmds);
         }
     }
 
@@ -114,7 +114,8 @@ class GitTask extends AbstractTask
      * @param array $config
      * @return void
      */
-    public function ignoreEdit(array $config) {
+    public function ignoreEdit(array $config)
+    {
         $cmds = "";
 
         if ($this->fs->exists('.gitignore')) {
@@ -126,7 +127,7 @@ class GitTask extends AbstractTask
             foreach ($config['options']['replaces'] as $old => $new) {
 
                 // find in existing rows and replace
-                if ( $key = array_search($old, $file)) {
+                if ($key = array_search($old, $file)) {
                     $file[$key] = $new;
                 }
             }
@@ -137,8 +138,7 @@ class GitTask extends AbstractTask
             }
 
             // dump to file
-            $this->fs->dumpFile( '.gitignore', $cmds );
-
+            $this->fs->dumpFile('.gitignore', $cmds);
         }
     }
 
@@ -147,8 +147,9 @@ class GitTask extends AbstractTask
      * @param array $config
      * @return void
      */
-    public function commit(array $config) {
-        $this->execute( 'git commit -m "' . $config['options']['message'] .'"' );
+    public function commit(array $config)
+    {
+        $this->execute('git commit -m "' . $config['options']['message'] .'"');
     }
 
 
@@ -156,8 +157,10 @@ class GitTask extends AbstractTask
      * @param array $config
      * @return void
      */
-    public function remoteAdd(array $config) {
-        $this->execute( 'git remote add '
+    public function remoteAdd(array $config)
+    {
+        $this->execute(
+            'git remote add '
             . (!isset($config['options']['origin'])? 'origin' : $config['options']['origin'])
             .' '
             . (isset($config['options']['url'])? $config['options']['url'] : $this->setQuestion('<options=bold;bg=cyan>  ASK </> <fg=cyan>Please add your git remote url: </> ', null))
@@ -169,8 +172,10 @@ class GitTask extends AbstractTask
      * @param array $config
      * @return void
      */
-    public function push(array $config) {
-        $this->execute( 'git push '
+    public function push(array $config)
+    {
+        $this->execute(
+            'git push '
             . (!isset($config['options']['params'])? '' : implode(' ', $config['options']['params']))
             .' ' . (!isset($config['options']['origin'])? 'origin' : $config['options']['origin'])
             .' ' . $config['options']['branch']
@@ -182,13 +187,12 @@ class GitTask extends AbstractTask
      * @param array $config
      * @return void
      */
-    public function pull(array $config) {
-        $this->execute( 'git pull '
+    public function pull(array $config)
+    {
+        $this->execute(
+            'git pull '
             . (!isset($config['options']['origin'])? 'origin' : $config['options']['origin'])
             .' ' . $config['options']['branch']
         );
     }
-
-
-
 }

@@ -31,7 +31,8 @@ class FilesystemTask extends AbstractTask
      * task config:
      *
      */
-    public function copy(array $config) {
+    public function copy(array $config)
+    {
         $this->fs->copy(
             $config['options']['originFile'],
             $config['options']['targetFile'],
@@ -42,7 +43,8 @@ class FilesystemTask extends AbstractTask
     /**
      * @param array $config
      */
-    public function mkdir(array $config) {
+    public function mkdir(array $config)
+    {
         $this->fs->mkdir(
             $config['options']['dirs'],
             (isset($config['options']['mode']) ? $config['options']['mode'] : 0777)
@@ -53,14 +55,16 @@ class FilesystemTask extends AbstractTask
      * @param array $config
      * @return mixed
      */
-    public function exists(array $config) {
+    public function exists(array $config)
+    {
         return $this->fs->exists($config['options']['files']);
     }
 
     /**
      * @param array $config
      */
-    public function touch(array $config) {
+    public function touch(array $config)
+    {
         $this->fs->touch(
             $config['options']['files'],
             (isset($config['options']['time']) ? $config['options']['time'] : null),
@@ -72,7 +76,8 @@ class FilesystemTask extends AbstractTask
     /**
      * @param array $config
      */
-    public function remove(array $config) {
+    public function remove(array $config)
+    {
         $this->fs->remove($config['options']['files']);
     }
 
@@ -80,7 +85,8 @@ class FilesystemTask extends AbstractTask
     /**
      * @param array $config
      */
-    public function chmod(array $config){
+    public function chmod(array $config)
+    {
         $this->fs->chmod(
             $config['options']['files'],
             $config['options']['mode'],
@@ -93,7 +99,8 @@ class FilesystemTask extends AbstractTask
     /**
      * @param array $config
      */
-    public function chown(array $config) {
+    public function chown(array $config)
+    {
         $this->fs->chown(
             $config['options']['files'],
             $config['options']['user'],
@@ -104,7 +111,8 @@ class FilesystemTask extends AbstractTask
     /**
      * @param array $config
      */
-    public function chgrp(array $config) {
+    public function chgrp(array $config)
+    {
         $this->fs->chgrp(
             $config['options']['files'],
             $config['options']['group'],
@@ -115,7 +123,8 @@ class FilesystemTask extends AbstractTask
     /**
      * @param array $config
      */
-    public function rename(array $config) {
+    public function rename(array $config)
+    {
         $this->fs->rename(
             $config['options']['origin'],
             $config['options']['target'],
@@ -126,7 +135,8 @@ class FilesystemTask extends AbstractTask
     /**
      * @param array $config
      */
-    public function symlink(array $config) {
+    public function symlink(array $config)
+    {
         $this->fs->symlink(
             $config['options']['originDir'],
             $config['options']['targetDir'],
@@ -137,7 +147,8 @@ class FilesystemTask extends AbstractTask
     /**
      * @param array $config
      */
-    public function hardlink(array $config) {
+    public function hardlink(array $config)
+    {
         $this->fs->hardlink(
             $config['options']['originFile'],
             $config['options']['targetFiles']
@@ -152,7 +163,8 @@ class FilesystemTask extends AbstractTask
      *
      * @return string|null
      */
-    public function readlink(array $config) {
+    public function readlink(array $config)
+    {
         return $this->fs->readlink(
             $config['options']['path'],
             (isset($config['options']['canonicalize']) ? $config['options']['canonicalize'] : false)
@@ -167,7 +179,8 @@ class FilesystemTask extends AbstractTask
      *
      * @return string Path of target relative to starting path
      */
-    public function makePathRelative(array $config) {
+    public function makePathRelative(array $config)
+    {
         return $this->fs->makePathRelative(
             $config['options']['endPath'],
             $config['options']['startPath']
@@ -181,7 +194,8 @@ class FilesystemTask extends AbstractTask
      *
      * @throws IOException When file type is unknown
      */
-    public function mirror(array $config) {
+    public function mirror(array $config)
+    {
         $this->fs->mirror(
             $config['options']['originDir'],
             $config['options']['targetDir'],
@@ -198,7 +212,8 @@ class FilesystemTask extends AbstractTask
      *
      * @return bool
      */
-    public function isAbsolutePath(array $config) {
+    public function isAbsolutePath(array $config)
+    {
         return $this->fs->isAbsolutePath(
             $config['options']['file']
         );
@@ -212,7 +227,8 @@ class FilesystemTask extends AbstractTask
      *
      * @return string The new temporary filename (with path), or throw an exception on failure
      */
-    public function tempnam(array $config) {
+    public function tempnam(array $config)
+    {
         return $this->fs->tempnam(
             $config['options']['dir'],
             $config['options']['prefix']
@@ -226,7 +242,8 @@ class FilesystemTask extends AbstractTask
      *
      * @throws IOException If the file cannot be written to
      */
-    public function dumpFile(array $config) {
+    public function dumpFile(array $config)
+    {
         $this->fs->dumpFile(
             $config['options']['filename'],
             $config['options']['content']
@@ -240,7 +257,8 @@ class FilesystemTask extends AbstractTask
      *
      * @throws IOException If the file is not writable
      */
-    public function appendToFile(array $config) {
+    public function appendToFile(array $config)
+    {
         $this->fs->appendToFile(
             $config['options']['filename'],
             $config['options']['content']

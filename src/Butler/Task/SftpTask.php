@@ -19,7 +19,6 @@ class SftpTask extends AbstractTask
     public function __construct(InputInterface $input, OutputInterface $output, HelperSet $helperSet)
     {
         parent::__construct($input, $output, $helperSet);
-
     }
 
 
@@ -39,10 +38,9 @@ class SftpTask extends AbstractTask
      *  'rsa_private_file' => '~/.ssh/id_rsa', // string | optional default: ~/.ssh/id_rsa
      *  'rsa_private_password' => '{rsa_password}', // string | optional default: ~/.ssh/id_rsa
      */
-    public function auth(array $config) {
-
+    public function auth(array $config)
+    {
         try {
-
             if ($this->client === null) {
 
                 // connect
@@ -53,7 +51,7 @@ class SftpTask extends AbstractTask
                 );
 
                 // if username is empty
-                if(!isset($config['options']['username'])) {
+                if (!isset($config['options']['username'])) {
                     $config['options']['username'] = $this->setQuestion('<options=bold;bg=cyan>  ASK </> <fg=cyan>SSH User: </> ', null);
                 }
 
@@ -84,7 +82,7 @@ class SftpTask extends AbstractTask
                     default:
 
                         // if password is empty
-                        if(!isset($config['options']['password'])) {
+                        if (!isset($config['options']['password'])) {
                             $config['options']['password'] = $this->setQuestion('<options=bold;bg=cyan>  ASK </> <fg=cyan>SSH Password: </> ', null);
                         }
 
@@ -96,12 +94,9 @@ class SftpTask extends AbstractTask
                         }
                 }
             }
-
         } catch (Exception $e) {
-
             echo 'Sftp Exception: ',  $e->getMessage(), "\n";
         }
-
     }
 
     /**
@@ -109,8 +104,8 @@ class SftpTask extends AbstractTask
      * task options:
      * 'path' => '.' // string | optional default: ./
      */
-    public function list(array $config) {
-
+    public function list(array $config)
+    {
         try {
             $list = $this->client->nlist((isset($config['options']['path']) ? $config['options']['path'] : '.'));
             #$list = $this->client->rawlist((isset($config['options']['path']) ? $config['options']['path'] : '.'));
@@ -127,10 +122,8 @@ class SftpTask extends AbstractTask
                 }
             }
         } catch (Exception $e) {
-
             echo 'SFTP Exception: ',  $e->getMessage(), "\n";
         }
-
     }
 
     /**
@@ -144,8 +137,8 @@ class SftpTask extends AbstractTask
      *      'dir3'
      * ]
      */
-    public function mkdir(array $config) {
-
+    public function mkdir(array $config)
+    {
         try {
             $path = $config['options']['dir'];
 
@@ -165,7 +158,6 @@ class SftpTask extends AbstractTask
                 }
             }
         } catch (Exception $e) {
-
             echo 'SFTP Exception: ',  $e->getMessage(), "\n";
         }
     }
@@ -182,8 +174,8 @@ class SftpTask extends AbstractTask
      *      'dir2'
      * ]
      */
-    public function delete($config) {
-
+    public function delete($config)
+    {
         try {
             $path = $config['options']['target'];
 
@@ -196,9 +188,7 @@ class SftpTask extends AbstractTask
             foreach ($path as $target) {
                 $this->deleteTarget($target);
             }
-
         } catch (Exception $e) {
-
             echo 'SFTP Exception: ',  $e->getMessage(), "\n";
         }
     }
@@ -212,8 +202,8 @@ class SftpTask extends AbstractTask
      *      'file1' => 'target/file1'
      * ]
      */
-    public function symlink($config) {
-
+    public function symlink($config)
+    {
         try {
             // iterate over multible links
             foreach ($config['options']['links'] as $link => $target) {
@@ -241,9 +231,7 @@ class SftpTask extends AbstractTask
                     }
                 }
             }
-
         } catch (Exception $e) {
-
             echo 'SFTP Exception: ',  $e->getMessage(), "\n";
         }
     }
@@ -256,7 +244,8 @@ class SftpTask extends AbstractTask
      * @param $target
      * @throws \Exception
      */
-    private function deleteTarget($target) {
+    private function deleteTarget($target)
+    {
         if ($this->client->file_exists($target)) {
 
             // check if is dir or file
@@ -280,7 +269,6 @@ class SftpTask extends AbstractTask
                     throw new \Exception('Cannot delete '.$target.'! Please check file permissions');
                 }
             }
-
         } else {
             //echo 'File "'.$delpath.'" does not exist!';
         }
@@ -291,7 +279,8 @@ class SftpTask extends AbstractTask
      * @param $path
      * @return bool
      */
-    private function isEmptyDir($dir) {
+    private function isEmptyDir($dir)
+    {
 
         // if result is an array (dir) or false (file)
         if ($result = $this->client->nlist($dir)) {

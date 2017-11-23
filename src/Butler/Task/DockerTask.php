@@ -29,11 +29,11 @@ class DockerTask extends AbstractTask
     /**
      * @param array $config
      */
-    public function settings(array $config) {
+    public function settings(array $config)
+    {
 
         // load existing settings if exists and merge with new settings
-        if ( $this->fs->exists($config['options']['filename']))
-        {
+        if ($this->fs->exists($config['options']['filename'])) {
             try {
                 // parse yaml from file
                 $settings = $this->yaml::parse(file_get_contents($config['options']['filename']));
@@ -42,7 +42,7 @@ class DockerTask extends AbstractTask
                     $settings,
                     $config['options']['settings']
                 );
-            } catch ( \Symfony\Component\Yaml\Exception\ParseException $e) {
+            } catch (\Symfony\Component\Yaml\Exception\ParseException $e) {
                 // ToDo: refactor exeptionhandling
                 printf("Unable to parse the YAML string: %s", $e->getMessage());
             }
@@ -51,7 +51,7 @@ class DockerTask extends AbstractTask
         // dump settings to yaml and in the file
         $this->fs->dumpFile(
             $config['options']['filename'],
-            $this->yaml::dump($config['options']['settings'],20,2)
+            $this->yaml::dump($config['options']['settings'], 20, 2)
         );
     }
 
@@ -59,12 +59,11 @@ class DockerTask extends AbstractTask
      * creating a dockerfile
      * @param array $config
      */
-    public function dockerfile(array $config) {
-
+    public function dockerfile(array $config)
+    {
         $cmds = $this->parseDockerCmd($config['options']['cmd']);
 
-        $this->fs->dumpFile($config['options']['path'].'Dockerfile',$cmds);
-
+        $this->fs->dumpFile($config['options']['path'].'Dockerfile', $cmds);
     }
 
 
@@ -72,7 +71,8 @@ class DockerTask extends AbstractTask
      * @param array $config
      * @return string
      */
-    private function parseDockerCmd(array $config) {
+    private function parseDockerCmd(array $config)
+    {
         $cmds = '';
 
         // if $key === string && $value === string | render value as string
@@ -82,7 +82,6 @@ class DockerTask extends AbstractTask
         // if $key === int and $value === array assoc | recursive function call
 
         foreach ($config as $key => $cmd) {
-
             if (is_array($cmd)) {
                 /*
                  * 'RUN' => [
@@ -118,11 +117,9 @@ class DockerTask extends AbstractTask
                         ]
                     ]
                  */
-                elseif ( is_int($key) ) {
+                elseif (is_int($key)) {
                     $cmds .= $this->parseDockerCmd($cmd);
                 }
-
-
             } else { // 'FROM' => 'php:7-fpm-alpine'
 
                 // render
@@ -131,6 +128,4 @@ class DockerTask extends AbstractTask
         }
         return $cmds;
     }
-
-
 }

@@ -7,7 +7,6 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class FilesystemHelper extends Filesystem implements HelperInterface
 {
-
     protected $helperSet = null;
 
     /**
@@ -35,7 +34,8 @@ class FilesystemHelper extends Filesystem implements HelperInterface
      *
      * @return string The canonical name
      */
-    public function getName() {
+    public function getName()
+    {
         return 'filesystem';
     }
 }
