@@ -160,7 +160,7 @@ class GitTask extends AbstractTask
         $this->execute( 'git remote add '
             . (!isset($config['options']['origin'])? 'origin' : $config['options']['origin'])
             .' '
-            . $config['options']['url']
+            . (isset($config['options']['url'])? $config['options']['url'] : $this->setQuestion('<options=bold;bg=cyan>  ASK </> <fg=cyan>Please add your git remote url: </> ', null))
         );
     }
 
