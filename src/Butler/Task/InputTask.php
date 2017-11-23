@@ -14,16 +14,30 @@ class InputTask extends AbstractTask
      * @return array
      */
     public function question(array $config) {
-
         $answers = [];
         foreach ($config['options'] as $key => $question) {
             // print question and get answer
-            $response = $this->setQuestion('<options=bold;bg=cyan>  ASK </> <fg=cyan>'.$question.' :</> ', 'AcmeDemo');
-
+            $response = $this->setQuestion('<options=bold;bg=cyan>  ASK </> <fg=cyan>'.$question.' :</> ', '');
             // write the result to multidimensional array defines by a path string
             $answers = array_merge_recursive($this->pathToArray($key, $response), $answers);
         }
+        return $answers;
+    }
 
+    /**
+     * output multible questions from type: confirmation and return the answer to the given variable
+     *
+     * @param array $config
+     * @return array
+     */
+    public function confirmation(array $config) {
+        $answers = [];
+        foreach ($config['options'] as $key => $question) {
+            // print question and get answer
+            $response = $this->setQuestion('<options=bold;bg=cyan>  ASK </> <fg=cyan>'.$question.':</> (y/n)(default:y): ', true, 'confirmation');
+            // write the result to multidimensional array defines by a path string
+            $answers = array_merge_recursive($this->pathToArray($key, $response), $answers);
+        }
         return $answers;
     }
 
