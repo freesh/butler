@@ -1,0 +1,27 @@
+'set github auth token':
+  class: \Butler\Task\InputTask
+  task: question
+  options:
+    githubtoken: 'Gihub Auth token:'
+
+'github Auth':
+  class: \Butler\Task\GithubTask
+  task: auth
+  options:
+    token: '{githubtoken}'
+
+'create repository':
+  class: \Butler\Task\GithubTask
+  task: repositoryCreate
+  options:
+    name: butler-test-repo
+    description: 'This is a test :) '
+    homepage: ''
+    public: false
+
+'remove repository':
+  class: \Butler\Task\GithubTask
+  task: repositoryRemove
+  options:
+    user: freesh
+    name: butler-test-repo

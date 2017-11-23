@@ -12,36 +12,34 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class RunCommand extends Command
 {
-    protected $expLang; // ExpressionLanguage
+    /**
+     * @var ExpressionLanguage
+     */
+    protected $expLang;
     /**
      * @var OutputInterface
      */
     protected $output;
-
     /**
      * @var InputInterface
      */
     protected $input;
-
     /**
-     * Array with the project tasks
+     * Project tasks array
      *
      * @var array
      */
     private $projectTasks = [];
-
     /**
-     * Runtime project config array
+     * Project runtime config array
      *
      * @var array
      */
     private $projectConfig = [];
-
     /**
      * @var array
      */
     protected $taskObjects = [];
-
 
     public function __construct($name = null)
     {
@@ -57,6 +55,7 @@ class RunCommand extends Command
         $this->setDescription('Run Tasks.');
         $this->addArgument('project type', InputArgument::REQUIRED);
         $this->addOption('task', 't', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Execute only this task(s)', []);
+        $this->addOption('projectPath', null, InputOption::VALUE_REQUIRED, 'Alternative path to project.yaml directory', []);
     }
 
 
@@ -71,9 +70,14 @@ class RunCommand extends Command
     {
         $this->output = $output;
         $this->input = $input;
+        if (!empty($input->getOption('projectPath')))
+            $localButlerPath = $this->getLocalButlerPath($input->getOption('projectPath'));
+        else
+            $localButlerPath = $this->getLocalButlerPath('~/Butler');
+
         $this->projectTasks = $this->loadConfigYamlFile(
-            '../src/Butler/Project/' . $this->stringToClassName(
-                $input->getArgument('project type')
+            $localButlerPath . '/Project/' . $this->stringToClassName(
+            $input->getArgument('project type')
             ) . '.yaml'
         );
         $this->reduceTasks($input->getOption('task'));
@@ -106,8 +110,7 @@ class RunCommand extends Command
                 if (isset($config['debug']) && $config['debug'] == true) {
                     $this->debug(
                         [
-                            'project' => $this->projectConfig,
-                            'options' => $taskOptions
+                            'project' => $this->projectConfig, 'options' => $taskOptions
                         ],
                         (isset($config['debug-path']) ? $config['debug-path'] : ''),
                         (isset($config['debug-depth']) ? $config['debug-depth'] : -1),
@@ -229,8 +232,10 @@ class RunCommand extends Command
      */
     private function loadConfigYamlFile($filepath)
     {
-        return
-            YamlHelper::parse(file_get_contents($filepath));
+        if (!file_exists($filepath)) {
+            throw new \Exception('Project config file could not be loaded! "'.$filepath.'"');
+        }
+        return YamlHelper::parse(file_get_contents($filepath));
     }
 
 
@@ -262,7 +267,7 @@ class RunCommand extends Command
 
         // to max depth level
         $array = $this->arrayLevelReduce($array, $depth);
-        if ($type == 'export') {
+        if ($type === 'export') {
             var_export($array);
         } else {
             $this->recursive_print('debug', $array);
@@ -315,7 +320,7 @@ class RunCommand extends Command
     private function arrayLevelReduce ($array, $maxLevel = -1)
     {
         // if no max level is set return whole array
-        if ($maxLevel == -1)
+        if ($maxLevel === -1)
             return $array;
         // reduce if max level is set // ToDO: refactor! this shit works very poor
         $arrayReduced = [];
@@ -329,5 +334,20 @@ class RunCommand extends Command
             }
         }
         return $arrayReduced;
+    }
+
+    /**
+     * Replace ~ in $path with the absolute user path
+     *
+     * @param $path
+     * @return mixed
+     */
+    private function getLocalButlerPath($path)
+    {
+        if (function_exists('posix_getuid') && strpos($path, '~') !== false) {
+            $userInfo = posix_getpwuid(posix_getuid());
+            return str_replace('~', $userInfo['dir'], $path);
+        }
+        return $path;
     }
 }

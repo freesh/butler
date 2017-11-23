@@ -1,0 +1,206 @@
+'set project data':
+  class: \Butler\Task\InputTask
+  task: question
+  options:
+    projectname: 'What is the name of your Project?'
+    projectvendor: 'What is the vendor name of your Project?'
+
+'Composer create':
+  class: \Butler\Task\ComposerTask
+  task: create
+  options:
+    distribution: neos/neos-base-distribution
+    tempPath: temp
+    params:
+      - '--no-dev'
+
+'Composer require':
+  class: \Butler\Task\ComposerTask
+  task: add
+  options:
+    package: 'packagefactory/atomicfusion packagefactory/atomicfusion-afx:~3.0.0 sitegeist/monocle'
+
+'Composer require-dev':
+  class: \Butler\Task\ComposerTask
+  task: add
+  options:
+    package: 'sitegeist/magicwand:dev-master sitegeist/neosguidelines'
+    params:
+      - '--dev'
+
+'Neos dev settings':
+  class: \Butler\Task\NeosTask
+  task: settings
+  options:
+    filename: Configuration/Development/Settings.yaml
+    settings:
+      Neos:
+        Flow:
+          persistence:
+            backendOptions:
+              dbname: application
+              user: toor
+              password: toor
+              host: 0.0.0.0
+              port: 8086
+
+'Neos global settings':
+  class: \Butler\Task\FilesystemTask
+  task: copy
+  options:
+    originFile: Configuration/Settings.yaml.example
+    targetFile: Configuration/Settings.yaml
+
+'Docker create docker-compose.yml':
+  class: \Butler\Task\NeosTask
+  task: settings
+  options:
+    filename: docker-compose.yml
+    settings:
+      version: '2'
+      services:
+        db:
+          image: 'mysql:5.7'
+          volumes:
+            - './Data/Docker/Database:/var/lib/mysql'
+          restart: always
+          ports:
+            - '8086:3306'
+          command:
+            - '--character-set-server=utf8'
+            - '--collation-server=utf8_unicode_ci'
+          environment:
+            MYSQL_ROOT_PASSWORD: toor
+            MYSQL_DATABASE: application
+            MYSQL_USER: toor
+            MYSQL_PASSWORD: toor
+        phpmyadmin:
+          image: phpmyadmin/phpmyadmin
+          environment:
+            - PMA_HOST=db
+            - PMA_PORT=3306
+            - PMA_USER=toor
+            - PMA_PASSWORD=toor
+          restart: always
+          ports:
+            - '8082:80'
+          volumes:
+            - /sessions
+
+'Docker init dockerfile':
+  class: \Butler\Task\DockerTask
+  task: dockerfile
+  options:
+    path: Build/Docker/
+    cmd:
+      FROM: 'php:7-fpm-alpine'
+      ENV: 'IMAGICK_VERSION 3.4.1'
+      RUN: 'docker-php-ext-install pdo pdo_mysql gd'
+      0:
+        RUN:
+          - 'apk add --no-cache bash imagemagick-dev ssmtp libtool autoconf gcc g++ make'
+          - 'pecl install imagick-$IMAGICK_VERSION'
+          - 'echo "extension=imagick.so" > /usr/local/etc/php/conf.d/ext-imagick.ini'
+          - 'apk del libtool autoconf gcc g++ make'
+
+'Docker docker-compose up':
+  class: \Butler\Task\CommandTask
+  task: command
+  options:
+    command: 'docker-compose up -d'
+
+'Docker waiting for database':
+  class: \Butler\Task\CommandTask
+  task: command
+  options:
+    command: 'while ! mysqladmin ping -h0.0.0.0 --port=8086 --silent; do sleep 1 ;done'
+
+'Neos migrate database':
+  class: \Butler\Task\NeosTask
+  task: doctrineMigrate
+  options:
+    context: Development
+
+'Neos create admin':
+  class: \Butler\Task\NeosTask
+  task: createUser
+  options:
+    context: Development
+    #user: admin
+    #password: admin
+    username: 'King Loui'
+    roles:
+      - 'Neos.Neos:Administrator'
+
+'Neos import demo':
+  class: \Butler\Task\NeosTask
+  task: siteImport
+  options:
+    context: Development
+    package: Neos.Demo
+
+'Neos kickstart site':
+  class: \Butler\Task\NeosTask
+  task: kickstartSite
+  options:
+    context: Development
+    package-key: '{projectvendor}.Site'
+    site-name: '{projectname}'
+
+'Neos create site':
+  class: \Butler\Task\NeosTask
+  task: siteCreate
+  options:
+    context: Development
+    #package-key: '{projectvendor}.Site'
+    package-key: 'Neos.Demo'
+    site-name: '{projectname}'
+
+'docker-compose down':
+  class: \Butler\Task\CommandTask
+  task: command
+  options:
+    command: 'docker-compose down'
+
+'git init':
+  class: \Butler\Task\GitTask
+  task: init
+  options: {  }
+
+'git ignoreEdit':
+  class: \Butler\Task\GitTask
+  task: ignoreEdit
+  options:
+    replaces:
+      /Packages/: '/Packages/*'
+
+'git ignore':
+  class: \Butler\Task\GitTask
+  task: ignore
+  options:
+    files:
+      - 'Build/*'
+      - '!/Build/Docker/'
+      - '!/Packages/Sites/'
+
+'git add':
+  class: \Butler\Task\GitTask
+  task: add
+  options:
+    files:
+      - '*'
+      - .gitignore
+
+'git commit':
+  class: \Butler\Task\GitTask
+  task: commit
+  options:
+    message: 'initial commit'
+
+'The End :)':
+  class: \Butler\Task\InputTask
+  task: writelines
+  options:
+    command: Finished
+    0: 'Run docker-compose up'
+    1: 'Run ./flow server:run'

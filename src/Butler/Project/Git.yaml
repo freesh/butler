@@ -1,0 +1,65 @@
+init:
+  class: \Butler\Task\GitTask
+  task: init
+  options: {  }
+
+ignoreEdit:
+  class: \Butler\Task\GitTask
+  task: ignoreEdit
+  options:
+    replaces:
+      /Packages/: '/Packages/*'
+
+ignore:
+  class: \Butler\Task\GitTask
+  task: ignore
+  options:
+    files:
+      - 'Build/*'
+      - '!/Build/Docker/'
+      - '!/Packages/Sites/'
+
+unignore:
+  class: \Butler\Task\GitTask
+  task: unignore
+  options:
+    files:
+      - Build/
+      - Readme.rst
+
+add:
+  class: \Butler\Task\GitTask
+  task: add
+  options:
+    files:
+      - '*'
+      - .gitignore
+
+commit:
+  class: \Butler\Task\GitTask
+  task: commit
+  options:
+    message: 'initial commit'
+
+'add remote':
+  class: \Butler\Task\GitTask
+  task: remoteAdd
+  options:
+    origin: origin
+    url: 'git@github.com:freesh/butlertest.git'
+
+push:
+  class: \Butler\Task\GitTask
+  task: push
+  options:
+    params:
+      - '-u'
+    origin: origin
+    branch: master
+
+pull:
+  class: \Butler\Task\GitTask
+  task: pull
+  options:
+    origin: origin
+    branch: master
