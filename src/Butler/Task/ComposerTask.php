@@ -12,10 +12,11 @@ class ComposerTask extends AbstractTask
     /**
      * @var \Butler\Helper\FilesystemHelper
      */
-    protected $fs;
+    protected $fileSystem;
 
     /**
      * FilesystemTask constructor.
+     *
      * @param InputInterface $input
      * @param OutputInterface $output
      * @param HelperSet $helperSet
@@ -23,30 +24,45 @@ class ComposerTask extends AbstractTask
     public function __construct(InputInterface $input, OutputInterface $output, HelperSet $helperSet)
     {
         parent::__construct($input, $output, $helperSet);
-        $this->fs = $this->helperSet->get('filesystem'); // init filesystem helper
+        $this->fileSystem = $this->helperSet->get('filesystem'); // init filesystem helper
     }
 
     /**
+     * Execute composer create in a temp folder, mv all up and delete temp folder if command is ready
+     *
      * @param array $config
      */
     public function create(array $config)
     {
-        $this->execute('composer create-project '. (!isset($config['options']['params'])? '' : implode(' ', $config['options']['params'])) .' '. $config['options']['distribution'].' '.$config['options']['tempPath']);
-        $this->fs->mirror($config['options']['tempPath'], './');
-        $this->fs->remove($config['options']['tempPath']);
+        $this->execute(
+            'composer create-project '
+            . (!isset($config['options']['params']) ? '' : implode(' ', $config['options']['params']))
+            .' '. $config['options']['distribution']
+            .' '.$config['options']['tempPath']
+        );
+        $this->fileSystem->mirror($config['options']['tempPath'], './');
+        $this->fileSystem->remove($config['options']['tempPath']);
     }
 
 
     /**
+     * Add packages
+     *
      * @param array $config
      */
     public function add(array $config)
     {
-        $this->execute('composer require '. (!isset($config['options']['params'])? '' : implode(' ', $config['options']['params'])) .' '. $config['options']['package']);
+        $this->execute(
+            'composer require '
+            . (!isset($config['options']['params'])? '' : implode(' ', $config['options']['params']))
+            .' '. $config['options']['package']
+        );
     }
 
 
     /**
+     * Remove packages
+     *
      * @param array $config
      */
     public function remove(array $config)

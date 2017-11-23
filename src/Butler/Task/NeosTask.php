@@ -15,10 +15,11 @@ class NeosTask extends AbstractTask
     /**
      * @var \Butler\Helper\FilesystemHelper
      */
-    protected $fs;
+    protected $fileSystem;
 
     /**
      * FilesystemTask constructor.
+     *
      * @param InputInterface $input
      * @param OutputInterface $output
      * @param HelperSet $helperSet
@@ -27,7 +28,7 @@ class NeosTask extends AbstractTask
     {
         parent::__construct($input, $output, $helperSet);
         $this->yaml = $this->helperSet->get('yaml'); // init filesystem helper
-        $this->fs = $this->helperSet->get('filesystem'); // init filesystem helper
+        $this->fileSystem = $this->helperSet->get('filesystem'); // init filesystem helper
     }
 
 
@@ -36,9 +37,8 @@ class NeosTask extends AbstractTask
      */
     public function settings(array $config)
     {
-
         // load existing settings if exists and merge with new settings
-        if ($this->fs->exists($config['options']['filename'])) {
+        if ($this->fileSystem->exists($config['options']['filename'])) {
             try {
                 // parse yaml from file
                 $settings = $this->yaml::parse(file_get_contents($config['options']['filename']));
@@ -52,9 +52,8 @@ class NeosTask extends AbstractTask
                 printf("Unable to parse the YAML string: %s", $e->getMessage());
             }
         }
-
         // dump settings to yaml and in the file
-        $this->fs->dumpFile(
+        $this->fileSystem->dumpFile(
             $config['options']['filename'],
             $this->yaml::dump($config['options']['settings'], 20, 2)
         );
@@ -67,12 +66,10 @@ class NeosTask extends AbstractTask
     public function doctrineMigrate(array $config)
     {
         $context = 'Development';
-
         // set context to Production
         if (isset($config['options']['context'])) {
             $context = $config['options']['context'];
         }
-
         // execute command
         $this->execute('export FLOW_CONTEXT='. $context .' && ./flow doctrine:migrate');
     }
@@ -84,20 +81,16 @@ class NeosTask extends AbstractTask
     public function createUser(array $config)
     {
         $context = 'Development';
-
         // set context to Production
         if (isset($config['options']['context'])) {
             $context = $config['options']['context'];
         }
-
         if (!isset($config['options']['user'])) {
             $config['options']['user'] = $this->setQuestion('<options=bold;bg=cyan>  ASK </> <fg=cyan>Username: </> ', null);
         }
-
         if (!isset($config['options']['password'])) {
             $config['options']['password'] = $this->setQuestion('<options=bold;bg=cyan>  ASK </> <fg=cyan>Password: </> ', null);
         }
-
         // execute command
         $this->execute('export FLOW_CONTEXT='. $context .' && ./flow user:create '. $config['options']['user'] .' '. $config['options']['password'] .' '. $config['options']['username'] . (!isset($config['options']['roles']) ? '' : ' --roles ' . implode(' ', $config['options']['roles'])));
     }

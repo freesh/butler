@@ -16,6 +16,13 @@ class SftpTask extends AbstractTask
      */
     private $client = null;
 
+    /**
+     * SftpTask constructor.
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @param HelperSet $helperSet
+     */
     public function __construct(InputInterface $input, OutputInterface $output, HelperSet $helperSet)
     {
         parent::__construct($input, $output, $helperSet);
@@ -42,23 +49,19 @@ class SftpTask extends AbstractTask
     {
         try {
             if ($this->client === null) {
-
                 // connect
                 $this->client = new SFTP(
                     $config['options']['host'],
                     (!isset($config['options']['port']) ? '22' : $config['options']['port']),
                     (!isset($config['options']['timeout']) ? null : $config['options']['timeout'])
                 );
-
                 // if username is empty
                 if (!isset($config['options']['username'])) {
                     $config['options']['username'] = $this->setQuestion('<options=bold;bg=cyan>  ASK </> <fg=cyan>SSH User: </> ', null);
                 }
-
                 // auth
                 switch ((!isset($config['options']['auth_method']) ? 'default' : $config['options']['auth_method'])) {
                     case 'rsa':
-
                         // load private key
                         $key = new RSA();
                         $key->setPassword($config['options']['rsa_private_password']);
@@ -67,7 +70,6 @@ class SftpTask extends AbstractTask
                                 (!isset($config['options']['rsa_private_file']) ? '~/.ssh/id_rsa' : $config['options']['rsa_private_file'])
                             )
                         ));
-
                         // login
                         if (!$this->client->login(
                             $config['options']['username'],
@@ -75,17 +77,13 @@ class SftpTask extends AbstractTask
                         )) {
                             throw new \Exception('Cannot login into your server with rsa !');
                         }
-
                         break;
-
                     case 'userpw':
                     default:
-
                         // if password is empty
                         if (!isset($config['options']['password'])) {
                             $config['options']['password'] = $this->setQuestion('<options=bold;bg=cyan>  ASK </> <fg=cyan>SSH Password: </> ', null);
                         }
-
                         if (!$this->client->login(
                             $config['options']['username'],
                             (!isset($config['options']['password']) ? null : $config['options']['password'])
@@ -141,12 +139,10 @@ class SftpTask extends AbstractTask
     {
         try {
             $path = $config['options']['dir'];
-
             // if dir is string put it in an array
             if (!is_array($path)) {
                 $path = array($path);
             }
-
             // iterate over multible dirs
             foreach ($path as $dir) {
                 if (!$this->client->file_exists($dir)) {
@@ -178,12 +174,10 @@ class SftpTask extends AbstractTask
     {
         try {
             $path = $config['options']['target'];
-
             // if target is string put it in an array
             if (!is_array($path)) {
                 $path = array($path);
             }
-
             // iterate over multible targets
             foreach ($path as $target) {
                 $this->deleteTarget($target);
@@ -207,7 +201,6 @@ class SftpTask extends AbstractTask
         try {
             // iterate over multible links
             foreach ($config['options']['links'] as $link => $target) {
-
                 // check if file or link does not exist
                 if (!$this->client->file_exists($link) && !$this->client->is_link($link)) {
                     // create symlink
@@ -221,7 +214,6 @@ class SftpTask extends AbstractTask
                         true,
                         'confirmation'
                     )) {
-
                         // delete existing link
                         $this->deleteTarget($link);
                         // create symlink
@@ -238,8 +230,6 @@ class SftpTask extends AbstractTask
 
 
 
-
-
     /**
      * @param $target
      * @throws \Exception
@@ -247,10 +237,8 @@ class SftpTask extends AbstractTask
     private function deleteTarget($target)
     {
         if ($this->client->file_exists($target)) {
-
             // check if is dir or file
             if (!$this->client->is_link($target) && !$this->isEmptyDir($target)) {
-
                 // get confirmation to delete not empty folder
                 if ($this->setQuestion(
                     '<options=bold;bg=cyan>  ASK </> <fg=cyan>"'.$target .'" is a dir and not empty. Delete recursively? (y/n): </> ',
@@ -263,7 +251,6 @@ class SftpTask extends AbstractTask
                     }
                 }
             } else {
-
                 // delete file or dir with just . and .. in it.
                 if (!$this->client->delete($target, true)) {
                     throw new \Exception('Cannot delete '.$target.'! Please check file permissions');
@@ -276,47 +263,44 @@ class SftpTask extends AbstractTask
 
     /**
      * returns true if $dir ist an empty dir or a file
+     *
      * @param $path
      * @return bool
      */
     private function isEmptyDir($dir)
     {
-
         // if result is an array (dir) or false (file)
         if ($result = $this->client->nlist($dir)) {
             return empty(
-            array_diff(
-                $result,
-                ['.','..']
-            )
+                array_diff(
+                    $result,
+                    ['.','..']
+                )
             );
         }
-
         // $path looks like a file
         return true;
     }
 
     /**
      * replace ~ with absolute user path
+     *
      * @param $path
      * @return mixed
      */
     private function getRsaPrivateKey($path)
     {
-
         // replace ~ with user path
         if (function_exists('posix_getuid') && strpos($path, '~') !== false) {
             $userinfo = posix_getpwuid(posix_getuid());
             $path = str_replace('~', $userinfo['dir'], $path);
         }
-
         // if file does not exist: ask for new path. :)
         if (!file_exists($path)) {
             $path = $this->getRsaPrivateKey(
                 $this->setQuestion('<options=bold;bg=cyan>  ASK </> <fg=cyan>RSA private key file not found! Please add again, or try with absolute path: </> ', null)
             );
         }
-
         return $path;
     }
 }

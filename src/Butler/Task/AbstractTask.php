@@ -36,7 +36,6 @@ abstract class AbstractTask
      */
     protected $config = [];
 
-
     /**
      * AbstractTask constructor
      * @param InputInterface $input
@@ -59,7 +58,6 @@ abstract class AbstractTask
     protected function setQuestion($question = '', $default = '', $type = 'question', $choices = array())
     {
         $helper = $this->getHelper('question');
-
         switch ($type) {
             case 'confirmation':
                 if ($default == '') {
@@ -77,9 +75,7 @@ abstract class AbstractTask
             default:
                 $question = new Question($question, $default);
         }
-
         $bundle = $helper->ask($this->input, $this->output, $question);
-
         return $bundle;
     }
 
@@ -90,27 +86,21 @@ abstract class AbstractTask
     protected function execute($command)
     {
         $processHelper = $this->getHelper('process');
-
         $process = new Process($command);
         $process->setTimeout(600);
-
         $processHelper->run($this->output, $process);
-
-
         // executes after the command finishes
         if (!$process->isSuccessful()) {
             $this->output->writeln('<error><options=bold;bg=red>  ERR </></error> <fg=red>"' . $command . '" is too drunk to work. Please run butler command with -v, -vv, or -vvv for more information.</>');
             if ($this->output->isVerbose()) {
                 $this->output->writeln('<fg=black;bg=white>'.$process->getErrorOutput().'</>');
             }
-
             #throw new ProcessFailedException($process);
         } else {
             if ($this->output->isVerbose()) {
                 $this->output->writeln('<options=bold;bg=green>  OK  </> <comment>"' . $command . '</comment>');
             }
         }
-
         #return $process->getOutput();
     }
 
