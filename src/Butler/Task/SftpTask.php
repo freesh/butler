@@ -1,4 +1,5 @@
 <?php
+
 namespace Butler\Task;
 
 use Symfony\Component\Console\Helper\HelperSet;
@@ -57,7 +58,10 @@ class SftpTask extends AbstractTask
                 );
                 // if username is empty
                 if (!isset($config['options']['username'])) {
-                    $config['options']['username'] = $this->setQuestion('<options=bold;bg=cyan>  ASK </> <fg=cyan>SSH User: </> ', null);
+                    $config['options']['username'] = $this->setQuestion(
+                        '<options=bold;bg=cyan>  ASK </> <fg=cyan>SSH User: </> ',
+                        null
+                    );
                 }
                 // auth
                 switch ((!isset($config['options']['auth_method']) ? 'default' : $config['options']['auth_method'])) {
@@ -82,7 +86,10 @@ class SftpTask extends AbstractTask
                     default:
                         // if password is empty
                         if (!isset($config['options']['password'])) {
-                            $config['options']['password'] = $this->setQuestion('<options=bold;bg=cyan>  ASK </> <fg=cyan>SSH Password: </> ', null);
+                            $config['options']['password'] = $this->setQuestion(
+                                '<options=bold;bg=cyan>  ASK </> <fg=cyan>SSH Password: </> ',
+                                null
+                            );
                         }
                         if (!$this->client->login(
                             $config['options']['username'],
@@ -93,7 +100,7 @@ class SftpTask extends AbstractTask
                 }
             }
         } catch (Exception $e) {
-            echo 'Sftp Exception: ',  $e->getMessage(), "\n";
+            echo 'Sftp Exception: ', $e->getMessage(), "\n";
         }
     }
 
@@ -114,13 +121,13 @@ class SftpTask extends AbstractTask
                 } else {
                     $this->output->writeln($id);
                     foreach ($item as $key => $value) {
-                        $this->output->write(''.$key.':'.$value);
+                        $this->output->write('' . $key . ':' . $value);
                     }
                     $this->output->writeln('');
                 }
             }
         } catch (Exception $e) {
-            echo 'SFTP Exception: ',  $e->getMessage(), "\n";
+            echo 'SFTP Exception: ', $e->getMessage(), "\n";
         }
     }
 
@@ -147,14 +154,14 @@ class SftpTask extends AbstractTask
             foreach ($path as $dir) {
                 if (!$this->client->file_exists($dir)) {
                     if (!$this->client->mkdir($dir, -1, true)) {
-                        throw new \Exception('Cannot create directory "'.$dir.'"! Please check file permissions');
+                        throw new \Exception('Cannot create directory "' . $dir . '"! Please check file permissions');
                     }
                 } else {
-                    $this->output->writeln('Directory "'.$dir.'" already exist!');
+                    $this->output->writeln('Directory "' . $dir . '" already exist!');
                 }
             }
         } catch (Exception $e) {
-            echo 'SFTP Exception: ',  $e->getMessage(), "\n";
+            echo 'SFTP Exception: ', $e->getMessage(), "\n";
         }
     }
 
@@ -183,7 +190,7 @@ class SftpTask extends AbstractTask
                 $this->deleteTarget($target);
             }
         } catch (Exception $e) {
-            echo 'SFTP Exception: ',  $e->getMessage(), "\n";
+            echo 'SFTP Exception: ', $e->getMessage(), "\n";
         }
     }
 
@@ -205,12 +212,12 @@ class SftpTask extends AbstractTask
                 if (!$this->client->file_exists($link) && !$this->client->is_link($link)) {
                     // create symlink
                     if (!$this->client->symlink($target, $link)) {
-                        throw new \Exception('Cannot create symlink "'.$link.'"! Please check file permissions');
+                        throw new \Exception('Cannot create symlink "' . $link . '"! Please check file permissions');
                     }
                 } else {
                     // get confirmation to delete existing link, file or folder
                     if ($this->setQuestion(
-                        '<options=bold;bg=cyan>  ASK </> <fg=cyan>"'.$link .'" already exist. Will you delete it and create symlink? (y/n): </> ',
+                        '<options=bold;bg=cyan>  ASK </> <fg=cyan>"' . $link . '" already exist. Will you delete it and create symlink? (y/n): </> ',
                         true,
                         'confirmation'
                     )) {
@@ -218,16 +225,15 @@ class SftpTask extends AbstractTask
                         $this->deleteTarget($link);
                         // create symlink
                         if (!$this->client->symlink($target, $link)) {
-                            throw new \Exception('Cannot create symlink "'.$link.'"! Please check file permissions');
+                            throw new \Exception('Cannot create symlink "' . $link . '"! Please check file permissions');
                         }
                     }
                 }
             }
         } catch (Exception $e) {
-            echo 'SFTP Exception: ',  $e->getMessage(), "\n";
+            echo 'SFTP Exception: ', $e->getMessage(), "\n";
         }
     }
-
 
 
     /**
@@ -241,19 +247,19 @@ class SftpTask extends AbstractTask
             if (!$this->client->is_link($target) && !$this->isEmptyDir($target)) {
                 // get confirmation to delete not empty folder
                 if ($this->setQuestion(
-                    '<options=bold;bg=cyan>  ASK </> <fg=cyan>"'.$target .'" is a dir and not empty. Delete recursively? (y/n): </> ',
+                    '<options=bold;bg=cyan>  ASK </> <fg=cyan>"' . $target . '" is a dir and not empty. Delete recursively? (y/n): </> ',
                     true,
                     'confirmation'
                 )) {
                     // delete recursive
                     if (!$this->client->delete($target, true)) {
-                        throw new \Exception('Cannot delete '.$target.'! Please check file permissions');
+                        throw new \Exception('Cannot delete ' . $target . '! Please check file permissions');
                     }
                 }
             } else {
                 // delete file or dir with just . and .. in it.
                 if (!$this->client->delete($target, true)) {
-                    throw new \Exception('Cannot delete '.$target.'! Please check file permissions');
+                    throw new \Exception('Cannot delete ' . $target . '! Please check file permissions');
                 }
             }
         } else {
@@ -298,7 +304,10 @@ class SftpTask extends AbstractTask
         // if file does not exist: ask for new path. :)
         if (!file_exists($path)) {
             $path = $this->getRsaPrivateKey(
-                $this->setQuestion('<options=bold;bg=cyan>  ASK </> <fg=cyan>RSA private key file not found! Please add again, or try with absolute path: </> ', null)
+                $this->setQuestion(
+                    '<options=bold;bg=cyan>  ASK </> <fg=cyan>RSA private key file not found! Please add again, or try with absolute path: </> ',
+                    null
+                )
             );
         }
         return $path;

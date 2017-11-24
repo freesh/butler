@@ -89,8 +89,7 @@ class DockerTask extends AbstractTask
                         }
                         $count++;
                     }
-                }
-                elseif (is_int($key)) {
+                } elseif (is_int($key)) {
                     $lines .= $this->parseDockerCmd($cmd);
                 }
             } else {

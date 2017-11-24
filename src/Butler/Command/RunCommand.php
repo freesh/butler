@@ -78,7 +78,7 @@ class RunCommand extends Command
 
         $this->projectTasks = $this->loadConfigYamlFile(
             $localButlerPath . '/Project/' . $this->stringToClassName(
-            $input->getArgument('project type')
+                $input->getArgument('project type')
             ) . '.yaml'
         );
         $this->reduceTasks($input->getOption('task'));
@@ -263,7 +263,7 @@ class RunCommand extends Command
      * @param int $depth
      * @param string $type
      */
-    private function debug($array=[], $path='', $depth=-1, $type='print')
+    private function debug($array = [], $path = '', $depth = -1, $type = 'print')
     {
         // get ary value by path
         if (isset($path)) {
@@ -275,7 +275,7 @@ class RunCommand extends Command
         if ($type === 'export') {
             var_export($array);
         } else {
-            $this->recursive_print('debug', $array);
+            $this->recursivePrint('debug', $array);
         }
     }
 
@@ -286,14 +286,15 @@ class RunCommand extends Command
      * @param $varname
      * @param $varval
      */
-    public function recursive_print($varname, $varval)
+    public function recursivePrint($varname, $varval)
     {
-        if (! is_array($varval)):
-            $this->output->writeln("<fg=red>".$varname . ": </> = " . $varval); else:
-            foreach ($varval as $key => $val):
-                $this->recursive_print($varname . "." . $key, $val);
-        endforeach;
-        endif;
+        if (! is_array($varval)) {
+            $this->output->writeln("<fg=red>" . $varname . ": </> = " . $varval);
+        } else {
+            foreach ($varval as $key => $val) {
+                $this->recursivePrint($varname . "." . $key, $val);
+            }
+        }
     }
 
     /**
