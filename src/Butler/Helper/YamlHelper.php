@@ -7,7 +7,6 @@ use Symfony\Component\Yaml\Yaml;
 
 class YamlHelper extends Yaml implements HelperInterface
 {
-
     protected $helperSet = null;
 
     /**
@@ -35,7 +34,8 @@ class YamlHelper extends Yaml implements HelperInterface
      *
      * @return string The canonical name
      */
-    public function getName() {
+    public function getName()
+    {
         return 'yaml';
     }
 
@@ -50,14 +50,10 @@ class YamlHelper extends Yaml implements HelperInterface
     public static function arrayMergeDistinct(array &$settings1, array &$settings2)
     {
         $merged = $settings1;
-        foreach ($settings2 as $key => &$value)
-        {
-            if (is_array($value) && isset($merged[$key]) && is_array($merged[$key]))
-            {
+        foreach ($settings2 as $key => &$value) {
+            if (is_array($value) && isset($merged[$key]) && is_array($merged[$key])) {
                 $merged[$key] = self::arrayMergeDistinct($merged[$key], $value);
-            }
-            else
-            {
+            } else {
                 $merged[$key] = $value;
             }
         }

@@ -14,8 +14,6 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
 
 use Symfony\Component\Process\ProcessBuilder;
 
-
-
 abstract class AbstractTask
 {
     /**
@@ -38,13 +36,12 @@ abstract class AbstractTask
      */
     protected $config = [];
 
-
     /**
      * AbstractTask constructor
      * @param InputInterface $input
      * @param OutputInterface $output
      */
-    public function __construct(InputInterface $input, OutputInterface $output, HelperSet $helperSet )
+    public function __construct(InputInterface $input, OutputInterface $output, HelperSet $helperSet)
     {
         $this->input = $input;
         $this->output = $output;
@@ -58,26 +55,27 @@ abstract class AbstractTask
      * @param array $choices array with choices if $type == choice
      * @return mixed
      */
-    protected function setQuestion($question = '', $default = '', $type = 'question', $choices = array()) {
-
+    protected function setQuestion($question = '', $default = '', $type = 'question', $choices = array())
+    {
         $helper = $this->getHelper('question');
-
-        switch($type) {
+        switch ($type) {
             case 'confirmation':
-                if ($default == '') $default = false;
+                if ($default == '') {
+                    $default = false;
+                }
                 $question = new ConfirmationQuestion($question, $default);
                 break;
             case 'choice':
-                if (!$default) $default = null;
+                if (!$default) {
+                    $default = null;
+                }
                 $question = new ChoiceQuestion($question, $choices, $default);
                 break;
             case 'question':
             default:
                 $question = new Question($question, $default);
         }
-
         $bundle = $helper->ask($this->input, $this->output, $question);
-
         return $bundle;
     }
 
@@ -85,28 +83,24 @@ abstract class AbstractTask
      * @param string $command
      * @return string
      */
-    protected function execute($command) {
-
+    protected function execute($command)
+    {
         $processHelper = $this->getHelper('process');
-
         $process = new Process($command);
         $process->setTimeout(600);
-
         $processHelper->run($this->output, $process);
-
-
         // executes after the command finishes
         if (!$process->isSuccessful()) {
-
             $this->output->writeln('<error><options=bold;bg=red>  ERR </></error> <fg=red>"' . $command . '" is too drunk to work. Please run butler command with -v, -vv, or -vvv for more information.</>');
-            if($this->output->isVerbose()) $this->output->writeln('<fg=black;bg=white>'.$process->getErrorOutput().'</>');
-
+            if ($this->output->isVerbose()) {
+                $this->output->writeln('<fg=black;bg=white>'.$process->getErrorOutput().'</>');
+            }
             #throw new ProcessFailedException($process);
         } else {
-
-            if($this->output->isVerbose()) $this->output->writeln('<options=bold;bg=green>  OK  </> <comment>"' . $command . '</comment>');
+            if ($this->output->isVerbose()) {
+                $this->output->writeln('<options=bold;bg=green>  OK  </> <comment>"' . $command . '</comment>');
+            }
         }
-
         #return $process->getOutput();
     }
 

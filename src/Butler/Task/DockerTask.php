@@ -11,10 +11,11 @@ class DockerTask extends AbstractTask
     /**
      * @var \Butler\Helper\FilesystemHelper
      */
-    protected $fs;
+    protected $fileSystem;
 
     /**
      * FilesystemTask constructor.
+     *
      * @param InputInterface $input
      * @param OutputInterface $output
      * @param HelperSet $helperSet
@@ -22,18 +23,19 @@ class DockerTask extends AbstractTask
     public function __construct(InputInterface $input, OutputInterface $output, HelperSet $helperSet)
     {
         parent::__construct($input, $output, $helperSet);
-        $this->fs = $this->helperSet->get('filesystem'); // init filesystem helper
+        $this->fileSystem = $this->helperSet->get('filesystem'); // init filesystem helper
     }
 
 
     /**
+     * Create a docker-compose.yaml with config
+     *
      * @param array $config
      */
-    public function settings(array $config) {
-
+    public function settings(array $config)
+    {
         // load existing settings if exists and merge with new settings
-        if ( $this->fs->exists($config['options']['filename']))
-        {
+        if ($this->fileSystem->exists($config['options']['filename'])) {
             try {
                 // parse yaml from file
                 $settings = $this->yaml::parse(file_get_contents($config['options']['filename']));
@@ -42,95 +44,58 @@ class DockerTask extends AbstractTask
                     $settings,
                     $config['options']['settings']
                 );
-            } catch ( \Symfony\Component\Yaml\Exception\ParseException $e) {
+            } catch (\Symfony\Component\Yaml\Exception\ParseException $e) {
                 // ToDo: refactor exeptionhandling
                 printf("Unable to parse the YAML string: %s", $e->getMessage());
             }
         }
-
         // dump settings to yaml and in the file
-        $this->fs->dumpFile(
+        $this->fileSystem->dumpFile(
             $config['options']['filename'],
-            $this->yaml::dump($config['options']['settings'],20,2)
+            $this->yaml::dump($config['options']['settings'], 20, 2)
         );
     }
 
     /**
      * creating a dockerfile
+     *
      * @param array $config
      */
-    public function dockerfile(array $config) {
-
-        $cmds = $this->parseDockerCmd($config['options']['cmd']);
-
-        $this->fs->dumpFile($config['options']['path'].'Dockerfile',$cmds);
-
+    public function dockerfile(array $config)
+    {
+        $lines = $this->parseDockerCmd($config['options']['cmd']);
+        $this->fileSystem->dumpFile($config['options']['path'].'Dockerfile', $lines);
     }
 
 
     /**
+     * Parse multidimensional array to multi line string
+     *
      * @param array $config
      * @return string
      */
-    private function parseDockerCmd(array $config) {
-        $cmds = '';
-
-        // if $key === string && $value === string | render value as string
-
-        // if $key === string && $value === array int | render values in for each
-
-        // if $key === int and $value === array assoc | recursive function call
-
+    private function parseDockerCmd(array $config)
+    {
+        $lines = '';
         foreach ($config as $key => $cmd) {
-
             if (is_array($cmd)) {
-                /*
-                 * 'RUN' => [
-                        'apk add --no-cache bash imagemagick-dev ssmtp libtool autoconf gcc g++ make',
-                        'pecl install imagick-$IMAGICK_VERSION',
-                        'echo "extension=imagick.so" > /usr/local/etc/php/conf.d/ext-imagick.ini',
-                        'apk del libtool autoconf gcc g++ make'
-                    ],
-                 */
-                if (is_string($key) && !empty($cmd[0])) { // ['RUN' => 'docker-php-ext-install pdo pdo_mysql gd']
+                if (is_string($key) && !empty($cmd[0])) {
                     $count = 0;
                     foreach ($cmd as $cmdItem) {
                         if ($count == 0) {
-                            $cmds .= $key . ' ' . $cmdItem . " \ \n";
+                            $lines .= $key . ' ' . $cmdItem . " \ \n";
                         } else {
-                            $cmds .= '    && ' . $cmdItem . " \ \n";
+                            $lines .= '    && ' . $cmdItem . " \ \n";
                         }
                         $count++;
                     }
+                } elseif (is_int($key)) {
+                    $lines .= $this->parseDockerCmd($cmd);
                 }
-
-                /*
-                 *  ['RUN' => 'docker-php-ext-install pdo pdo_mysql gd'],
-
-                    or:
-
-                    [
-                        'RUN' => [
-                            'apk add --no-cache bash imagemagick-dev ssmtp libtool autoconf gcc g++ make',
-                            'pecl install imagick-$IMAGICK_VERSION',
-                            'echo "extension=imagick.so" > /usr/local/etc/php/conf.d/ext-imagick.ini',
-                            'apk del libtool autoconf gcc g++ make'
-                        ]
-                    ]
-                 */
-                elseif ( is_int($key) ) {
-                    $cmds .= $this->parseDockerCmd($cmd);
-                }
-
-
-            } else { // 'FROM' => 'php:7-fpm-alpine'
-
-                // render
-                $cmds .= $key.' '.$cmd." \n";
+            } else {
+                $lines .= $key.' '.$cmd." \n";
             }
         }
-        return $cmds;
+        return $lines;
     }
-
-
 }

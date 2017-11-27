@@ -70,14 +70,15 @@ class RunCommand extends Command
     {
         $this->output = $output;
         $this->input = $input;
-        if (!empty($input->getOption('projectPath')))
+        if (!empty($input->getOption('projectPath'))) {
             $localButlerPath = $this->getLocalButlerPath($input->getOption('projectPath'));
-        else
+        } else {
             $localButlerPath = $this->getLocalButlerPath('~/Butler');
+        }
 
         $this->projectTasks = $this->loadConfigYamlFile(
             $localButlerPath . '/Project/' . $this->stringToClassName(
-            $input->getArgument('project type')
+                $input->getArgument('project type')
             ) . '.yaml'
         );
         $this->reduceTasks($input->getOption('task'));
@@ -144,10 +145,11 @@ class RunCommand extends Command
      *
      * @param array $projectConfiguration
      */
-    private function updateProjectConfiguration ( $projectConfiguration )
+    private function updateProjectConfiguration($projectConfiguration)
     {
-        if (is_array($projectConfiguration))
-            $this->projectConfig = array_merge( $this->projectConfig, $projectConfiguration);
+        if (is_array($projectConfiguration)) {
+            $this->projectConfig = array_merge($this->projectConfig, $projectConfiguration);
+        }
     }
 
     /**
@@ -156,7 +158,7 @@ class RunCommand extends Command
      * @param array $taskConfig
      * @return array
      */
-    private function parseTaskConfig (array $taskConfig = [])
+    private function parseTaskConfig(array $taskConfig = [])
     {
         array_walk_recursive(
             $taskConfig,
@@ -168,9 +170,10 @@ class RunCommand extends Command
                     // iterate over multible matches and replace them if they exists in projectConfig
                     foreach ($matches as $match) {
                         // if path is found and a value is returned
-                        if ( is_string( $param = $this->arrayPathValue( $match[1], $this->projectConfig ) ) )
+                        if (is_string($param = $this->arrayPathValue($match[1], $this->projectConfig))) {
                             // replace variable string with value
-                            $val = str_replace( $match[0], $param, $val );
+                            $val = str_replace($match[0], $param, $val);
+                        }
                     }
                 }
             }
@@ -185,12 +188,12 @@ class RunCommand extends Command
      * @param array $config
      * @return string
      */
-    private function isConditionTrue (array $config)
+    private function isConditionTrue(array $config)
     {
-        if ( isset($config['condition'])) {
+        if (isset($config['condition'])) {
             return $this->expLang->evaluate($config['condition'], $this->projectConfig);
         }
-        return TRUE;
+        return true;
     }
 
 
@@ -246,8 +249,9 @@ class RunCommand extends Command
      */
     private function createHelperSet(array $HelperArray)
     {
-        foreach ( $HelperArray as $helper )
-            $this->getHelperSet()->set( $helper );
+        foreach ($HelperArray as $helper) {
+            $this->getHelperSet()->set($helper);
+        }
     }
 
 
@@ -259,18 +263,19 @@ class RunCommand extends Command
      * @param int $depth
      * @param string $type
      */
-    private function debug ($array=[], $path='', $depth=-1, $type='print')
+    private function debug($array = [], $path = '', $depth = -1, $type = 'print')
     {
         // get ary value by path
-        if (isset($path))
+        if (isset($path)) {
             $array = $this->arrayPathValue($path, $array);
+        }
 
         // to max depth level
         $array = $this->arrayLevelReduce($array, $depth);
         if ($type === 'export') {
             var_export($array);
         } else {
-            $this->recursive_print('debug', $array);
+            $this->recursivePrint('debug', $array);
         }
     }
 
@@ -281,15 +286,15 @@ class RunCommand extends Command
      * @param $varname
      * @param $varval
      */
-    function recursive_print ($varname, $varval)
+    public function recursivePrint($varname, $varval)
     {
-        if (! is_array($varval)):
-            $this->output->writeln( "<fg=red>".$varname . ": </> = " . $varval );
-        else:
-            foreach ($varval as $key => $val):
-                $this->recursive_print ($varname . "." . $key, $val);
-            endforeach;
-        endif;
+        if (! is_array($varval)) {
+            $this->output->writeln("<fg=red>" . $varname . ": </> = " . $varval);
+        } else {
+            foreach ($varval as $key => $val) {
+                $this->recursivePrint($varname . "." . $key, $val);
+            }
+        }
     }
 
     /**
@@ -299,11 +304,11 @@ class RunCommand extends Command
      * @param array $data
      * @return array|mixed
      */
-    private function arrayPathValue ( $path, array $data )
+    private function arrayPathValue($path, array $data)
     {
         $paths = explode(".", $path);
         // iterate over path and data array
-        foreach($paths as $seg){
+        foreach ($paths as $seg) {
             isset($data[$seg]) ? $data = $data[$seg] : null;
         }
         return $data;
@@ -317,16 +322,17 @@ class RunCommand extends Command
      * @param int $maxLevel
      * @return array
      */
-    private function arrayLevelReduce ($array, $maxLevel = -1)
+    private function arrayLevelReduce($array, $maxLevel = -1)
     {
         // if no max level is set return whole array
-        if ($maxLevel === -1)
+        if ($maxLevel === -1) {
             return $array;
+        }
         // reduce if max level is set // ToDO: refactor! this shit works very poor
         $arrayReduced = [];
-        if ($maxLevel > 0 ) {
+        if ($maxLevel > 0) {
             foreach ($array as $key => $value) {
-                if(is_array($value)) {
+                if (is_array($value)) {
                     $arrayReduced[$key] = $this->arrayReduce($value, --$maxLevel);
                 } else {
                     $arrayReduced[$key] = $value;

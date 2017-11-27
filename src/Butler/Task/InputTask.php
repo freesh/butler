@@ -13,7 +13,8 @@ class InputTask extends AbstractTask
      * @param array $config
      * @return array
      */
-    public function question(array $config) {
+    public function question(array $config)
+    {
         $answers = [];
         foreach ($config['options'] as $key => $question) {
             // print question and get answer
@@ -30,7 +31,8 @@ class InputTask extends AbstractTask
      * @param array $config
      * @return array
      */
-    public function confirmation(array $config) {
+    public function confirmation(array $config)
+    {
         $answers = [];
         foreach ($config['options'] as $key => $question) {
             // print question and get answer
@@ -45,36 +47,31 @@ class InputTask extends AbstractTask
      * @param array $config
      * @return void
      */
-    public function writelines(array $config) {
-
+    public function writelines(array $config)
+    {
         $this->output->writeln($config['options']);
-
         return;
     }
 
     /**
      * transform string path and value to multidimensional array
+     *
      * @param $path
      * @param $value
      * @return array
      */
-    private function pathToArray($path, $value) {
-
+    private function pathToArray($path, $value)
+    {
         // get reversed path elements
         $paths = array_reverse(explode(".", $path));
-
         //add value to last path element
         $array = array($paths[0] => $value);
-
         // remove last path element
         unset($paths[0]);
-
         // iterate elements from childs to parent
         foreach ($paths as $arr) {
             $array = array($arr => $array);
         }
-
         return $array;
     }
-
 }

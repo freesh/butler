@@ -12,10 +12,11 @@ class FilesystemTask extends AbstractTask
     /**
      * @var \Butler\Helper\FilesystemHelper
      */
-    protected $fs;
+    protected $fileSystem;
 
     /**
      * FilesystemTask constructor.
+     *
      * @param InputInterface $input
      * @param OutputInterface $output
      * @param HelperSet $helperSet
@@ -23,7 +24,7 @@ class FilesystemTask extends AbstractTask
     public function __construct(InputInterface $input, OutputInterface $output, HelperSet $helperSet)
     {
         parent::__construct($input, $output, $helperSet);
-        $this->fs = $this->helperSet->get('filesystem'); // init filesystem helper
+        $this->fileSystem = $this->helperSet->get('filesystem'); // init filesystem helper
     }
 
     /**
@@ -31,8 +32,9 @@ class FilesystemTask extends AbstractTask
      * task config:
      *
      */
-    public function copy(array $config) {
-        $this->fs->copy(
+    public function copy(array $config)
+    {
+        $this->fileSystem->copy(
             $config['options']['originFile'],
             $config['options']['targetFile'],
             (isset($config['options']['overwriteNewerFiles']) ? $config['options']['overwriteNewerFiles'] : false)
@@ -42,8 +44,9 @@ class FilesystemTask extends AbstractTask
     /**
      * @param array $config
      */
-    public function mkdir(array $config) {
-        $this->fs->mkdir(
+    public function mkdir(array $config)
+    {
+        $this->fileSystem->mkdir(
             $config['options']['dirs'],
             (isset($config['options']['mode']) ? $config['options']['mode'] : 0777)
         );
@@ -53,15 +56,17 @@ class FilesystemTask extends AbstractTask
      * @param array $config
      * @return mixed
      */
-    public function exists(array $config) {
-        return $this->fs->exists($config['options']['files']);
+    public function exists(array $config)
+    {
+        return $this->fileSystem->exists($config['options']['files']);
     }
 
     /**
      * @param array $config
      */
-    public function touch(array $config) {
-        $this->fs->touch(
+    public function touch(array $config)
+    {
+        $this->fileSystem->touch(
             $config['options']['files'],
             (isset($config['options']['time']) ? $config['options']['time'] : null),
             (isset($config['options']['atime']) ? $config['options']['atime'] : null)
@@ -72,16 +77,18 @@ class FilesystemTask extends AbstractTask
     /**
      * @param array $config
      */
-    public function remove(array $config) {
-        $this->fs->remove($config['options']['files']);
+    public function remove(array $config)
+    {
+        $this->fileSystem->remove($config['options']['files']);
     }
 
 
     /**
      * @param array $config
      */
-    public function chmod(array $config){
-        $this->fs->chmod(
+    public function chmod(array $config)
+    {
+        $this->fileSystem->chmod(
             $config['options']['files'],
             $config['options']['mode'],
             (isset($config['options']['umask']) ? $config['options']['umask'] : 0000),
@@ -93,8 +100,9 @@ class FilesystemTask extends AbstractTask
     /**
      * @param array $config
      */
-    public function chown(array $config) {
-        $this->fs->chown(
+    public function chown(array $config)
+    {
+        $this->fileSystem->chown(
             $config['options']['files'],
             $config['options']['user'],
             (isset($config['options']['recursive']) ? $config['options']['recursive'] : false)
@@ -104,8 +112,9 @@ class FilesystemTask extends AbstractTask
     /**
      * @param array $config
      */
-    public function chgrp(array $config) {
-        $this->fs->chgrp(
+    public function chgrp(array $config)
+    {
+        $this->fileSystem->chgrp(
             $config['options']['files'],
             $config['options']['group'],
             (isset($config['options']['recursive']) ? $config['options']['recursive'] : false)
@@ -115,8 +124,9 @@ class FilesystemTask extends AbstractTask
     /**
      * @param array $config
      */
-    public function rename(array $config) {
-        $this->fs->rename(
+    public function rename(array $config)
+    {
+        $this->fileSystem->rename(
             $config['options']['origin'],
             $config['options']['target'],
             (isset($config['options']['overwrite']) ? $config['options']['overwrite'] : false)
@@ -126,8 +136,9 @@ class FilesystemTask extends AbstractTask
     /**
      * @param array $config
      */
-    public function symlink(array $config) {
-        $this->fs->symlink(
+    public function symlink(array $config)
+    {
+        $this->fileSystem->symlink(
             $config['options']['originDir'],
             $config['options']['targetDir'],
             (isset($config['options']['copyOnWindows']) ? $config['options']['copyOnWindows'] : false)
@@ -137,8 +148,9 @@ class FilesystemTask extends AbstractTask
     /**
      * @param array $config
      */
-    public function hardlink(array $config) {
-        $this->fs->hardlink(
+    public function hardlink(array $config)
+    {
+        $this->fileSystem->hardlink(
             $config['options']['originFile'],
             $config['options']['targetFiles']
         );
@@ -149,11 +161,11 @@ class FilesystemTask extends AbstractTask
      * Resolves links in paths.
      *
      * @param array   $config
-     *
      * @return string|null
      */
-    public function readlink(array $config) {
-        return $this->fs->readlink(
+    public function readlink(array $config)
+    {
+        return $this->fileSystem->readlink(
             $config['options']['path'],
             (isset($config['options']['canonicalize']) ? $config['options']['canonicalize'] : false)
         );
@@ -164,11 +176,11 @@ class FilesystemTask extends AbstractTask
      * Given an existing path, convert it to a path relative to a given starting path.
      *
      * @param array $config
-     *
      * @return string Path of target relative to starting path
      */
-    public function makePathRelative(array $config) {
-        return $this->fs->makePathRelative(
+    public function makePathRelative(array $config)
+    {
+        return $this->fileSystem->makePathRelative(
             $config['options']['endPath'],
             $config['options']['startPath']
         );
@@ -178,11 +190,11 @@ class FilesystemTask extends AbstractTask
      * Mirrors a directory to another.
      *
      * @param array $config
-     *
      * @throws IOException When file type is unknown
      */
-    public function mirror(array $config) {
-        $this->fs->mirror(
+    public function mirror(array $config)
+    {
+        $this->fileSystem->mirror(
             $config['options']['originDir'],
             $config['options']['targetDir'],
             (isset($config['options']['iterator']) ? $config['options']['iterator'] : null),
@@ -195,11 +207,11 @@ class FilesystemTask extends AbstractTask
      * Returns whether the file path is an absolute path.
      *
      * @param array $config
-     *
      * @return bool
      */
-    public function isAbsolutePath(array $config) {
-        return $this->fs->isAbsolutePath(
+    public function isAbsolutePath(array $config)
+    {
+        return $this->fileSystem->isAbsolutePath(
             $config['options']['file']
         );
     }
@@ -209,11 +221,11 @@ class FilesystemTask extends AbstractTask
      * Creates a temporary file with support for custom stream wrappers.
      *
      * @param array $config
-     *
      * @return string The new temporary filename (with path), or throw an exception on failure
      */
-    public function tempnam(array $config) {
-        return $this->fs->tempnam(
+    public function tempnam(array $config)
+    {
+        return $this->fileSystem->tempnam(
             $config['options']['dir'],
             $config['options']['prefix']
         );
@@ -223,11 +235,11 @@ class FilesystemTask extends AbstractTask
      * Atomically dumps content into a file.
      *
      * @param array $config
-     *
      * @throws IOException If the file cannot be written to
      */
-    public function dumpFile(array $config) {
-        $this->fs->dumpFile(
+    public function dumpFile(array $config)
+    {
+        $this->fileSystem->dumpFile(
             $config['options']['filename'],
             $config['options']['content']
         );
@@ -235,13 +247,13 @@ class FilesystemTask extends AbstractTask
 
     /**
      * Appends content to an existing file.
-
-     * @param array $config
      *
+     * @param array $config
      * @throws IOException If the file is not writable
      */
-    public function appendToFile(array $config) {
-        $this->fs->appendToFile(
+    public function appendToFile(array $config)
+    {
+        $this->fileSystem->appendToFile(
             $config['options']['filename'],
             $config['options']['content']
         );
