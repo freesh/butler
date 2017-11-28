@@ -3,6 +3,7 @@ namespace Butler\Command;
 
 use Butler\Helper\FilesystemHelper;
 use Butler\Helper\YamlHelper;
+use Butler\Helper\JsonHelper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -82,7 +83,7 @@ class RunCommand extends Command
             ) . '.yaml'
         );
         $this->reduceTasks($input->getOption('task'));
-        $this->createHelperSet([new FilesystemHelper(), new YamlHelper()]);
+        $this->createHelperSet([new FilesystemHelper(), new YamlHelper(), new JsonHelper()]);
 
         foreach ($this->projectTasks as $key => $config) {
             $class = (string)$config['class'];
