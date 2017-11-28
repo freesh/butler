@@ -18,7 +18,7 @@ class NeosTask extends AbstractTask
     protected $fileSystem;
 
     /**
-     * FilesystemTask constructor.
+     * NeosTask constructor.
      *
      * @param InputInterface $input
      * @param OutputInterface $output

@@ -15,7 +15,7 @@ class ComposerTask extends AbstractTask
     protected $fileSystem;
 
     /**
-     * FilesystemTask constructor.
+     * ComposerTask constructor.
      *
      * @param InputInterface $input
      * @param OutputInterface $output

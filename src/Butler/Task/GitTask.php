@@ -14,7 +14,7 @@ class GitTask extends AbstractTask
     protected $fileSystem;
 
     /**
-     * FilesystemTask constructor.
+     * GitTask constructor.
      *
      * @param InputInterface $input
      * @param OutputInterface $output

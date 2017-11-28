@@ -38,6 +38,7 @@ abstract class AbstractTask
 
     /**
      * AbstractTask constructor
+     *
      * @param InputInterface $input
      * @param OutputInterface $output
      */

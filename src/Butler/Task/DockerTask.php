@@ -14,7 +14,7 @@ class DockerTask extends AbstractTask
     protected $fileSystem;
 
     /**
-     * FilesystemTask constructor.
+     * DockerTask constructor.
      *
      * @param InputInterface $input
      * @param OutputInterface $output
