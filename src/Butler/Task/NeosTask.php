@@ -18,7 +18,7 @@ class NeosTask extends AbstractTask
     protected $fileSystem;
 
     /**
-     * FilesystemTask constructor.
+     * NeosTask constructor.
      *
      * @param InputInterface $input
      * @param OutputInterface $output
@@ -139,6 +139,7 @@ class NeosTask extends AbstractTask
      * kickstart a site package
      *
      * @param array $config
+     * @return array
      */
     public function kickstartSite(array $config)
     {
@@ -146,16 +147,22 @@ class NeosTask extends AbstractTask
         if (isset($config['options']['context'])) {
             $context = $config['options']['context'];
         }
+        if (!isset($config['options']['package-key'])) {
+            $config['options']['package-key'] = $this->setQuestion('<options=bold;bg=cyan>  ASK </> <fg=cyan>Please add the package key: </> ', null);
+        }
+        if (!isset($config['options']['site-name'])) {
+            $config['options']['site-name'] = $this->setQuestion('<options=bold;bg=cyan>  ASK </> <fg=cyan>Please add the site name: </> ', null);
+        }
+        $config['options']['site-name'] = ucfirst($config['options']['site-name']);
+        $config['options']['package-key'] = ucwords($config['options']['package-key'],'.');
         $this->execute(
-            'export FLOW_CONTEXT='. $context .' && '
-            .'./flow kickstart:site '
-            .'--package-key ' . ucwords(
-                (isset($config['options']['package-key'])? $config['options']['package-key'] : $this->setQuestion('<options=bold;bg=cyan>  ASK </> <fg=cyan>Please add the package key: </> ', null)),
-                '.'
-            )
-            .' --site-name "' . ucfirst(
-                (isset($config['options']['site-name'])? $config['options']['site-name'] : $this->setQuestion('<options=bold;bg=cyan>  ASK </> <fg=cyan>Please add the site name: </> ', null))
-            ) .'"'
+            'export FLOW_CONTEXT='. $context .' && ' .'./flow kickstart:site ' .'--package-key ' . $config['options']['package-key'] .' --site-name "' . $config['options']['site-name'] .'"'
         );
+        return [
+            'neos' => [
+                'site-package' => $config['options']['package-key'],
+                'site-name' => $config['options']['site-name']
+            ]
+        ];
     }
 }

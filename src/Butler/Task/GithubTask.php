@@ -13,6 +13,13 @@ class GithubTask extends AbstractTask
      */
     private $client = null;
 
+    /**
+     * GithubTask constructor.
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @param HelperSet $helperSet
+     */
     public function __construct(InputInterface $input, OutputInterface $output, HelperSet $helperSet)
     {
         parent::__construct($input, $output, $helperSet);

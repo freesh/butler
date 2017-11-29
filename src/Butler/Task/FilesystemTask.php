@@ -203,6 +203,35 @@ class FilesystemTask extends AbstractTask
     }
 
     /**
+     * Moves a directory.
+     *
+     * @param array $config
+     * @throws IOException When file type is unknown
+     * @taskOptions:
+     *  originDir: 'my/dir' # string
+     *  targetDir: 'my/new/dir' # string
+     *  iterator: null
+     *  options:
+     *    override: false
+     *    copy_on_windows: true
+     *    delete: true
+     */
+    public function move(array $config)
+    {
+        $this->fileSystem->mirror(
+            $config['options']['originDir'],
+            $config['options']['targetDir'],
+            (isset($config['options']['iterator']) ? $config['options']['iterator'] : null),
+            (isset($config['options']['options']) ? $config['options']['options'] : array())
+        );
+        if ($this->fileSystem->exists($config['options']['targetDir'])) {
+            $this->fileSystem->remove($config['options']['originDir']);
+        } else {
+            $this->output->writeln('<error><options=bold;bg=red>  ERR </></error>' .'<fg=red>"filesystem:move" Target "' . $config['options']['targetDir'] . '" could not created!</>');
+        }
+    }
+
+    /**
      * ToDo: how to use returned value?
      * Returns whether the file path is an absolute path.
      *
