@@ -44,6 +44,24 @@ class ComposerTask extends AbstractTask
         $this->fileSystem->remove($config['options']['tempPath']);
     }
 
+    /**
+     * update packages
+     *
+     * @param array $config
+     * @taskOptions:
+     *  packages: [] # array
+     *  params: [] # array
+     */
+    public function update(array $config)
+    {
+        $this->execute(
+            'composer update '
+            . (isset($config['options']['params'])? implode(' ', $config['options']['params']) : '')
+            .' '
+            . (isset($config['options']['packages'])? implode(' ', $config['options']['packages']) : '')
+        );
+    }
+
 
     /**
      * Add packages
@@ -67,6 +85,6 @@ class ComposerTask extends AbstractTask
      */
     public function remove(array $config)
     {
-        $this->execute('composer remove '.$config['options']['package']);
+        $this->execute('composer remove '.$config['options']['packages']);
     }
 }
