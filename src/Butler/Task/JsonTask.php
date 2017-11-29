@@ -52,7 +52,7 @@ class JsonTask extends AbstractTask
     {
         if (!$this->fileSystem->exists($config['options']['filename'])) {
             try {
-                $this->fileSystem->dumpFile($config['options']['filename'], json_encode($config['options']['data'], JSON_PRETTY_PRINT));
+                $this->fileSystem->dumpFile($config['options']['filename'], json_encode($config['options']['data'], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
             } catch (Exception $e) {
                 $this->output->writeln('<error><options=bold;bg=red>  ERR </></error> <fg=red>"json:create" ' . $e->getMessage() .'</>');
             }
@@ -87,6 +87,6 @@ class JsonTask extends AbstractTask
         }
         $data = json_decode(file_get_contents($config['options']['filename']), true);
         $config['options']['data'] = $this->json::arrayMergeDistinct($data, $config['options']['data']);
-        $this->fileSystem->dumpFile($config['options']['filename'], json_encode($config['options']['data'], JSON_PRETTY_PRINT));
+        $this->fileSystem->dumpFile($config['options']['filename'], json_encode($config['options']['data'], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
     }
 }
