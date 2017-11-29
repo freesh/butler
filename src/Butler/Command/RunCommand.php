@@ -97,7 +97,7 @@ class RunCommand extends Command
                 );
 
                 // Parse variables in task option array
-                $taskOptions = $this->parseTaskConfig($config['options']);
+                $taskOptions = $this->parseTaskConfig((isset($config['options']) ? $config['options'] : []));
 
                 // execute task
                 $this->updateProjectConfiguration(
