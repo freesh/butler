@@ -268,8 +268,15 @@ class FilesystemTask extends AbstractTask
      */
     public function dumpFile(array $config)
     {
+        if(is_array($config['options']['content'])) {
+            $content = '';
+            foreach ($config['options']['content'] as $line) {
+                $content .= $line."\n";
+            }
+            $config['options']['content'] = $content;
+        }
         $this->fileSystem->dumpFile(
-            $config['options']['filename'],
+            $config['options']['file'],
             $config['options']['content']
         );
     }
