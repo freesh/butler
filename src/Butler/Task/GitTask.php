@@ -43,7 +43,7 @@ class GitTask extends AbstractTask
      */
     public function add(array $config)
     {
-        $this->execute('git add ' . (!isset($config['options']['files'])? '*' : implode(' ', $config['options']['files'])));
+        $this->execute('git add ' . (!isset($config['options']['files'])? '.' : implode(' ', $config['options']['files'])));
     }
 
 
