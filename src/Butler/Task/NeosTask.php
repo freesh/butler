@@ -160,9 +160,49 @@ class NeosTask extends AbstractTask
         );
         return [
             'neos' => [
-                'site-package' => $config['options']['package-key'],
-                'site-name' => $config['options']['site-name']
+                'site-package' => [
+                    'key' => $config['options']['package-key'],
+                    'name' => $config['options']['site-name'],
+                    'composer-name' => $this->getJsonData(
+                        'Packages/Sites/'.$config['options']['package-key'].'/composer.json',
+                        'name'
+                    )
+                ]
             ]
         ];
+    }
+
+
+    /**
+     * Load Json Data from a json file
+     * ToDo: Put in global helper
+     * @param $file
+     * @param $path
+     * @return array|mixed|void
+     */
+    private function getJsonData($file, $path) {
+        if (!$this->fileSystem->exists($file)) {
+            $this->output->writeln( 'File "' . $file . '" does not exist!');
+            return false;
+        }
+        $data = json_decode(file_get_contents($file), true);
+        return $this->arrayPathValue($path,$data);
+    }
+
+    /**
+     * get the value of a array by key path example: this.is.my.path
+     * ToDo: Put this in a global helper
+     * @param $path
+     * @param array $data
+     * @return array|mixed
+     */
+    private function arrayPathValue($path, array $data)
+    {
+        $paths = explode(".", $path);
+        // iterate over path and data array
+        foreach ($paths as $seg) {
+            isset($data[$seg]) ? $data = $data[$seg] : null;
+        }
+        return $data;
     }
 }
