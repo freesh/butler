@@ -40,8 +40,11 @@ class ComposerTask extends AbstractTask
             .' '. $config['options']['distribution']
             .' '.$config['options']['tempPath']
         );
-        $this->fileSystem->mirror($config['options']['tempPath'], './');
-        $this->fileSystem->remove($config['options']['tempPath']);
+        $this->fileSystem->mirror(
+            $this->fileSystem->getPath($config['options']['tempPath']),
+            $this->fileSystem->getPath('./')
+        );
+        $this->fileSystem->remove($this->fileSystem->getPath($config['options']['tempPath']));
     }
 
     /**
@@ -87,4 +90,16 @@ class ComposerTask extends AbstractTask
     {
         $this->execute('composer remove '.$config['options']['packages']);
     }
+
+    /**
+     * converts a path to absolute path
+     * ToDo: put in global path helper
+     *
+     * @param $path
+     * @return string
+     */
+    /*private function makePathAbsolute($path)
+    {
+        return getcwd().'/'.ltrim ( $path, "./" );
+    }*/
 }
