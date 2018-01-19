@@ -3,7 +3,6 @@ namespace Butler\Command;
 
 use Symfony\Component\Finder\Finder;
 
-use Butler\Helper\FilesystemHelper;
 use Butler\Helper\YamlHelper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -21,6 +20,10 @@ class ListCommand extends Command
      * @var InputInterface
      */
     protected $input;
+    /**
+     * @var boolean
+     */
+    protected $info = false;
 
     public function __construct($name = null)
     {
@@ -34,6 +37,7 @@ class ListCommand extends Command
         $this->setAliases(['l']);
         $this->setDescription('List Tasks.');
         $this->addOption('projectPath', null, InputOption::VALUE_REQUIRED, 'Alternative path to project.yaml directory', []);
+        $this->addOption('info', 'i', InputOption::VALUE_NONE, 'Print path and file informations');
     }
 
 
@@ -54,6 +58,10 @@ class ListCommand extends Command
             $localButlerPath = $this->getLocalButlerPath('~/Butler/Project/');
         }
 
+        if (!empty($input->getOption('info'))) {
+            $this->info = true;
+        }
+
         $this->printProjectNames($localButlerPath, 'Local');
         $this->printProjectNames('src/Butler/Project/', 'Default');
 
@@ -70,9 +78,14 @@ class ListCommand extends Command
         $finder = new Finder();
         $finder->files()->name('/\.yaml$/');
         $this->output->writeln('');
-        $this->output->writeln($name.':');
+        $this->output->writeln('<fg=green;options=bold>'.$name.':</>');
         foreach (iterator_to_array($finder->in($path), false) as $file) {
-            $this->output->writeln('  '.$this->yamlFileNameToCommandName($file->getRelativePathname()));
+            $this->output->writeln(
+                '  <options=bold>'
+                . $this->yamlFileNameToCommandName($file->getRelativePathname())
+                . '</>'
+                . ($this->info ? '  <fg=blue>('.$file->getRealPath().')</>' : '')
+            );
         }
     }
 
