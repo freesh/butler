@@ -6,11 +6,13 @@ require __DIR__.'/vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
 use Butler\Command\RunCommand;
+use Butler\Command\ListCommand;
 use Butler\Command\DeleteCommand;
 
 $application = new Application('Butler', '1.0.0 alpha');
 
 $application->add(new RunCommand());
+$application->add(new ListCommand());
 $application->add(new DeleteCommand());
 
 $application->run();

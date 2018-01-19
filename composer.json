@@ -12,6 +12,7 @@
     "require": {
         "symfony/console": "~3.4.0",
         "symfony/process": "~3.4.0",
+        "symfony/finder": "~3.4.0",
         "symfony/filesystem": "~3.4.0",
         "symfony/expression-language": "~3.4.0",
         "symfony/yaml": "~3.4.0",
