@@ -30,6 +30,16 @@ class FindTask extends AbstractTask
     /**
      * @param array $config
      * @return void
+     *
+     * @usage:
+     * replace:
+     *   class: \Butler\Task\FindTask
+     *   task: replaceInFile
+     *   options:
+     *     filename: MyFile.txt
+     *     replace:
+     *       'old string 1': 'new string'
+     *       'old string 2': 'new string2'
      */
     public function replaceInFile(array $config)
     {
