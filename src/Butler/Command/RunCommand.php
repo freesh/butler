@@ -136,8 +136,12 @@ class RunCommand extends Command
         if (!isset($this->taskObjects[$class]) || !$this->taskObjects[$class] instanceof $class) {
             $this->taskObjects[$class] = new $class($this->input, $this->output, $this->getHelperSet());
         }
-        return
-            $this->taskObjects[$class]->$task($config);
+        // ToDo: Implement a validator, that runs before the first task ist executed
+        if (!method_exists($this->taskObjects[$class],$task)) {
+            $this->output->writeln('<error><options=bold;bg=red>  ERR </></error> <fg=red>Task "' . $task .'" does not exist in "'.$class.'".</>');
+            return null;
+        }
+        return $this->taskObjects[$class]->$task($config);
     }
 
 
@@ -208,6 +212,7 @@ class RunCommand extends Command
     {
         // return just tasks are configured to execute by --task="... 1" --task="... 2"
         if (!empty($tasks)) {
+            // ToDo: send message if task from --task option does not exist in your project file
             $this->projectTasks = array_intersect_key($this->projectTasks, array_flip($tasks));
             return true;
         }
