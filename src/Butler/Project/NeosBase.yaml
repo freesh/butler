@@ -188,7 +188,7 @@
   task: add
   options:
     files:
-      - '*'
+      - '.'
       - .gitignore
 
 'git commit':

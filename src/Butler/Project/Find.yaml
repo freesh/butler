@@ -1,0 +1,8 @@
+'replaceInFile':
+  class: \Butler\Task\FindTask
+  task: replaceInFile
+  options:
+    filename: replace.txt
+    replaces:
+      'Guten Tag': 'Hallo'
+      'Bis bald': 'Bye'
