@@ -6,9 +6,13 @@ Butler is a php taskrunner for creating and initialising web projects.
 You can define tasks for composer, git, docker, sftp, file operations and other things ...
 
 [Installation](#installation)
+
 [Usage](#usage)
+
 [Create a project file](#create-a-project-file)
+
 [Debugging](#debugging)
+
 [Create new Task File](#create-new-task-file-deprecated)
 
 ## Installation:
