@@ -36,7 +36,7 @@ You can define tasks for composer, git, docker, sftp, file operations and other 
 
 **Run project:**
 
-- Go to your empty Projectfolder
+```cd emptyProjectfolder```
 
 ```butler project:run neos-base```
 
@@ -56,7 +56,7 @@ Execute with special path for butler files (default: ~/Butler)
 
 ```butler help command:name```
 
-## Create Project a File
+## Create a project file
 
 1. Create a new projectname.yaml file in ```/Butler/Project/```.
 2. Configure your tasks.
@@ -97,7 +97,7 @@ Example configuration:
 // ...
 ```
 
-### Modify and use project config
+### Modify and use project runtime config
 
 Ask the user some interesting questions with the question task of the inputTask Driver:
 ```
@@ -124,6 +124,7 @@ This config variables can be used in task configuration like this:
       - '{level1.sub2.myvar}.txt'
 ```
 The first task will ask the user for vendor and name and the second task creates a file named by the answers.
+Some Tasks return data to the runtime config.
 
 
 ### Using conditions in task configuration
@@ -199,6 +200,16 @@ Ternary Operators: (see: https://symfony.com/doc/current/components/expression_l
 - ```foo ? 'yes' : 'no'```
 - ```foo ?: 'no' (equal to foo ? foo : 'no')```
 - ```foo ? 'yes' (equal to foo ? 'yes' : '')```
+
+## Debugging
+
+### Debug Task output
+
+```butler project:run neos-base -v```
+
+```butler project:run neos-base -vv```
+
+```butler project:run neos-base -vvv```
 
 ### Debug "Task-" and "Runtime-Config"
 
@@ -326,7 +337,7 @@ debug.options.public:  = false
 ```
 
 
-## Create new Task File
+## Create new Task File (deprecated)
 
 1. Create a new task class in ```src/Butler/Task/``` extending ```AbstractTask```.
 2. Now you can create public functions with a $config param which is an array. (function name = task name)
