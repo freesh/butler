@@ -1,25 +1,19 @@
 # Butler
-Butler is a small taskrunner for creating and initialising web projects.
-You can define tasks for composer, git, docker and and and...
 
-The future goal of this project is to create tasks for initializing the complete project stack.
-For example:
+Note: This in an experimental wip state.
 
-- Ask project name and vendor
-- Init project on github/gitlab
-- Init project on your projectmanagement tool
-- Init dev, stage, and live server (ssh on your hoster, or with api on aws, digitalocean and other services)
-- Init CI tool (gitlabci, usw...)
-- Init project distribution
-- Init and start docker (or vagrant)
-- Init configuration
-- Call setup routines for project distribution
-- Setup deployment with deployer
-- Push Project to git
-- Deploy Project to dev server
-- Create your awesome project. =)
+Butler is a php taskrunner for creating and initialising web projects.
+You can define tasks for composer, git, docker, sftp, file operations and other things ...
 
+[Installation](#installation)
 
+[Usage](#usage)
+
+[Create a project file](#create-a-project-file)
+
+[Debugging](#debugging)
+
+[Create new Task File](#create-new-task-file-deprecated)
 
 ## Installation:
 
@@ -42,130 +36,105 @@ For example:
 
 ## Usage:
 
-**Create neos base Project:**
+**List comands**
 
-- Go to your empty Projectfolder
-- Execute butler command
+```butler list```
 
-Parameter "neos-base" stands for NeosBase project and is configures in NeosBaseProject.php/yaml
+**List project configurations**
+
+```butler project:list```
+
+**Run project:**
+
+```cd emptyProjectfolder```
 
 ```butler project:run neos-base```
 
-Execute just some specific tasks: --task or -t
+Execute just some specific tasks from project config: --task or -t
 
-```butler project:run neos-base --task="my task1 key" --task="my task4 key"```
+```butler project:run neos-base --task="myTask1Key" --task="my task2 key"```
 
 Execute with special path for butler files (default: ~/Butler)
 
-```butler project:run neos-base --task="./Build/Butler"```
+```butler project:run neos-base --projectPath="./Build/Butler"```
 
 **Help:**
 
 ```butler``` or ```butler --help```
 
+**Help for a specific command**
 
-## Create Project
+```butler help command:name```
 
-1. Create a new project class in ```src/Butler/Project/``` extending ```AbstractProject```and create the public "createTask" function.
-2. Use ```$this->addTask()``` to add your tasks. (See available tasks in ```src/Butler/Task/```)
-3. Use your task: ```$ butler project:create my-new-site``
+## Create a project file
 
-Example:
+1. Create a new projectname.yaml file in ```/Butler/Project/```.
+2. Configure your tasks.
+3. Use your task: ```$ butler project:run projectname```
+4. If your projectfile is located in a subfolder like ```/Butler/Project/vendor/projectfile.yaml```, you have to use it like that: ```$ butler project:run vendor/projectname```
+
+Example configuration:
 
 ```
-<?php
+########################
+# Init runtime data
+########################
+'Set project data':
+  class: \Butler\Task\InputTask
+  task: question
+  options:
+    projectname: 'What is the name of your Project?'
 
-namespace Butler\Project;
+########################
+# Init project with composer
+########################
+'Composer create':
+  class: \Butler\Task\ComposerTask
+  task: create
+  options:
+    distribution: neos/neos-base-distribution
+    tempPath: temp
+    params:
+      - '--no-dev'
 
-class MyNewSiteProject extends AbstractProject
-{
+'Neos kickstart site':
+  class: \Butler\Task\NeosTask
+  task: kickstartSite
+  options:
+    context: Development
+    site-name: '{projectname}'
 
-    /**
-     * create tasks
-     */
-    public function createTasks() {
-
-        $this->addTask([
-            'key' => 'project-data',
-            'class' => '\\Butler\\Task\\InputTask',
-            'task' => 'question',
-            'options' => [
-                'projectname' => 'What is the name of your project?',
-                'projectvendor' => 'What is the vendor of your project?'
-            ],
-        ]);
-
-        $this->addTask([
-            'key' => 'create',
-            'class' => '\\Butler\\Task\\ComposerTask',
-            'task' => 'create',
-            'options' => [
-                'distribution' => 'neos/neos-base-distribution',
-                'tempPath' => 'temp',
-                'params' => [
-                    '--no-dev'
-                ]
-            ],
-        ]);
-
-        $this->addTask([
-            'key' => 'require',
-            'class' => '\\Butler\\Task\\ComposerTask',
-            'task' => 'add',
-            'options' => [
-                'package' => 'packagefactory/atomicfusion packagefactory/atomicfusion-afx:~3.0.0 sitegeist/monocle'
-            ],
-        ]);
-
-        $this->addTask([
-            'key' => 'require-dev',
-            'class' => '\\Butler\\Task\\ComposerTask',
-            'task' => 'add',
-            'options' => [
-                'package' => 'sitegeist/magicwand:dev-master sitegeist/neosguidelines',
-                'params' => [
-                    '--dev'
-                ]
-            ],
-        ]);
-    }
-}
+// ...
 ```
 
-### Modify and use project config
+### Modify and use project runtime config
 
 Ask the user some interesting questions with the question task of the inputTask Driver:
 ```
-        $this->addTask([
-            'key' => 'project-data',
-            'class' => '\\Butler\\Task\\InputTask',
-            'task' => 'question',
-            'options' => [
-                'projectname' => 'What is the name of your project?',
-                'projectvendor' => 'What is the vendor of your project?',
-                'level1.sub1.myvar' => 'first tree in level1',
-                'level1.sub2.myvar' => 'different tree in level1'
-            ],
-        ]);
+'get project-data':
+  class: \Butler\Task\InputTask
+  task: question
+  options:
+    projectname: What is the name of your project?
+    projectvendor: What is the vendor of your project?
+    level1.sub1.myvar: first tree in level1
+    level1.sub2.myvar: different tree in level1
  ```
 
 The option keys "projectname" and "projectvendor" will be stored in a project configuration.
 This config variables can be used in task configuration like this:
 ```
-        $this->addTask([
-            'key' => 'touch file',
-            'class' => '\\Butler\\Task\\FilesystemTask',
-            'task' => 'touch',
-            'options' => [
-                'files' => [
-                    '{projectvendor}-{projectname}.txt',
-                    '{level1.sub1.myvar}.txt',
-                    '{level1.sub2.myvar}.txt'
-                ]
-            ]
-        ]);
+'touch file':
+  class: \Butler\Task\FilesystemTask
+  task: touch
+  options:
+    files:
+      - '{projectvendor}-{projectname}.txt'
+      - '{level1.sub1.myvar}.txt'
+      - '{level1.sub2.myvar}.txt'
 ```
 The first task will ask the user for vendor and name and the second task creates a file named by the answers.
+Some Tasks return data to the runtime config.
 
 
 ### Using conditions in task configuration
@@ -173,25 +142,20 @@ The first task will ask the user for vendor and name and the second task creates
 The execution of every task can skipped by condition:
 
 ```
-        $this->addTask([
-            'key' => 'set project data',
-            'class' => '\\Butler\\Task\\InputTask',
-            'task' => 'question',
-            'options' => [
-                'projectname' => 'What is the name of your Project?',
-                'projectvendor' => 'What is the vendor name of your Project?'
-            ],
-        ]);
+'set project data:
+  class: \Butler\Task\InputTask
+  task: question
+  options:
+    projectname: 'What is the name of your Project?'
+    projectvendor: 'What is the vendor name of your Project?'
 
-        $this->addTask([
-            'key' => 'touch projectvendor',
-            'class' => '\\Butler\\Task\\FilesystemTask',
-            'task' => 'touch',
-            'options' => [
-                'files' => '{projectvendor}-{projectname}.txt',
-            ],
-            'condition' => 'projectname != projectvendor'
-        ]);
+'touch projectvendor',
+  class: \Butler\Task\FilesystemTask
+  task: touch
+  condition: 'projectname != projectvendor'
+  options:
+    files:
+      - '{projectvendor}-{projectname}.txt'
 ```
 The task "touch projectvendor" is only executed if project config variables for "projectname" and "projectvendor" have NOT the same value.
 
@@ -247,21 +211,28 @@ Ternary Operators: (see: https://symfony.com/doc/current/components/expression_l
 - ```foo ?: 'no' (equal to foo ? foo : 'no')```
 - ```foo ? 'yes' (equal to foo ? 'yes' : '')```
 
+## Debugging
+
+### Debug Task output
+
+```butler project:run neos-base -v```
+
+```butler project:run neos-base -vv```
+
+```butler project:run neos-base -vvv```
+
 ### Debug "Task-" and "Runtime-Config"
 
 ``` 
-        $this->addTask([
-            'key' => 'github create repository',
-            'class' => '\\Butler\\Task\\GithubTask',
-            'task' => 'repositoryCreate',
-            'options' => [
-                ...
-            ],
-            'debug' => true, // bool | optional default: false
-            'debug-depth' => '3', // int | optional (default: -1)
-            'debug-path' => 'project.github', // string | optional (project.my.option)
-            'debug-type' => 'export' // string | optional [export|print] (default: print) 
-        ]);
+'github create repository':
+  class: \Butler\Task\GithubTask
+  task: repositoryCreate
+  options:
+    ...
+  debug: true // bool | optional default: false
+  debug-depth: 3 // int | optional (default: -1)
+  debug-path: project.github' // string | optional (project.my.option)
+  debug-type: export // string | optional [export|print] (default: print)
 ```
 
 The option ```debug``` activates debug output for this task. It will output the representation of the task options array and the project runtime array.
@@ -376,7 +347,7 @@ debug.options.public:  = false
 ```
 
 
-## Create new Task Driver
+## Create new Task File (deprecated)
 
 1. Create a new task class in ```src/Butler/Task/``` extending ```AbstractTask```.
 2. Now you can create public functions with a $config param which is an array. (function name = task name)
