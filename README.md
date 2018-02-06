@@ -68,10 +68,10 @@ Execute with special path for butler files (default: ~/Butler)
 
 ## Create a project file
 
-1. Create a new projectname.yaml file in ```/Butler/Project/```.
+1. Create a new projectname.yaml file in ```~/Butler/Project/```.
 2. Configure your tasks.
 3. Use your task: ```$ butler project:run projectname```
-4. If your projectfile is located in a subfolder like ```/Butler/Project/vendor/projectfile.yaml```, you have to use it like that: ```$ butler project:run vendor/projectname```
+4. If your projectfile is located in a subfolder like ```~/Butler/Project/vendor/projectfile.yaml```, you have to use it like that: ```$ butler project:run vendor/projectname```
 
 Example configuration:
 
