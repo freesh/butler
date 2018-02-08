@@ -33,6 +33,12 @@ You can define tasks for composer, git, docker, sftp, file operations and other 
 
 ```alias butler="php ~/Butler/butler"```
 
+## Build phar archive
+
+Run the build command with composer
+```composer build```
+
+After that you find the _butler.phar_ on the project root.
 
 ## Usage:
 
