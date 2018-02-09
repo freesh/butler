@@ -54,17 +54,17 @@ class GitTask extends AbstractTask
     public function ignore(array $config)
     {
         $lines = "";
-        if (!$this->fileSystem->exists('.gitignore')) {
+        if (!$this->fileSystem->exists($this->fileSystem->getPath('.gitignore'))) {
             // iterate filepaths
             foreach ($config['options']['files'] as $line) {
                 $lines .= $line . " \n";
             }
             // dump to file
-            $this->fileSystem->dumpFile('.gitignore', $lines);
+            $this->fileSystem->dumpFile($this->fileSystem->getPath('.gitignore'), $lines);
         } else {
             $lines .= "\n";
             // load file
-            $file = array_map('trim', file('.gitignore', FILE_IGNORE_NEW_LINES));
+            $file = array_map('trim', file($this->fileSystem->getPath('.gitignore'), FILE_IGNORE_NEW_LINES));
             // get new unique rows
             $unique_files = array_diff($config['options']['files'], $file);
             // iterate filepaths
@@ -72,7 +72,7 @@ class GitTask extends AbstractTask
                 $lines .= $cmd . "\n";
             }
             // append to file
-            $this->fileSystem->appendToFile('.gitignore', $lines);
+            $this->fileSystem->appendToFile($this->fileSystem->getPath('.gitignore'), $lines);
         }
     }
 
@@ -84,9 +84,9 @@ class GitTask extends AbstractTask
     public function unignore(array $config)
     {
         $lines = "";
-        if ($this->fileSystem->exists('.gitignore')) {
+        if ($this->fileSystem->exists($this->fileSystem->getPath('.gitignore'))) {
             // load file
-            $file = array_map('trim', file('.gitignore', FILE_IGNORE_NEW_LINES));
+            $file = array_map('trim', file($this->fileSystem->getPath('.gitignore'), FILE_IGNORE_NEW_LINES));
             // get not matching rows
             $filepaths = array_diff($file, $config['options']['files']);
             // iterate filepaths
@@ -94,7 +94,7 @@ class GitTask extends AbstractTask
                 $lines .= $cmd . "\n";
             }
             // dump to file
-            $this->fileSystem->dumpFile('.gitignore', $lines);
+            $this->fileSystem->dumpFile($this->fileSystem->getPath('.gitignore'), $lines);
         }
     }
 
@@ -107,9 +107,9 @@ class GitTask extends AbstractTask
     public function ignoreEdit(array $config)
     {
         $lines = "";
-        if ($this->fileSystem->exists('.gitignore')) {
+        if ($this->fileSystem->exists($this->fileSystem->getPath('.gitignore'))) {
             // load file
-            $file = array_map('trim', file('.gitignore', FILE_IGNORE_NEW_LINES));
+            $file = array_map('trim', file($this->fileSystem->getPath('.gitignore'), FILE_IGNORE_NEW_LINES));
             // iterate replaces
             foreach ($config['options']['replaces'] as $old => $new) {
                 // find in existing rows and replace
@@ -122,7 +122,7 @@ class GitTask extends AbstractTask
                 $lines .= $cmd . "\n";
             }
             // dump to file
-            $this->fileSystem->dumpFile('.gitignore', $lines);
+            $this->fileSystem->dumpFile($this->fileSystem->getPath('.gitignore'), $lines);
         }
     }
 
