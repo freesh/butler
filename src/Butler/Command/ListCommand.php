@@ -154,19 +154,4 @@ class ListCommand extends Command
             }
         }
     }
-
-    /**
-     * Replace ~ in $path with the absolute user path
-     *
-     * @param $path
-     * @return mixed
-     */
-    private function getLocalButlerPath($path)
-    {
-        if (function_exists('posix_getuid') && strpos($path, '~') !== false) {
-            $userInfo = posix_getpwuid(posix_getuid());
-            return str_replace('~', $userInfo['dir'], $path);
-        }
-        return $path;
-    }
 }
