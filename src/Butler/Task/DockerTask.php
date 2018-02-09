@@ -35,10 +35,10 @@ class DockerTask extends AbstractTask
     public function settings(array $config)
     {
         // load existing settings if exists and merge with new settings
-        if ($this->fileSystem->exists($config['options']['filename'])) {
+        if ($this->fileSystem->exists($this->fileSystem->getPath($config['options']['filename']))) {
             try {
                 // parse yaml from file
-                $settings = $this->yaml::parse(file_get_contents($config['options']['filename']));
+                $settings = $this->yaml::parse(file_get_contents($this->fileSystem->getPath($config['options']['filename'])));
                 // merge distinct existing and new settings
                 $config['options']['settings'] = $this->yaml::arrayMergeDistinct(
                     $settings,
@@ -51,7 +51,7 @@ class DockerTask extends AbstractTask
         }
         // dump settings to yaml and in the file
         $this->fileSystem->dumpFile(
-            $config['options']['filename'],
+            $this->fileSystem->getPath($config['options']['filename']),
             $this->yaml::dump($config['options']['settings'], 20, 2)
         );
     }
@@ -64,7 +64,7 @@ class DockerTask extends AbstractTask
     public function dockerfile(array $config)
     {
         $lines = $this->parseDockerCmd($config['options']['cmd']);
-        $this->fileSystem->dumpFile($config['options']['path'].'Dockerfile', $lines);
+        $this->fileSystem->dumpFile($this->fileSystem->getPath($config['options']['path'].'Dockerfile'), $lines);
     }
 
 
