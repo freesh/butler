@@ -38,10 +38,10 @@ class NeosTask extends AbstractTask
     public function settings(array $config)
     {
         // load existing settings if exists and merge with new settings
-        if ($this->fileSystem->exists($config['options']['filename'])) {
+        if ($this->fileSystem->exists($this->fileSystem->getPath($config['options']['filename']))) {
             try {
                 // parse yaml from file
-                $settings = $this->yaml::parse(file_get_contents($config['options']['filename']));
+                $settings = $this->yaml::parse(file_get_contents($this->fileSystem->getPath($config['options']['filename'])));
                 // merge distinct existing and new settings
                 $config['options']['settings'] = $this->yaml::arrayMergeDistinct(
                     $settings,
@@ -54,7 +54,7 @@ class NeosTask extends AbstractTask
         }
         // dump settings to yaml and in the file
         $this->fileSystem->dumpFile(
-            $config['options']['filename'],
+            $this->fileSystem->getPath($config['options']['filename']),
             $this->yaml::dump($config['options']['settings'], 20, 2)
         );
     }
@@ -181,11 +181,11 @@ class NeosTask extends AbstractTask
      * @return array|mixed|void
      */
     private function getJsonData($file, $path) {
-        if (!$this->fileSystem->exists($file)) {
+        if (!$this->fileSystem->exists($this->fileSystem->getPath($file))) {
             $this->output->writeln( 'File "' . $file . '" does not exist!');
             return false;
         }
-        $data = json_decode(file_get_contents($file), true);
+        $data = json_decode(file_get_contents($this->fileSystem->getPath($file)), true);
         return $this->arrayPathValue($path,$data);
     }
 
