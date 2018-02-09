@@ -50,9 +50,9 @@ class JsonTask extends AbstractTask
      */
     public function create(array $config)
     {
-        if (!$this->fileSystem->exists($config['options']['filename'])) {
+        if (!$this->fileSystem->exists($this->fileSystem->getPath($config['options']['filename']))) {
             try {
-                $this->fileSystem->dumpFile($config['options']['filename'], json_encode($config['options']['data'], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+                $this->fileSystem->dumpFile($this->fileSystem->getPath($config['options']['filename']), json_encode($config['options']['data'], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
             } catch (Exception $e) {
                 $this->output->writeln('<error><options=bold;bg=red>  ERR </></error> <fg=red>"json:create" ' . $e->getMessage() .'</>');
             }
@@ -80,13 +80,13 @@ class JsonTask extends AbstractTask
      */
     public function update(array $config)
     {
-        if (!$this->fileSystem->exists($config['options']['filename'])) {
+        if (!$this->fileSystem->exists($this->fileSystem->getPath($config['options']['filename']))) {
             $this->output->writeln( 'File "' . $config['options']['filename'] . '" does not exist but will be created!');
             $this->create($config);
             return;
         }
-        $data = json_decode(file_get_contents($config['options']['filename']), true);
+        $data = json_decode(file_get_contents($this->fileSystem->getPath($config['options']['filename'])), true);
         $config['options']['data'] = $this->json::arrayMergeDistinct($data, $config['options']['data']);
-        $this->fileSystem->dumpFile($config['options']['filename'], json_encode($config['options']['data'], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+        $this->fileSystem->dumpFile($this->fileSystem->getPath($config['options']['filename']), json_encode($config['options']['data'], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
     }
 }
