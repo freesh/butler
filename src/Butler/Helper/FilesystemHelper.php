@@ -235,6 +235,19 @@ class FilesystemHelper extends Filesystem implements HelperInterface
     }
 
 
+    /**
+     * Removes files or directories.
+     *
+     * @param string|iterable $files A filename, an array of files, or a \Traversable instance to remove
+     *
+     * @throws IOException When removal fails
+     */
+    public function remove($files)
+    {
+        parent::remove($this->getPath($files));
+    }
+
+
 
 
 
@@ -263,7 +276,7 @@ class FilesystemHelper extends Filesystem implements HelperInterface
         if(($path = $this->isNotRootDir($path)) === false) {
             return null;
         }
-        if(is_array($path)) {
+        if(is_array($path) || $path instanceof \Traversable) {
             array_walk($path, function(&$val){
                 $val = $this->convertUserPath($val);
                 if(!$this->isAbsolutePath($val) && !empty($pharPath = \Phar::running(false))) {

@@ -81,10 +81,7 @@ class FilesystemTask extends AbstractTask
      */
     public function remove(array $config)
     {
-        $testen = $this->fileSystem->getPath($config['options']['files']);
-        var_export($testen);
-        die;
-        $this->fileSystem->remove($this->fileSystem->getPath($config['options']['files']));
+        $this->fileSystem->remove($config['options']['files']);
     }
 
 
