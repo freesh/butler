@@ -200,6 +200,34 @@ class FilesystemHelper extends Filesystem implements HelperInterface
     }
 
     /**
+     * Moves a directory oder file to another location.
+     *
+     * @param string       $originDir The origin directory
+     * @param string       $targetDir The target directory
+     * @param \Traversable $iterator  A Traversable instance
+     * @param array        $options   An array of boolean options
+     *                                Valid options are:
+     *                                - $options['override'] Whether to override an existing file on copy or not (see copy())
+     *                                - $options['copy_on_windows'] Whether to copy files instead of links on Windows (see symlink())
+     *                                - $options['delete'] Whether to delete files that are not in the source directory (defaults to false)
+     *
+     * @throws IOException When origin type is unknown or does not exist
+     */
+    public function move($origin, $target, \Traversable $iterator = null, $options = array())
+    {
+        if (is_dir($this->getPath($origin))) {
+            $this->mirror($origin, $target, $iterator, $options);
+        } else {
+            $this->copy($origin, $target, (isset($options['override']) ? $options['override'] : array()));
+        }
+        if ($this->exists($target)) {
+            $this->remove($origin);
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Creates a directory recursively.
      *
      * @param string|iterable $dirs The directory path

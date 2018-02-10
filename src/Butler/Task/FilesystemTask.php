@@ -221,16 +221,13 @@ class FilesystemTask extends AbstractTask
      */
     public function move(array $config)
     {
-        $this->fileSystem->mirror(
-            $this->fileSystem->getPath($config['options']['originDir']),
-            $this->fileSystem->getPath($config['options']['targetDir']),
-            (isset($config['options']['iterator']) ? $config['options']['iterator'] : null),
+        if (!$this->fileSystem->move(
+            $config['options']['origin'],
+            $config['options']['target'],
+            null,
             (isset($config['options']['options']) ? $config['options']['options'] : array())
-        );
-        if ($this->fileSystem->exists($this->fileSystem->getPath($config['options']['targetDir']))) {
-            $this->fileSystem->remove($this->fileSystem->getPath($config['options']['originDir']));
-        } else {
-            $this->output->writeln('<error><options=bold;bg=red>  ERR </></error>' .'<fg=red>"filesystem:move" Target "' . $this->fileSystem->getPath($config['options']['targetDir']) . '" could not created!</>');
+        )) {
+            $this->output->writeln('<error><options=bold;bg=red>  ERR </></error>' .'<fg=red>"filesystem:move" Target "' . $this->fileSystem->getPath($config['options']['target']) . '" could not created!</>');
         }
     }
 
