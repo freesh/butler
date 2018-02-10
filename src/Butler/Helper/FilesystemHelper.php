@@ -55,9 +55,7 @@ class FilesystemHelper extends Filesystem implements HelperInterface
      */
     public function chgrp($files, $group, $recursive = false)
     {
-        $this->toIterable($files);
-        array_walk($files,[$this, 'getPathWrapper']);
-        parent::chgrp($files, $group, $recursive);
+        parent::chgrp($this->getPath($files), $group, $recursive);
     }
 
     /**
@@ -72,9 +70,7 @@ class FilesystemHelper extends Filesystem implements HelperInterface
      */
     public function chmod($files, $mode, $umask = 0000, $recursive = false)
     {
-        $this->toIterable($files);
-        array_walk($files,[$this, 'getPathWrapper']);
-        parent::chmod($files, $mode, $umask, $recursive);
+        parent::chmod($this->getPath($files), $mode, $umask, $recursive);
     }
 
     /**
@@ -88,9 +84,7 @@ class FilesystemHelper extends Filesystem implements HelperInterface
      */
     public function chown($files, $user, $recursive = false)
     {
-        $this->toIterable($files);
-        array_walk($files,[$this, 'getPathWrapper']);
-        parent::chown($files, $user, $recursive);
+        parent::chown($this->getPath($files), $user, $recursive);
     }
 
     /**
@@ -134,9 +128,7 @@ class FilesystemHelper extends Filesystem implements HelperInterface
      */
     public function exists($files)
     {
-        $this->toIterable($files);
-        array_walk($files,[$this, 'getPathWrapper']);
-        return parent::exists($files);
+        return parent::exists($this->getPath($files));
     }
 
     /**
@@ -150,8 +142,6 @@ class FilesystemHelper extends Filesystem implements HelperInterface
      */
     public function hardlink($originFile, $targetFiles)
     {
-        $this->toIterable($targetFiles);
-        array_walk($targetFiles,[$this, 'getPathWrapper']);
         parent::hardlink($this->getPath($originFile), $targetFiles);
     }
 
@@ -237,7 +227,6 @@ class FilesystemHelper extends Filesystem implements HelperInterface
      */
     public function mkdir($dirs, $mode = 0777)
     {
-        $this->toIterable($dirs);
         parent::mkdir($this->getPath($dirs), $mode);
     }
 
@@ -336,18 +325,6 @@ class FilesystemHelper extends Filesystem implements HelperInterface
 
 
 
-
-
-    /*
-     * Wrapper function of $this->getPath for usage in array_map()
-     *
-     * @param $path string
-     */
-    private function getPathWrapper(&$path)
-    {
-        $path = $this->getPath($path);
-    }
-
     /**
      * Checks if cli is executed from phar archive.
      * If yes and $path is not absolute, the 'command working directory' will be used and extended by $path and
@@ -382,7 +359,7 @@ class FilesystemHelper extends Filesystem implements HelperInterface
      * converts a path to absolute path
      * ToDo: create a task
      *
-     * @param $path
+     * @param $path string
      * @return string
      */
     public function makePathAbsolute($path)
@@ -426,16 +403,5 @@ class FilesystemHelper extends Filesystem implements HelperInterface
             }
         }
         return $path;
-    }
-
-    /**
-     * @param mixed $files
-     *
-     * @return array|\Traversable
-     */
-    private function toIterable(&$files)
-    {
-        $files = is_array($files) || $files instanceof \Traversable ? $files : array($files);
-        return $files;
     }
 }
