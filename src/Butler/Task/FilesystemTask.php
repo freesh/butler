@@ -58,7 +58,9 @@ class FilesystemTask extends AbstractTask
      */
     public function exists(array $config)
     {
-        return $this->fileSystem->exists($this->getPath($config['options']['files']));
+        return [
+            'filesexists' => $this->fileSystem->exists($config['options']['files'])
+        ];
     }
 
     /**

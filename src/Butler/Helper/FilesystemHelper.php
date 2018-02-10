@@ -125,6 +125,20 @@ class FilesystemHelper extends Filesystem implements HelperInterface
         parent::dumpFile($this->getPath($filename), $content);
     }
 
+    /**
+     * Checks the existence of files or directories.
+     *
+     * @param string|iterable $files A filename, an array of files, or a \Traversable instance to check
+     *
+     * @return bool true if the file exists, false otherwise
+     */
+    public function exists($files)
+    {
+        $this->toIterable($files);
+        array_walk($files,[$this, 'getPathWrapper']);
+        return parent::exists($files);
+    }
+
 
 
 
