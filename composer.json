@@ -29,6 +29,7 @@
     "scripts": {
         "phpcs-n":"./vendor/bin/phpcs -n src --standard=PSR2",
         "phpcs":"./vendor/bin/phpcs src --standard=PSR2",
-        "phpcbf":"./vendor/bin/phpcbf src --standard=PSR2"
+        "phpcbf":"./vendor/bin/phpcbf src --standard=PSR2",
+        "build":"./bin/build && chmod +x ./butler.phar"
     }
 }

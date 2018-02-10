@@ -1,0 +1,8 @@
+#!/usr/bin/env php
+<?php
+
+$phar = new Phar('butler.phar', 0, 'butler.phar');
+
+$phar->buildFromDirectory('./');
+
+$phar->setStub($phar->createDefaultStub('butler'));

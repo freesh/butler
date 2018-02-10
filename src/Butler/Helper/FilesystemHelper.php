@@ -55,11 +55,13 @@ class FilesystemHelper extends Filesystem implements HelperInterface
         }
         if(is_array($path)) {
             array_walk($path, function(&$val){
+                $val = $this->convertUserPath($val);
                 if(!$this->isAbsolutePath($val) && !empty($pharPath = \Phar::running(false))) {
                     $val = $this->makePathAbsolute($val);
                 }
             });
         } else {
+            $path = $this->convertUserPath($path);
             if (!$this->isAbsolutePath($path) && !empty($pharPath = \Phar::running(false))) {
                 $path = $this->makePathAbsolute( $path);
             }
@@ -77,6 +79,21 @@ class FilesystemHelper extends Filesystem implements HelperInterface
     public function makePathAbsolute($path)
     {
         return getcwd().'/'.ltrim ( $path, "./" );
+    }
+
+    /**
+     * Replace ~ in $path with the absolute user path
+     *
+     * @param $path
+     * @return mixed
+     */
+    public function convertUserPath($path)
+    {
+        if (function_exists('posix_getuid') && strpos($path, '~') !== false) {
+            $userInfo = posix_getpwuid(posix_getuid());
+            return str_replace('~', $userInfo['dir'], $path);
+        }
+        return $path;
     }
 
     /**

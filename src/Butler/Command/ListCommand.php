@@ -4,6 +4,8 @@ namespace Butler\Command;
 use Symfony\Component\Finder\Finder;
 
 use Butler\Helper\YamlHelper;
+use Butler\Helper\FilesystemHelper;
+use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -21,6 +23,10 @@ class ListCommand extends Command
      */
     protected $input;
     /**
+     * @var \Butler\Helper\FilesystemHelper
+     */
+    protected $fileSystem;
+    /**
      * @var boolean
      */
     protected $info = false;
@@ -28,6 +34,7 @@ class ListCommand extends Command
     public function __construct($name = null)
     {
         parent::__construct($name);
+        $this->fileSystem = new FilesystemHelper();
     }
 
 
@@ -53,18 +60,17 @@ class ListCommand extends Command
         $this->output = $output;
         $this->input = $input;
         if (!empty($input->getOption('projectPath'))) {
-            $localButlerPath = $this->getLocalButlerPath($input->getOption('projectPath'));
+            $localButlerPath = $input->getOption('projectPath');
         } else {
-            $localButlerPath = $this->getLocalButlerPath('~/Butler/Project/');
+            $localButlerPath = '~/Butler/Project/';
         }
 
         if (!empty($input->getOption('info'))) {
             $this->info = true;
         }
 
-        $this->printProjectNames($localButlerPath, 'Local');
-        $this->printProjectNames('src/Butler/Project/', 'Default');
-
+        $this->printProjectNames($this->fileSystem->getPath($localButlerPath), 'Local');
+        $this->printProjectNames(dirname(__FILE__).'/../Project/', 'Default');
     }
 
     /**
@@ -147,20 +153,5 @@ class ListCommand extends Command
                 $this->recursivePrint($varname . "." . $key, $val);
             }
         }
-    }
-
-    /**
-     * Replace ~ in $path with the absolute user path
-     *
-     * @param $path
-     * @return mixed
-     */
-    private function getLocalButlerPath($path)
-    {
-        if (function_exists('posix_getuid') && strpos($path, '~') !== false) {
-            $userInfo = posix_getpwuid(posix_getuid());
-            return str_replace('~', $userInfo['dir'], $path);
-        }
-        return $path;
     }
 }
