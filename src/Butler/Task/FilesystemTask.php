@@ -35,8 +35,8 @@ class FilesystemTask extends AbstractTask
     public function copy(array $config)
     {
         $this->fileSystem->copy(
-            $this->fileSystem->getPath($config['options']['originFile']),
-            $this->fileSystem->getPath($config['options']['targetFile']),
+            $config['options']['originFile'],
+            $config['options']['targetFile'],
             (isset($config['options']['overwriteNewerFiles']) ? $config['options']['overwriteNewerFiles'] : false)
         );
     }
@@ -47,7 +47,7 @@ class FilesystemTask extends AbstractTask
     public function mkdir(array $config)
     {
         $this->fileSystem->mkdir(
-            $this->fileSystem->getPath($config['options']['dirs']),
+            $config['options']['dirs'],
             (isset($config['options']['mode']) ? $config['options']['mode'] : 0777)
         );
     }
@@ -58,7 +58,9 @@ class FilesystemTask extends AbstractTask
      */
     public function exists(array $config)
     {
-        return $this->fileSystem->exists($this->getPath($config['options']['files']));
+        return [
+            'filesexists' => $this->fileSystem->exists($config['options']['files'])
+        ];
     }
 
     /**
@@ -67,7 +69,7 @@ class FilesystemTask extends AbstractTask
     public function touch(array $config)
     {
         $this->fileSystem->touch(
-            $this->fileSystem->getPath($config['options']['files']),
+            $config['options']['files'],
             (isset($config['options']['time']) ? $config['options']['time'] : null),
             (isset($config['options']['atime']) ? $config['options']['atime'] : null)
         );
@@ -79,10 +81,7 @@ class FilesystemTask extends AbstractTask
      */
     public function remove(array $config)
     {
-        $testen = $this->fileSystem->getPath($config['options']['files']);
-        var_export($testen);
-        die;
-        $this->fileSystem->remove($this->fileSystem->getPath($config['options']['files']));
+        $this->fileSystem->remove($config['options']['files']);
     }
 
 
@@ -92,7 +91,7 @@ class FilesystemTask extends AbstractTask
     public function chmod(array $config)
     {
         $this->fileSystem->chmod(
-            $this->fileSystem->getPath($config['options']['files']),
+            $config['options']['files'],
             $config['options']['mode'],
             (isset($config['options']['umask']) ? $config['options']['umask'] : 0000),
             (isset($config['options']['recursive']) ? $config['options']['recursive'] : false)
@@ -106,7 +105,7 @@ class FilesystemTask extends AbstractTask
     public function chown(array $config)
     {
         $this->fileSystem->chown(
-            $this->fileSystem->getPath($config['options']['files']),
+            $config['options']['files'],
             $config['options']['user'],
             (isset($config['options']['recursive']) ? $config['options']['recursive'] : false)
         );
@@ -118,7 +117,7 @@ class FilesystemTask extends AbstractTask
     public function chgrp(array $config)
     {
         $this->fileSystem->chgrp(
-            $this->fileSystem->getPath($config['options']['files']),
+            $config['options']['files'],
             $config['options']['group'],
             (isset($config['options']['recursive']) ? $config['options']['recursive'] : false)
         );
@@ -130,8 +129,8 @@ class FilesystemTask extends AbstractTask
     public function rename(array $config)
     {
         $this->fileSystem->rename(
-            $this->fileSystem->getPath($config['options']['origin']),
-            $this->fileSystem->getPath($config['options']['target']),
+            $config['options']['origin'],
+            $config['options']['target'],
             (isset($config['options']['overwrite']) ? $config['options']['overwrite'] : false)
         );
     }
@@ -142,8 +141,8 @@ class FilesystemTask extends AbstractTask
     public function symlink(array $config)
     {
         $this->fileSystem->symlink(
-            $config['options']['originDir'],
-            $this->fileSystem->getPath($config['options']['targetDir']),
+            $config['options']['origin'],
+            $config['options']['target'],
             (isset($config['options']['copyOnWindows']) ? $config['options']['copyOnWindows'] : false)
         );
     }
@@ -154,8 +153,8 @@ class FilesystemTask extends AbstractTask
     public function hardlink(array $config)
     {
         $this->fileSystem->hardlink(
-            $this->fileSystem->getPath($config['options']['originFile']),
-            $this->fileSystem->getPath($config['options']['targetFile'])
+            $config['options']['originFile'],
+            $config['options']['targetFiles']
         );
     }
 
@@ -168,10 +167,12 @@ class FilesystemTask extends AbstractTask
      */
     public function readlink(array $config)
     {
-        return $this->fileSystem->readlink(
-            $this->fileSystem->getPath($config['options']['path']),
-            (isset($config['options']['canonicalize']) ? $config['options']['canonicalize'] : false)
-        );
+        return [
+            'readlink' => $this->fileSystem->readlink(
+                $config['options']['path'],
+                (isset($config['options']['canonicalize']) ? $config['options']['canonicalize'] : false)
+            )
+        ];
     }
 
     /**
@@ -179,14 +180,13 @@ class FilesystemTask extends AbstractTask
      * Given an existing path, convert it to a path relative to a given starting path.
      *
      * @param array $config
-     * @return string Path of target relative to starting path
+     * @return array Path of target relative to starting path
      */
     public function makePathRelative(array $config)
     {
-        return $this->fileSystem->makePathRelative(
-            $this->fileSystem->getPath($config['options']['endPath']),
-            $this->fileSystem->getPath($config['options']['startPath'])
-        );
+        return [
+            'makePathRelative' => $this->fileSystem->makePathRelative($config['options']['endPath'], $config['options']['startPath'])
+        ];
     }
 
     /**
@@ -198,9 +198,9 @@ class FilesystemTask extends AbstractTask
     public function mirror(array $config)
     {
         $this->fileSystem->mirror(
-            $this->fileSystem->getPath($config['options']['originDir']),
-            $this->fileSystem->getPath($config['options']['targetDir']),
-            (isset($config['options']['iterator']) ? $config['options']['iterator'] : null),
+            $config['options']['originDir'],
+            $config['options']['targetDir'],
+            null,
             (isset($config['options']['options']) ? $config['options']['options'] : array())
         );
     }
@@ -221,16 +221,13 @@ class FilesystemTask extends AbstractTask
      */
     public function move(array $config)
     {
-        $this->fileSystem->mirror(
-            $this->fileSystem->getPath($config['options']['originDir']),
-            $this->fileSystem->getPath($config['options']['targetDir']),
-            (isset($config['options']['iterator']) ? $config['options']['iterator'] : null),
+        if (!$this->fileSystem->move(
+            $config['options']['origin'],
+            $config['options']['target'],
+            null,
             (isset($config['options']['options']) ? $config['options']['options'] : array())
-        );
-        if ($this->fileSystem->exists($this->fileSystem->getPath($config['options']['targetDir']))) {
-            $this->fileSystem->remove($this->fileSystem->getPath($config['options']['originDir']));
-        } else {
-            $this->output->writeln('<error><options=bold;bg=red>  ERR </></error>' .'<fg=red>"filesystem:move" Target "' . $this->fileSystem->getPath($config['options']['targetDir']) . '" could not created!</>');
+        )) {
+            $this->output->writeln('<error><options=bold;bg=red>  ERR </></error>' .'<fg=red>"filesystem:move" Target "' . $this->fileSystem->getPath($config['options']['target']) . '" could not created!</>');
         }
     }
 
@@ -243,9 +240,9 @@ class FilesystemTask extends AbstractTask
      */
     public function isAbsolutePath(array $config)
     {
-        return $this->fileSystem->isAbsolutePath(
-            $config['options']['file']
-        );
+        return [
+            'isAbsolutePath' => $this->fileSystem->isAbsolutePath($config['options']['file'])
+        ];
     }
 
     /**
@@ -257,10 +254,12 @@ class FilesystemTask extends AbstractTask
      */
     public function tempnam(array $config)
     {
-        return $this->fileSystem->tempnam(
-            $this->fileSystem->getPath($config['options']['dir']),
-            $config['options']['prefix']
-        );
+        return [
+            'tempnam' => $this->fileSystem->tempnam(
+                $config['options']['dir'],
+                $config['options']['prefix']
+            )
+        ];
     }
 
     /**
@@ -279,7 +278,7 @@ class FilesystemTask extends AbstractTask
             $config['options']['content'] = $content;
         }
         $this->fileSystem->dumpFile(
-            $this->fileSystem->getPath($config['options']['file']),
+            $config['options']['file'],
             $config['options']['content']
         );
     }

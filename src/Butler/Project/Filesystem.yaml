@@ -113,7 +113,6 @@ mirror:
   options:
     originDir: staff
     targetDir: lulu
-    iterator: null
     options:
       override: false
       copy_on_windows: true
