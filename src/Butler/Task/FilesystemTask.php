@@ -181,14 +181,13 @@ class FilesystemTask extends AbstractTask
      * Given an existing path, convert it to a path relative to a given starting path.
      *
      * @param array $config
-     * @return string Path of target relative to starting path
+     * @return array Path of target relative to starting path
      */
     public function makePathRelative(array $config)
     {
-        return $this->fileSystem->makePathRelative(
-            $this->fileSystem->getPath($config['options']['endPath']),
-            $this->fileSystem->getPath($config['options']['startPath'])
-        );
+        return [
+            'makePathRelative' => $this->fileSystem->makePathRelative($config['options']['endPath'], $config['options']['startPath'])
+        ];
     }
 
     /**
