@@ -129,8 +129,8 @@ class FilesystemTask extends AbstractTask
     public function rename(array $config)
     {
         $this->fileSystem->rename(
-            $this->fileSystem->getPath($config['options']['origin']),
-            $this->fileSystem->getPath($config['options']['target']),
+            $config['options']['origin'],
+            $config['options']['target'],
             (isset($config['options']['overwrite']) ? $config['options']['overwrite'] : false)
         );
     }
