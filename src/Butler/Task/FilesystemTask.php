@@ -170,10 +170,12 @@ class FilesystemTask extends AbstractTask
      */
     public function readlink(array $config)
     {
-        return $this->fileSystem->readlink(
-            $this->fileSystem->getPath($config['options']['path']),
-            (isset($config['options']['canonicalize']) ? $config['options']['canonicalize'] : false)
-        );
+        return [
+            'readlink' => $this->fileSystem->readlink(
+                $config['options']['path'],
+                (isset($config['options']['canonicalize']) ? $config['options']['canonicalize'] : false)
+            )
+        ];
     }
 
     /**
