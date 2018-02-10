@@ -92,7 +92,7 @@ class FilesystemTask extends AbstractTask
     public function chmod(array $config)
     {
         $this->fileSystem->chmod(
-            $this->fileSystem->getPath($config['options']['files']),
+            $config['options']['files'],
             $config['options']['mode'],
             (isset($config['options']['umask']) ? $config['options']['umask'] : 0000),
             (isset($config['options']['recursive']) ? $config['options']['recursive'] : false)
@@ -118,7 +118,7 @@ class FilesystemTask extends AbstractTask
     public function chgrp(array $config)
     {
         $this->fileSystem->chgrp(
-            $this->fileSystem->getPath($config['options']['files']),
+            $config['options']['files'],
             $config['options']['group'],
             (isset($config['options']['recursive']) ? $config['options']['recursive'] : false)
         );

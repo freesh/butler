@@ -60,6 +60,23 @@ class FilesystemHelper extends Filesystem implements HelperInterface
         parent::chgrp($files, $group, $recursive);
     }
 
+    /**
+     * Change mode for an array of files or directories.
+     *
+     * @param string|iterable $files     A filename, an array of files, or a \Traversable instance to change mode
+     * @param int             $mode      The new mode (octal)
+     * @param int             $umask     The mode mask (octal)
+     * @param bool            $recursive Whether change the mod recursively or not
+     *
+     * @throws IOException When the change fail
+     */
+    public function chmod($files, $mode, $umask = 0000, $recursive = false)
+    {
+        $this->toIterable($files);
+        array_walk($files,[$this, 'getPathWrapper']);
+        parent::chmod($files, $mode, $umask, $recursive);
+    }
+
 
 
 
