@@ -44,6 +44,21 @@ class FilesystemHelper extends Filesystem implements HelperInterface
         parent::appendToFile($this->getPath($filename), $content);
     }
 
+    /**
+     * Change the group of an array of files or directories.
+     *
+     * @param string|iterable $files     A filename, an array of files, or a \Traversable instance to change group
+     * @param string          $group     The group name
+     * @param bool            $recursive Whether change the group recursively or not
+     *
+     * @throws IOException When the change fail
+     */
+    public function chgrp($files, $group, $recursive = false)
+    {
+        $this->toIterable($files);
+        array_walk($files,[$this, 'getPathWrapper']);
+        parent::chgrp($files, $group, $recursive);
+    }
 
 
 
