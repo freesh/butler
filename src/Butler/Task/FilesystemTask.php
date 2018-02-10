@@ -69,7 +69,7 @@ class FilesystemTask extends AbstractTask
     public function touch(array $config)
     {
         $this->fileSystem->touch(
-            $this->fileSystem->getPath($config['options']['files']),
+            $config['options']['files'],
             (isset($config['options']['time']) ? $config['options']['time'] : null),
             (isset($config['options']['atime']) ? $config['options']['atime'] : null)
         );

@@ -316,7 +316,7 @@ class FilesystemHelper extends Filesystem implements HelperInterface
      */
     public function tempnam($dir, $prefix)
     {
-        parent::tempnam($dir, $prefix);
+        return parent::tempnam($this->getPath($dir), $prefix);
     }
 
 
