@@ -196,7 +196,7 @@ class FilesystemHelper extends Filesystem implements HelperInterface
      */
     public function mirror($originDir, $targetDir, \Traversable $iterator = null, $options = array())
     {
-        parent::mirror($this->getPath($originDir), $this->getPath($targetDir), $iterator, $options);
+        parent::mirror($this->makePathAbsolute($originDir), $this->makePathAbsolute($targetDir), $iterator, $options);
     }
 
     /**
