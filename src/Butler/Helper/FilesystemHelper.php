@@ -77,6 +77,22 @@ class FilesystemHelper extends Filesystem implements HelperInterface
         parent::chmod($files, $mode, $umask, $recursive);
     }
 
+    /**
+     * Change the owner of an array of files or directories.
+     *
+     * @param string|iterable $files     A filename, an array of files, or a \Traversable instance to change owner
+     * @param string          $user      The new owner user name
+     * @param bool            $recursive Whether change the owner recursively or not
+     *
+     * @throws IOException When the change fail
+     */
+    public function chown($files, $user, $recursive = false)
+    {
+        $this->toIterable($files);
+        array_walk($files,[$this, 'getPathWrapper']);
+        parent::chown($files, $user, $recursive);
+    }
+
 
 
 

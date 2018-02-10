@@ -106,7 +106,7 @@ class FilesystemTask extends AbstractTask
     public function chown(array $config)
     {
         $this->fileSystem->chown(
-            $this->fileSystem->getPath($config['options']['files']),
+            $config['options']['files'],
             $config['options']['user'],
             (isset($config['options']['recursive']) ? $config['options']['recursive'] : false)
         );
