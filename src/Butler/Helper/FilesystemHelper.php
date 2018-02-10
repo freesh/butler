@@ -319,6 +319,19 @@ class FilesystemHelper extends Filesystem implements HelperInterface
         return parent::tempnam($this->getPath($dir), $prefix);
     }
 
+    /**
+     * Sets access and modification time of file.
+     *
+     * @param string|iterable $files A filename, an array of files, or a \Traversable instance to create
+     * @param int             $time  The touch time as a Unix timestamp
+     * @param int             $atime The access time as a Unix timestamp
+     *
+     * @throws IOException When touch fails
+     */
+    public function touch($files, $time = null, $atime = null)
+    {
+        parent::touch($this->getPath($files), $time, $atime);
+    }
 
 
 
