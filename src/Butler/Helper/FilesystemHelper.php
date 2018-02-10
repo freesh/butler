@@ -200,10 +200,10 @@ class FilesystemHelper extends Filesystem implements HelperInterface
     }
 
     /**
-     * Moves a directory oder file to another location.
+     * Moves a directory or file to another location.
      *
-     * @param string       $originDir The origin directory
-     * @param string       $targetDir The target directory
+     * @param string       $origin The origin file or directory
+     * @param string       $target The target file or directory
      * @param \Traversable $iterator  A Traversable instance
      * @param array        $options   An array of boolean options
      *                                Valid options are:
@@ -291,6 +291,19 @@ class FilesystemHelper extends Filesystem implements HelperInterface
         parent::rename($this->getPath($origin), $this->getPath($target), $overwrite);
     }
 
+    /**
+     * Creates a symbolic link or copy a directory.
+     *
+     * @param string $origin     The origin directory path
+     * @param string $target     The symbolic link name
+     * @param bool   $copyOnWindows Whether to copy files if on Windows
+     *
+     * @throws IOException When symlink fails
+     */
+    public function symlink($origin, $target, $copyOnWindows = false)
+    {
+        parent::symlink($origin, $this->getPath($target), $copyOnWindows);
+    }
 
 
 

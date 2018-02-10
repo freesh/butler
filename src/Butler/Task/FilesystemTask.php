@@ -141,8 +141,8 @@ class FilesystemTask extends AbstractTask
     public function symlink(array $config)
     {
         $this->fileSystem->symlink(
-            $config['options']['originDir'],
-            $this->fileSystem->getPath($config['options']['targetDir']),
+            $config['options']['origin'],
+            $config['options']['target'],
             (isset($config['options']['copyOnWindows']) ? $config['options']['copyOnWindows'] : false)
         );
     }
