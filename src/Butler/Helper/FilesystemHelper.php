@@ -155,6 +155,18 @@ class FilesystemHelper extends Filesystem implements HelperInterface
         parent::hardlink($this->getPath($originFile), $targetFiles);
     }
 
+    /**
+     * Returns whether the file path is an absolute path.
+     *
+     * @param string $file A file path
+     *
+     * @return bool
+     */
+    public function isAbsolutePath($file)
+    {
+        return parent::isAbsolutePath($file);
+    }
+
 
 
     /*

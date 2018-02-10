@@ -245,9 +245,9 @@ class FilesystemTask extends AbstractTask
      */
     public function isAbsolutePath(array $config)
     {
-        return $this->fileSystem->isAbsolutePath(
-            $config['options']['file']
-        );
+        return [
+            'isAbsolutePath' => $this->fileSystem->isAbsolutePath($config['options']['file'])
+        ];
     }
 
     /**
