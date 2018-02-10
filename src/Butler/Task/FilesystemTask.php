@@ -35,8 +35,8 @@ class FilesystemTask extends AbstractTask
     public function copy(array $config)
     {
         $this->fileSystem->copy(
-            $this->fileSystem->getPath($config['options']['originFile']),
-            $this->fileSystem->getPath($config['options']['targetFile']),
+            $config['options']['originFile'],
+            $config['options']['targetFile'],
             (isset($config['options']['overwriteNewerFiles']) ? $config['options']['overwriteNewerFiles'] : false)
         );
     }
