@@ -39,6 +39,26 @@ class FilesystemHelper extends Filesystem implements HelperInterface
         return 'filesystem';
     }
 
+    public function appendToFile($filename, $content)
+    {
+        parent::appendToFile($this->getPath($filename), $content);
+    }
+
+
+
+
+
+
+    /*
+     * Wrapper function of $this->getPath for usage in array_map()
+     *
+     * @param $path string
+     */
+    private function getPathWrapper(&$path)
+    {
+        $path = $this->getPath($path);
+    }
+
     /**
      * Checks if cli is executed from phar archive.
      * If yes and $path is not absolute, the 'command working directory' will be used and extended by $path and
@@ -117,5 +137,16 @@ class FilesystemHelper extends Filesystem implements HelperInterface
             }
         }
         return $path;
+    }
+
+    /**
+     * @param mixed $files
+     *
+     * @return array|\Traversable
+     */
+    private function toIterable(&$files)
+    {
+        $files = is_array($files) || $files instanceof \Traversable ? $files : array($files);
+        return $files;
     }
 }
