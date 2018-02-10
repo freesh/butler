@@ -254,10 +254,12 @@ class FilesystemTask extends AbstractTask
      */
     public function tempnam(array $config)
     {
-        return $this->fileSystem->tempnam(
-            $this->fileSystem->getPath($config['options']['dir']),
-            $config['options']['prefix']
-        );
+        return [
+            'tempnam' => $this->fileSystem->tempnam(
+                $config['options']['dir'],
+                $config['options']['prefix']
+            )
+        ];
     }
 
     /**
