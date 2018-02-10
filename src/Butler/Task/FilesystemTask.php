@@ -279,7 +279,7 @@ class FilesystemTask extends AbstractTask
             $config['options']['content'] = $content;
         }
         $this->fileSystem->dumpFile(
-            $this->fileSystem->getPath($config['options']['file']),
+            $config['options']['file'],
             $config['options']['content']
         );
     }
