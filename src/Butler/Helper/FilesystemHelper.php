@@ -180,6 +180,25 @@ class FilesystemHelper extends Filesystem implements HelperInterface
         return parent::makePathRelative($this->getPath($endPath), $this->getPath($startPath));
     }
 
+    /**
+     * Mirrors a directory to another.
+     *
+     * @param string       $originDir The origin directory
+     * @param string       $targetDir The target directory
+     * @param \Traversable $iterator  A Traversable instance
+     * @param array        $options   An array of boolean options
+     *                                Valid options are:
+     *                                - $options['override'] Whether to override an existing file on copy or not (see copy())
+     *                                - $options['copy_on_windows'] Whether to copy files instead of links on Windows (see symlink())
+     *                                - $options['delete'] Whether to delete files that are not in the source directory (defaults to false)
+     *
+     * @throws IOException When file type is unknown
+     */
+    public function mirror($originDir, $targetDir, \Traversable $iterator = null, $options = array())
+    {
+        parent::mirror($this->getPath($originDir), $this->getPath($targetDir), $iterator, $options);
+    }
+
 
 
 

@@ -199,9 +199,9 @@ class FilesystemTask extends AbstractTask
     public function mirror(array $config)
     {
         $this->fileSystem->mirror(
-            $this->fileSystem->getPath($config['options']['originDir']),
-            $this->fileSystem->getPath($config['options']['targetDir']),
-            (isset($config['options']['iterator']) ? $config['options']['iterator'] : null),
+            $config['options']['originDir'],
+            $config['options']['targetDir'],
+            null,
             (isset($config['options']['options']) ? $config['options']['options'] : array())
         );
     }
