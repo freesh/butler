@@ -156,8 +156,8 @@ class FilesystemTask extends AbstractTask
     public function hardlink(array $config)
     {
         $this->fileSystem->hardlink(
-            $this->fileSystem->getPath($config['options']['originFile']),
-            $this->fileSystem->getPath($config['options']['targetFile'])
+            $config['options']['originFile'],
+            $config['options']['targetFiles']
         );
     }
 

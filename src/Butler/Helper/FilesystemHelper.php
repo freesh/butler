@@ -139,6 +139,21 @@ class FilesystemHelper extends Filesystem implements HelperInterface
         return parent::exists($files);
     }
 
+    /**
+     * Creates a hard link, or several hard links to a file.
+     *
+     * @param string          $originFile  The original file
+     * @param string|iterable $targetFiles The target file(s)
+     *
+     * @throws FileNotFoundException When original file is missing or not a file
+     * @throws IOException           When link fails, including if link already exists
+     */
+    public function hardlink($originFile, $targetFiles)
+    {
+        $this->toIterable($targetFiles);
+        array_walk($targetFiles,[$this, 'getPathWrapper']);
+        parent::hardlink($this->getPath($originFile), $targetFiles);
+    }
 
 
 
