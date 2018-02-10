@@ -199,7 +199,19 @@ class FilesystemHelper extends Filesystem implements HelperInterface
         parent::mirror($this->getPath($originDir), $this->getPath($targetDir), $iterator, $options);
     }
 
-
+    /**
+     * Creates a directory recursively.
+     *
+     * @param string|iterable $dirs The directory path
+     * @param int             $mode The directory mode
+     *
+     * @throws IOException On any directory creation failure
+     */
+    public function mkdir($dirs, $mode = 0777)
+    {
+        $this->toIterable($dirs);
+        parent::mkdir($this->getPath($dirs), $mode);
+    }
 
 
 

@@ -47,7 +47,7 @@ class FilesystemTask extends AbstractTask
     public function mkdir(array $config)
     {
         $this->fileSystem->mkdir(
-            $this->fileSystem->getPath($config['options']['dirs']),
+            $config['options']['dirs'],
             (isset($config['options']['mode']) ? $config['options']['mode'] : 0777)
         );
     }
