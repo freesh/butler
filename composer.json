@@ -25,13 +25,15 @@
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "~3.2.0",
-        "editorconfig-checker/editorconfig-checker": "^7.0"
+        "editorconfig-checker/editorconfig-checker": "^7.0",
+        "codeception/codeception": "^2.3"
     },
     "scripts": {
         "phpcs-n":"./vendor/bin/phpcs -n src --standard=PSR2",
         "phpcs":"./vendor/bin/phpcs src --standard=PSR2",
         "phpcbf":"./vendor/bin/phpcbf src --standard=PSR2",
         "check-editorconfig": "editorconfig-checker src/*",
+
         "lint": "composer phpcs-n && composer check-editorconfig",
         "build":"./bin/build && chmod +x ./butler.phar"
     }
