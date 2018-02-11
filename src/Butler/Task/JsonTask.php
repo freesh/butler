@@ -57,7 +57,7 @@ class JsonTask extends AbstractTask
                 $this->output->writeln('<error><options=bold;bg=red>  ERR </></error> <fg=red>"json:create" ' . $e->getMessage() .'</>');
             }
         } else {
-            $this->output->writeln( '<error><options=bold;bg=red>  ERR </></error> <fg=red>"json:create" File "' . $config['options']['filename'] . '" already exist!</>');
+            $this->output->writeln('<error><options=bold;bg=red>  ERR </></error> <fg=red>"json:create" File "' . $config['options']['filename'] . '" already exist!</>');
         }
     }
 
@@ -81,7 +81,7 @@ class JsonTask extends AbstractTask
     public function update(array $config)
     {
         if (!$this->fileSystem->exists($this->fileSystem->getPath($config['options']['filename']))) {
-            $this->output->writeln( 'File "' . $config['options']['filename'] . '" does not exist but will be created!');
+            $this->output->writeln('File "' . $config['options']['filename'] . '" does not exist but will be created!');
             $this->create($config);
             return;
         }

@@ -154,7 +154,7 @@ class NeosTask extends AbstractTask
             $config['options']['site-name'] = $this->setQuestion('<options=bold;bg=cyan>  ASK </> <fg=cyan>Please add the site name: </> ', null);
         }
         $config['options']['site-name'] = ucfirst($config['options']['site-name']);
-        $config['options']['package-key'] = ucwords($config['options']['package-key'],'.');
+        $config['options']['package-key'] = ucwords($config['options']['package-key'], '.');
         $this->execute(
             'export FLOW_CONTEXT='. $context .' && ' .'./flow kickstart:site ' .'--package-key ' . $config['options']['package-key'] .' --site-name "' . $config['options']['site-name'] .'"'
         );
@@ -180,13 +180,14 @@ class NeosTask extends AbstractTask
      * @param $path
      * @return array|mixed|void
      */
-    private function getJsonData($file, $path) {
+    private function getJsonData($file, $path)
+    {
         if (!$this->fileSystem->exists($this->fileSystem->getPath($file))) {
-            $this->output->writeln( 'File "' . $file . '" does not exist!');
+            $this->output->writeln('File "' . $file . '" does not exist!');
             return false;
         }
         $data = json_decode(file_get_contents($this->fileSystem->getPath($file)), true);
-        return $this->arrayPathValue($path,$data);
+        return $this->arrayPathValue($path, $data);
     }
 
     /**

@@ -137,7 +137,7 @@ class RunCommand extends Command
             $this->taskObjects[$class] = new $class($this->input, $this->output, $this->getHelperSet());
         }
         // ToDo: Implement a validator, that runs before the first task ist executed
-        if (!method_exists($this->taskObjects[$class],$task)) {
+        if (!method_exists($this->taskObjects[$class], $task)) {
             $this->output->writeln('<error><options=bold;bg=red>  ERR </></error> <fg=red>Task "' . $task .'" does not exist in "'.$class.'".</>');
             return null;
         }

@@ -336,20 +336,20 @@ class FilesystemHelper extends Filesystem implements HelperInterface
      */
     public function getPath($path)
     {
-        if(($path = $this->isNotRootDir($path)) === false) {
+        if (($path = $this->isNotRootDir($path)) === false) {
             return null;
         }
-        if(is_array($path) || $path instanceof \Traversable) {
-            array_walk($path, function(&$val){
+        if (is_array($path) || $path instanceof \Traversable) {
+            array_walk($path, function (&$val) {
                 $val = $this->convertUserPath($val);
-                if(!$this->isAbsolutePath($val) && !empty($pharPath = \Phar::running(false))) {
+                if (!$this->isAbsolutePath($val) && !empty($pharPath = \Phar::running(false))) {
                     $val = $this->makePathAbsolute($val);
                 }
             });
         } else {
             $path = $this->convertUserPath($path);
             if (!$this->isAbsolutePath($path) && !empty($pharPath = \Phar::running(false))) {
-                $path = $this->makePathAbsolute( $path);
+                $path = $this->makePathAbsolute($path);
             }
         }
         return $path;
@@ -364,7 +364,7 @@ class FilesystemHelper extends Filesystem implements HelperInterface
      */
     public function makePathAbsolute($path)
     {
-        return getcwd().'/'.ltrim ( $path, "./" );
+        return getcwd().'/'.ltrim($path, "./");
     }
 
     /**
@@ -391,7 +391,7 @@ class FilesystemHelper extends Filesystem implements HelperInterface
      */
     private function isNotRootDir($path)
     {
-        if(is_array($path)) {
+        if (is_array($path)) {
             if (($key = array_search("/", $path)) !== false) {
                 $this->output->writeln('<error><options=bold;bg=red>  ERR </></error> <fg=red>"filesystem" Operations on "' . $path[$key] . '" are not allowed!</>');
                 unset($path[$key]);
