@@ -33,6 +33,7 @@
         "phpcs":"./vendor/bin/phpcs src --standard=PSR2",
         "phpcbf":"./vendor/bin/phpcbf src --standard=PSR2",
         "check-editorconfig": "editorconfig-checker src/*",
+        "test": "./vendor/bin/codecept run",
 
         "lint": "composer phpcs-n && composer check-editorconfig",
         "build":"./bin/build && chmod +x ./butler.phar"
