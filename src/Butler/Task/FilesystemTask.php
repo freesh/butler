@@ -222,8 +222,8 @@ class FilesystemTask extends AbstractTask
     public function move(array $config)
     {
         if (!$this->fileSystem->move(
-            $config['options']['origin'],
-            $config['options']['target'],
+            $config['options']['originDir'],
+            $config['options']['targetDir'],
             null,
             (isset($config['options']['options']) ? $config['options']['options'] : array())
         )) {
