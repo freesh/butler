@@ -5,4 +5,4 @@ $phar = new Phar('butler.phar', 0, 'butler.phar');
 
 $phar->buildFromDirectory('./');
 
-$phar->setStub($phar->createDefaultStub('butler'));
+$phar->setStub("#!/usr/bin/env php\n" . $phar->createDefaultStub('butler'));
