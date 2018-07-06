@@ -13,14 +13,14 @@ Basics
 - [CLI commands](doku/basics/cli.md)
 
 Project Configuration
-- [Create project config](docu/project-config/create-config.md)
-- [Variables](docu/project-config/variables.md)
-- [Conditions](docu/project-config/conditions.md)
-- [Debug](docu/project-config/debug.md)
+- [Create project config](doku/project-config/create-config.md)
+- [Variables](doku/project-config/variables.md)
+- [Conditions](doku/project-config/conditions.md)
+- [Debug](doku/project-config/debug.md)
 
 Development
 
-- [Create own tasks (deprecated: Will change in future)](development/own-tasks.md)
+- [Create own tasks (deprecated: Will change in future)](doku/development/own-tasks.md)
 
 
 
@@ -28,7 +28,7 @@ Development
 
 **1. Install butler**
 
-- See: [Install](install.md)
+- See: [Install](doku/basics/install.md)
 
 **2. create empty project folder**
 
