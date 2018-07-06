@@ -4,7 +4,7 @@
 
 The execution of every task can skipped by condition:
 
-```
+```yaml
 'set project data:
   class: \Butler\Task\InputTask
   task: question
