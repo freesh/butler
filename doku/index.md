@@ -3,7 +3,7 @@
 ## Basics
 
 tbd.
-<!-- - Setup -->
+- [Install](basics/install.md)
 <!-- - Getting started -->
 <!-- - CLI commands -->
 
