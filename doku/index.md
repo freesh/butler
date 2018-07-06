@@ -5,7 +5,7 @@
 tbd.
 - [Install](basics/install.md)
 <!-- - Getting started -->
-<!-- - CLI commands -->
+- [CLI commands](basics/cli.md)
 
 
 ## Projectconfig
