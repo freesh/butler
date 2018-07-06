@@ -11,8 +11,7 @@ tbd.
 ## Projectconfig
 
 <!-- - Usage of project configs -->
-<!-- - Create project config -->
-<!-- - Tasks -->
+- [Create project config](project-config/create-config.md)
 - [Variables](project-config/variables.md)
 - [Conditions](project-config/conditions.md)
 - [Debug](project-config/debug.md)
