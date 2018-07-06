@@ -19,3 +19,8 @@ tbd.
 ## Tasks
 
 tbd.
+
+
+## Development
+
+- [Create own tasks (deprecated: Will change in future)](development/own-tasks.md)
