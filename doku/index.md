@@ -2,9 +2,8 @@
 
 ## Basics
 
-tbd.
 - [Install](basics/install.md)
-<!-- - Getting started -->
+- [Getting started](basics/getting-started.md)
 - [CLI commands](basics/cli.md)
 
 
