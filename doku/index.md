@@ -8,14 +8,13 @@ tbd.
 <!-- - CLI commands -->
 
 
-
 ## Projectconfig
 
 <!-- - Usage of project configs -->
 <!-- - Create project config -->
 <!-- - Tasks -->
 - [Variables](project-config/variables.md)
-<!-- - Conditions -->
+- [Conditions](project-config/conditions.md)
 - [Debug](project-config/debug.md)
 
 ## Tasks
