@@ -6,7 +6,7 @@ You can use variables within your configuration. There are three ways to define 
 - Defined as environment variables
 - Returned by task. Variables can be returned by tasks. See documentation of this specific task.
 
-Debug: If you build your own project config, it is often usefull to debug the rendering of your project config if variables are used. See [debug](project-config/debug.md) section for more informations about that.
+Debug: If you build your own project config, it is often usefull to debug the rendering of your project config if variables are used. See [debug](./debug.md) section for more informations about that.
 
 Note: Variables can be used as array tree with point notation. This is interesting if variable sets are returned from tasks to your runtime configuration.
 

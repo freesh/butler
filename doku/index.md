@@ -16,7 +16,7 @@ tbd.
 <!-- - Tasks -->
 - [Variables](project-config/variables.md)
 <!-- - Conditions -->
-<!-- - [Debug](project-config/debug.md)-->
+- [Debug](project-config/debug.md)
 
 ## Tasks
 
