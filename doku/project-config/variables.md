@@ -46,4 +46,4 @@ Some Tasks return data to the runtime config. This can also used.
 projectname="myproject" butler project:run neos
 ```
 
-If the environment bariable is not overwriten within the yaml file, butler will look in your environment for this variable and use this value.
+If the environment variable is **not** overwriten within the yaml file, butler will look in your environment for this variable and use this value.
