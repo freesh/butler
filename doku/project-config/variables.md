@@ -39,3 +39,11 @@ This config variables can be used in task configuration like this:
 ```
 The first task will ask the user for vendor and name and the second task creates a file named by the answers.
 Some Tasks return data to the runtime config. This can also used. 
+
+### Use environment variables
+
+```bash
+projectname="myproject" butler project:run neos
+```
+
+If the environment bariable is not overwriten within the yaml file, butler will look in your environment for this variable and use this value.

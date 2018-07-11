@@ -175,7 +175,7 @@ class RunCommand extends Command
                     // iterate over multible matches and replace them if they exists in projectConfig
                     foreach ($matches as $match) {
                         // if path is found and a value is returned
-                        if (is_string($param = $this->arrayPathValue($match[1], $this->projectConfig))) {
+                        if (is_string($param = $this->arrayPathValue($match[1], $this->projectConfig)) || is_string($param = getenv($match[1]))) {
                             // replace variable string with value
                             $val = str_replace($match[0], $param, $val);
                         }
