@@ -41,10 +41,10 @@ class ComposerTask extends AbstractTask
             .' '.$config['options']['tempPath']
         );
         $this->fileSystem->mirror(
-            $this->fileSystem->getPath($config['options']['tempPath']),
-            $this->fileSystem->getPath('./')
+            $config['options']['tempPath'],
+            './'
         );
-        $this->fileSystem->remove($this->fileSystem->getPath($config['options']['tempPath']));
+        $this->fileSystem->remove($config['options']['tempPath']);
     }
 
     /**
