@@ -91,6 +91,9 @@ class RunCommand extends Command
             $projectConf = null;
 
             if ($this->isConditionTrue($config)) {
+                if ($output->isVerbose()) {
+                    $this->output->writeln('');
+                }
                 $this->output->writeln(
                     '<fg=green;options=bold>Execute Task:</> <fg=blue>' . $key . '</>'
                     . ($output->isVerbose() ? ' <comment>(' . $class . ' -> ' . $task . ')</comment>' : '')
